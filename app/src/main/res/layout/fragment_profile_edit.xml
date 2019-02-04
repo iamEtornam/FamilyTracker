@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:context=".fragments.ProfileEditFragment">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="24dp"
+		android:gravity="center_horizontal"
+		android:orientation="vertical">
+
+		<de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+			android:id="@+id/imgProfile"
+			android:layout_width="100dp"
+			android:layout_height="100dp"
+			android:layout_marginTop="15dp"
+			android:src="@drawable/ic_person"
+			app:civ_border_color="#FF000000"
+			app:civ_border_width="2dp" />
+
+		<TextView
+			android:id="@+id/txtImgSelect"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="5dp"
+			android:text="@string/select_photo"
+			android:textColor="@color/colorAccent" />
+
+
+		<com.google.android.material.textfield.TextInputEditText
+			android:id="@+id/edtFirstName"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="30dp"
+			android:background="@drawable/edit_text_outline"
+			android:hint="@string/first_name_hint"
+			android:inputType="textPersonName"
+			android:padding="10dp" />
+
+		<com.google.android.material.textfield.TextInputEditText
+			android:id="@+id/edtOtherName"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp"
+			android:background="@drawable/edit_text_outline"
+			android:hint="@string/other_name_hint"
+			android:inputType="textPersonName"
+			android:padding="10dp" />
+
+
+		<RadioGroup
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp"
+			android:orientation="horizontal">
+
+			<RadioButton
+				android:id="@+id/rBtnMale"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/male" />
+
+			<RadioButton
+				android:id="@+id/rBtnFemale"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/female" />
+
+			<RadioButton
+				android:id="@+id/rBtnOther"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:text="@string/other" />
+		</RadioGroup>
+
+		<com.google.android.material.textfield.TextInputEditText
+			android:id="@+id/edtDateOfBirth"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp"
+			android:background="@drawable/edit_text_outline"
+			android:hint="@string/dob_hint"
+			android:inputType="date"
+			android:padding="10dp" />
+
+		<com.google.android.material.textfield.TextInputEditText
+			android:id="@+id/edtHomeAddress"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp"
+			android:background="@drawable/edit_text_outline"
+			android:hint="@string/home_address_hint"
+			android:inputType="textPostalAddress"
+			android:padding="10dp" />
+
+		<com.google.android.material.textfield.TextInputEditText
+			android:id="@+id/edtWorkAddress"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp"
+			android:background="@drawable/edit_text_outline"
+			android:hint="@string/work_address_hint"
+			android:inputType="textPersonName"
+			android:padding="10dp" />
+
+		<com.google.android.material.textfield.TextInputEditText
+			android:id="@+id/edtMobileNumber"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="10dp"
+			android:background="@drawable/edit_text_outline"
+			android:hint="@string/mobile_number_hint"
+			android:inputType="phone"
+			android:padding="10dp" />
+
+		<com.tuyenmonkey.mkloader.MKLoader
+			android:id="@+id/progressIndicator"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="15dp"
+			app:mk_color="@color/colorAccent"
+			app:mk_type="Whirlpool" />
+
+		<com.google.android.material.button.MaterialButton
+			android:id="@+id/btnUpdateDetail"
+			style="@style/Theme.AppCompat.Light"
+			android:layout_width="wrap_content"
+			android:layout_height="50dp"
+			android:layout_marginTop="20dp"
+			android:layout_marginBottom="30dp"
+			android:padding="10dp"
+			android:text="@string/update_details"
+			android:textColor="@color/colorWhite" />
+
+	</LinearLayout>
+
+</ScrollView>

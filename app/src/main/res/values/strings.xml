@@ -1,3 +1,21 @@
 <resources>
 	<string name="app_name">Family Tracker</string>
+	<string name="terms_and_conditions"><![CDATA[By Signning up, you have agreed with our terms & conditions]]></string>
+	<string name="continue_with_google">Continue with Google</string>
+	<string name="getting_started">Getting Started…</string>
+
+	<!-- TODO: Remove or change this placeholder text -->
+	<string name="hello_blank_fragment">Hello blank fragment</string>
+	<string name="first_name_hint">Enter your First Name</string>
+	<string name="other_name_hint">Enter your Other Names</string>
+	<string name="male">Male</string>
+	<string name="female">Female</string>
+	<string name="other">Other</string>
+	<string name="dob_hint">Enter your Date of Birth</string>
+	<string name="home_address_hint">Enter your Home Address</string>
+	<string name="work_address_hint">Enter your Work Address(Optional)</string>
+	<string name="mobile_number_hint">Enter your Mobile Number</string>
+	<string name="update_details">Update Details</string>
+	<string name="select_photo">select photo</string>
+
 </resources>
