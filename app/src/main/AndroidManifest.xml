@@ -3,6 +3,8 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	package="co.etornam.familytracker">
 
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
 	<application
 		android:allowBackup="true"
 		android:icon="@mipmap/ic_launcher"
@@ -11,8 +13,7 @@
 		android:supportsRtl="true"
 		android:theme="@style/AppTheme"
 		tools:ignore="GoogleAppIndexingWarning">
-		<activity android:name=".ui.ProfileActivity"></activity>
-		<activity android:name=".ui.EditProfileActivity" />
+		<activity android:name=".ui.ProfileActivity" />
 		<activity
 			android:name=".security.SignUpActivity"
 			android:theme="@style/FullscreenUltimate">
@@ -29,6 +30,7 @@
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
+
 	</application>
 
 </manifest>

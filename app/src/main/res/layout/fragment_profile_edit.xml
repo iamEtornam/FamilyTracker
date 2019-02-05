@@ -3,6 +3,7 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
+	android:id="@+id/fragMainLayout"
 	android:layout_height="match_parent"
 	tools:context=".fragments.ProfileEditFragment">
 
@@ -13,7 +14,7 @@
 		android:gravity="center_horizontal"
 		android:orientation="vertical">
 
-		<de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+		<de.hdodenhof.circleimageview.CircleImageView
 			android:id="@+id/imgProfile"
 			android:layout_width="100dp"
 			android:layout_height="100dp"
@@ -53,6 +54,7 @@
 
 
 		<RadioGroup
+			android:id="@+id/genderGroup"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
 			android:layout_marginTop="10dp"
@@ -125,7 +127,9 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginTop="15dp"
+			android:layout_marginBottom="20dp"
 			app:mk_color="@color/colorAccent"
+			android:visibility="gone"
 			app:mk_type="Whirlpool" />
 
 		<com.google.android.material.button.MaterialButton

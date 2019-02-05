@@ -1,22 +1,94 @@
 package co.etornam.familytracker.fragments;
 
 
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.tuyenmonkey.mkloader.MKLoader;
 
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import co.etornam.familytracker.R;
+import co.etornam.familytracker.model.Profile;
+import de.hdodenhof.circleimageview.CircleImageView;
+import gun0912.tedbottompicker.TedBottomPicker;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ProfileEditFragment extends Fragment {
+
+
+	@BindView(R.id.imgProfile)
+	CircleImageView imgProfile;
+	@BindView(R.id.txtImgSelect)
+	TextView txtImgSelect;
+	@BindView(R.id.edtFirstName)
+	TextInputEditText edtFirstName;
+	@BindView(R.id.edtOtherName)
+	TextInputEditText edtOtherName;
+	@BindView(R.id.rBtnMale)
+	RadioButton rBtnMale;
+	@BindView(R.id.rBtnFemale)
+	RadioButton rBtnFemale;
+	@BindView(R.id.rBtnOther)
+	RadioButton rBtnOther;
+	@BindView(R.id.edtDateOfBirth)
+	TextInputEditText edtDateOfBirth;
+	@BindView(R.id.edtHomeAddress)
+	TextInputEditText edtHomeAddress;
+	@BindView(R.id.edtWorkAddress)
+	TextInputEditText edtWorkAddress;
+	@BindView(R.id.edtMobileNumber)
+	TextInputEditText edtMobileNumber;
+	@BindView(R.id.progressIndicator)
+	MKLoader progressIndicator;
+	@BindView(R.id.btnUpdateDetail)
+	MaterialButton btnUpdateDetail;
+	@BindView(R.id.genderGroup)
+	RadioGroup genderGroup;
+	@BindView(R.id.fragMainLayout)
+	ScrollView fragMainLayout;
+	private Uri resultUri = null;
+	private Task<Uri> urlTask, thumbTask;
+	private FirebaseAuth mAuth;
+	private Bitmap imageFile;
+	private StorageReference mStorage, mImageRef;
+	private DatabaseReference mDatabase;
+	private int genderId;
+	private String firstName;
+	private String otherName;
+	private String dateOfBirth;
+	private String homeAddress;
+	private String workAddress;
+	private String mobileNumber;
 
 
 	public ProfileEditFragment() {
@@ -30,6 +102,113 @@ public class ProfileEditFragment extends Fragment {
 		// Inflate the layout for this fragment
 		View view = inflater.inflate(R.layout.fragment_profile_edit, container, false);
 		Objects.requireNonNull(getActivity()).getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+		ButterKnife.bind(this, view);
 		return view;
+	}
+
+	@Override
+	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+		super.onViewCreated(view, savedInstanceState);
+		mAuth = FirebaseAuth.getInstance();
+		mStorage = FirebaseStorage.getInstance().getReference();
+		mDatabase = FirebaseDatabase.getInstance().getReference();
+
+		genderGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				genderId = group.getCheckedRadioButtonId();
+			}
+		});
+	}
+
+	@OnClick({R.id.imgProfile, R.id.txtImgSelect, R.id.btnUpdateDetail})
+	void onViewClicked(View view) {
+		switch (view.getId()) {
+			case R.id.imgProfile:
+				pickImage();
+				break;
+			case R.id.txtImgSelect:
+				pickImage();
+				break;
+			case R.id.btnUpdateDetail:
+				validateUserDetails();
+				Toast.makeText(getContext(), "id is: " + genderId, Toast.LENGTH_SHORT).show();
+				break;
+		}
+	}
+
+	private void pickImage() {
+		TedBottomPicker picker = new TedBottomPicker.Builder(Objects.requireNonNull(getContext()))
+				.setOnImageSelectedListener(uri -> {
+					resultUri = uri;
+					imgProfile.setImageURI(resultUri);
+				}).create();
+		assert getFragmentManager() != null;
+		picker.show(getFragmentManager());
+	}
+
+	private void validateUserDetails() {
+		firstName = Objects.requireNonNull(edtFirstName.getText()).toString();
+		otherName = Objects.requireNonNull(edtOtherName.getText()).toString();
+		dateOfBirth = Objects.requireNonNull(edtDateOfBirth.getText()).toString();
+		homeAddress = Objects.requireNonNull(edtHomeAddress.getText()).toString();
+		workAddress = Objects.requireNonNull(edtWorkAddress.getText()).toString();
+		mobileNumber = Objects.requireNonNull(edtMobileNumber.getText()).toString();
+
+
+		if (!firstName.isEmpty() && !otherName.isEmpty() && !dateOfBirth.isEmpty() && !homeAddress.isEmpty() && !workAddress.isEmpty() && !mobileNumber.isEmpty() && resultUri != null) {
+			saveUserDetails();
+		} else if (firstName.isEmpty()) {
+			edtFirstName.setError("Field cannot be Empty");
+		} else if (otherName.isEmpty()) {
+			edtOtherName.setError("Field cannot be Empty");
+		} else if (dateOfBirth.isEmpty()) {
+			edtDateOfBirth.setError("Field cannot be Empty");
+		} else if (homeAddress.isEmpty()) {
+			edtHomeAddress.setError("Field cannot be Empty");
+		} else if (workAddress.isEmpty()) {
+			edtWorkAddress.setError("Field cannot be Empty");
+		} else if (mobileNumber.isEmpty()) {
+			edtMobileNumber.setError("Field cannot be Empty");
+		} else if (resultUri == null) {
+			txtImgSelect.setError("Select a Photo");
+		} else {
+			Snackbar.make(getView().findViewById(R.id.fragMainLayout), "Something went wrong. ", Snackbar.LENGTH_SHORT).show();
+		}
+	}
+
+	private void saveUserDetails() {
+		btnUpdateDetail.setVisibility(View.GONE);
+		progressIndicator.setVisibility(View.VISIBLE);
+		mImageRef = mStorage.child("profile_images").child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid() + ".jpg");
+		UploadTask uploadTask = mImageRef.putFile(resultUri);
+		urlTask = uploadTask.continueWithTask(task -> {
+			if (!task.isSuccessful()) {
+				throw Objects.requireNonNull(task.getException());
+			}
+			return mImageRef.getDownloadUrl();
+		}).addOnCompleteListener(task -> {
+			if (task.isSuccessful()) {
+				final Uri downloadUrl = task.getResult();
+				assert downloadUrl != null;
+
+				writeUserDetails(firstName, otherName, dateOfBirth, homeAddress, workAddress, mobileNumber, downloadUrl.toString(), genderId);
+			} else {
+				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragMainLayout), "Couldn't upload Profile Photo. ", Snackbar.LENGTH_SHORT).show();
+			}
+			btnUpdateDetail.setVisibility(View.VISIBLE);
+			progressIndicator.setVisibility(View.GONE);
+		});
+	}
+
+	private void writeUserDetails(String firstName, String otherName, String dateOfBirth, String homeAddress, String workAddress, String mobileNumber, String profileImgUrl, int gender) {
+		Profile profile = new Profile(firstName, otherName, dateOfBirth, homeAddress, workAddress, mobileNumber, profileImgUrl, gender, ServerValue.TIMESTAMP);
+		mDatabase.child("users").child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).setValue(profile).addOnCompleteListener(task -> {
+			if (task.isSuccessful()) {
+				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragMainLayout), "Details Saved!!! ", Snackbar.LENGTH_SHORT).show();
+			} else {
+				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragMainLayout), "Couldn't Save Details ", Snackbar.LENGTH_SHORT).show();
+			}
+		});
 	}
 }
