@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.etornam.familytracker.R;
-import co.etornam.familytracker.fragments.ProfileEditFragment;
+import co.etornam.familytracker.fragments.ProfileDisplayFragment;
 
 public class ProfileActivity extends AppCompatActivity {
 	@BindView(R.id.fragContainer)
@@ -20,7 +20,7 @@ public class ProfileActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_profile);
 		ButterKnife.bind(this);
 
-		ProfileEditFragment profileEditFragment = new ProfileEditFragment();
+		ProfileDisplayFragment profileEditFragment = new ProfileDisplayFragment();
 
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		transaction.replace(R.id.fragContainer, profileEditFragment);

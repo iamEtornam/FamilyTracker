@@ -8,13 +8,13 @@ public class Profile {
 	private String workAddress;
 	private String mobileNumber;
 	private String profileImgUrl;
-	private int gender;
+	private String gender;
 	private Object timestamp;
 
 	public Profile() {
 	}
 
-	public Profile(String firstName, String otherName, String dateOfBirth, String homeAddress, String workAddress, String mobileNumber, String profileImgUrl, int gender, Object timestamp) {
+	public Profile(String firstName, String otherName, String dateOfBirth, String homeAddress, String workAddress, String mobileNumber, String profileImgUrl, String gender, Object timestamp) {
 		this.firstName = firstName;
 		this.otherName = otherName;
 		this.dateOfBirth = dateOfBirth;
@@ -82,11 +82,11 @@ public class Profile {
 		this.profileImgUrl = profileImgUrl;
 	}
 
-	public int getGender() {
+	public String getGender() {
 		return gender;
 	}
 
-	public void setGender(int gender) {
+	public void setGender(String gender) {
 		this.gender = gender;
 	}
 

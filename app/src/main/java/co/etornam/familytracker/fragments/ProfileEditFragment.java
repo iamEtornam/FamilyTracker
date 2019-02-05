@@ -4,6 +4,7 @@ package co.etornam.familytracker.fragments;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
@@ -41,12 +41,14 @@ import co.etornam.familytracker.model.Profile;
 import de.hdodenhof.circleimageview.CircleImageView;
 import gun0912.tedbottompicker.TedBottomPicker;
 
+import static co.etornam.familytracker.util.Constants.USER_DB;
+
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ProfileEditFragment extends Fragment {
 
-
+	private String TAG = ProfileEditFragment.class.getSimpleName();
 	@BindView(R.id.imgProfile)
 	CircleImageView imgProfile;
 	@BindView(R.id.txtImgSelect)
@@ -78,12 +80,12 @@ public class ProfileEditFragment extends Fragment {
 	@BindView(R.id.fragMainLayout)
 	ScrollView fragMainLayout;
 	private Uri resultUri = null;
-	private Task<Uri> urlTask, thumbTask;
+	private Task<Uri> urlTask;
 	private FirebaseAuth mAuth;
 	private Bitmap imageFile;
 	private StorageReference mStorage, mImageRef;
 	private DatabaseReference mDatabase;
-	private int genderId;
+	private String gender;
 	private String firstName;
 	private String otherName;
 	private String dateOfBirth;
@@ -114,7 +116,19 @@ public class ProfileEditFragment extends Fragment {
 		mStorage = FirebaseStorage.getInstance().getReference();
 		mDatabase = FirebaseDatabase.getInstance().getReference();
 
-		genderGroup.setOnCheckedChangeListener((group, checkedId) -> genderId = group.getCheckedRadioButtonId());
+		genderGroup.setOnCheckedChangeListener((group, checkedId) -> {
+			switch (checkedId) {
+				case R.id.rBtnMale:
+					gender = "Male";
+					break;
+				case R.id.rBtnFemale:
+					gender = "Female";
+					break;
+				case R.id.rBtnOther:
+					gender = "Other";
+					break;
+			}
+		});
 	}
 
 	@OnClick({R.id.imgProfile, R.id.txtImgSelect, R.id.btnUpdateDetail})
@@ -128,7 +142,7 @@ public class ProfileEditFragment extends Fragment {
 				break;
 			case R.id.btnUpdateDetail:
 				validateUserDetails();
-				Toast.makeText(getContext(), "id is: " + genderId, Toast.LENGTH_SHORT).show();
+				Log.d(TAG, "onViewClicked: " + gender);
 				break;
 		}
 	}
@@ -188,7 +202,7 @@ public class ProfileEditFragment extends Fragment {
 				final Uri downloadUrl = task.getResult();
 				assert downloadUrl != null;
 
-				writeUserDetails(firstName, otherName, dateOfBirth, homeAddress, workAddress, mobileNumber, downloadUrl.toString(), genderId);
+				writeUserDetails(firstName, otherName, dateOfBirth, homeAddress, workAddress, mobileNumber, downloadUrl.toString(), gender);
 			} else {
 				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragMainLayout), "Couldn't upload Profile Photo. ", Snackbar.LENGTH_SHORT).show();
 			}
@@ -197,9 +211,9 @@ public class ProfileEditFragment extends Fragment {
 		});
 	}
 
-	private void writeUserDetails(String firstName, String otherName, String dateOfBirth, String homeAddress, String workAddress, String mobileNumber, String profileImgUrl, int gender) {
+	private void writeUserDetails(String firstName, String otherName, String dateOfBirth, String homeAddress, String workAddress, String mobileNumber, String profileImgUrl, String gender) {
 		Profile profile = new Profile(firstName, otherName, dateOfBirth, homeAddress, workAddress, mobileNumber, profileImgUrl, gender, ServerValue.TIMESTAMP);
-		mDatabase.child("users").child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).setValue(profile).addOnCompleteListener(task -> {
+		mDatabase.child(USER_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).setValue(profile).addOnCompleteListener(task -> {
 			if (task.isSuccessful()) {
 				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragMainLayout), "Details Saved!!! ", Snackbar.LENGTH_SHORT).show();
 				ProfileDisplayFragment profileDisplayFragment = new ProfileDisplayFragment();
