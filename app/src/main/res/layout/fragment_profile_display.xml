@@ -1,14 +1,169 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	android:id="@+id/fragDisplayMain"
+	android:orientation="vertical"
 	tools:context=".fragments.ProfileDisplayFragment">
 
-	<!-- TODO: Update blank fragment layout -->
-	<TextView
+	<LinearLayout
+		android:id="@+id/displayLayout"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:text="@string/hello_blank_fragment" />
+		android:layout_height="wrap_content"
+		android:layout_margin="24dp"
+		android:orientation="vertical">
 
-</FrameLayout>
+		<de.hdodenhof.circleimageview.CircleImageView
+			android:id="@+id/imgUserProfile"
+			android:layout_width="120dp"
+			android:layout_height="120dp"
+			android:layout_gravity="center_horizontal"
+			android:layout_marginTop="15dp"
+			android:gravity="center_horizontal"
+			android:src="@drawable/ic_person"
+			app:civ_border_color="#FF000000"
+			app:civ_border_width="2dp" />
+
+
+		<TextView
+			android:id="@+id/txtUserName"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginTop="20dp"
+			android:drawableStart="@drawable/ic_person"
+			android:drawablePadding="8dp"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textSize="18sp"
+			tools:text="@string/text_placeholder" />
+
+		<TextView
+			android:id="@+id/txtUserGender"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginTop="15dp"
+			android:drawableStart="@drawable/ic_gender"
+			android:drawablePadding="8dp"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textSize="18sp"
+			tools:text="@string/text_placeholder" />
+
+		<TextView
+			android:id="@+id/txtUserDob"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginTop="15dp"
+			android:drawableStart="@drawable/ic_date"
+			android:drawablePadding="8dp"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textSize="18sp"
+			tools:text="@string/text_placeholder" />
+
+		<TextView
+			android:id="@+id/txtUserHomeAddress"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginTop="15dp"
+			android:drawableStart="@drawable/ic_home"
+			android:drawablePadding="8dp"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textSize="18sp"
+			tools:text="@string/text_placeholder" />
+
+		<TextView
+			android:id="@+id/txtUserWorkAddress"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginTop="15dp"
+			android:drawableStart="@drawable/ic_work"
+			android:drawablePadding="8dp"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textSize="18sp"
+			tools:text="@string/text_placeholder" />
+
+
+		<TextView
+			android:id="@+id/txtUserMobileNumber"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginTop="15dp"
+			android:drawableStart="@drawable/ic_phone"
+			android:drawablePadding="8dp"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textSize="18sp"
+			tools:text="@string/text_placeholder" />
+
+		<View
+			android:id="@+id/divider"
+			android:layout_width="match_parent"
+			android:layout_height="1dp"
+			android:layout_margin="15dp"
+			android:background="?android:attr/listDivider" />
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginTop="15dp"
+			android:drawableStart="@drawable/ic_person"
+			android:drawablePadding="8dp"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textSize="18sp"
+			tools:text="@string/text_placeholder" />
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginTop="15dp"
+			android:drawableStart="@drawable/ic_person"
+			android:drawablePadding="8dp"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textSize="18sp"
+			tools:text="@string/text_placeholder" />
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginTop="15dp"
+			android:drawableStart="@drawable/ic_person"
+			android:drawablePadding="8dp"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textSize="18sp"
+			tools:text="@string/text_placeholder" />
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginTop="15dp"
+			android:drawableStart="@drawable/ic_person"
+			android:drawablePadding="8dp"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textSize="18sp"
+			tools:text="@string/text_placeholder" />
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginTop="15dp"
+			android:drawableStart="@drawable/ic_person"
+			android:drawablePadding="8dp"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textSize="18sp"
+			tools:text="@string/text_placeholder" />
+
+
+	</LinearLayout>
+
+
+</ScrollView>

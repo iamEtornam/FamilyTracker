@@ -17,5 +17,7 @@
 	<string name="mobile_number_hint">Enter your Mobile Number</string>
 	<string name="update_details">Update Details</string>
 	<string name="select_photo">select photo</string>
+	<string name="avatar">Avatar</string>
+	<string name="text_placeholder">Dummy Text Here</string>
 
 </resources>
