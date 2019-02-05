@@ -32,6 +32,7 @@ import java.util.Objects;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -113,12 +114,7 @@ public class ProfileEditFragment extends Fragment {
 		mStorage = FirebaseStorage.getInstance().getReference();
 		mDatabase = FirebaseDatabase.getInstance().getReference();
 
-		genderGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(RadioGroup group, int checkedId) {
-				genderId = group.getCheckedRadioButtonId();
-			}
-		});
+		genderGroup.setOnCheckedChangeListener((group, checkedId) -> genderId = group.getCheckedRadioButtonId());
 	}
 
 	@OnClick({R.id.imgProfile, R.id.txtImgSelect, R.id.btnUpdateDetail})
@@ -206,6 +202,11 @@ public class ProfileEditFragment extends Fragment {
 		mDatabase.child("users").child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).setValue(profile).addOnCompleteListener(task -> {
 			if (task.isSuccessful()) {
 				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragMainLayout), "Details Saved!!! ", Snackbar.LENGTH_SHORT).show();
+				ProfileDisplayFragment profileDisplayFragment = new ProfileDisplayFragment();
+				assert getFragmentManager() != null;
+				FragmentTransaction transaction = getFragmentManager().beginTransaction();
+				transaction.replace(R.id.fragContainer, profileDisplayFragment);
+				transaction.commit();
 			} else {
 				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragMainLayout), "Couldn't Save Details ", Snackbar.LENGTH_SHORT).show();
 			}

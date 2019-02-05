@@ -11,7 +11,7 @@
 	<string name="male">Male</string>
 	<string name="female">Female</string>
 	<string name="other">Other</string>
-	<string name="dob_hint">Enter your Date of Birth</string>
+	<string name="dob_hint">Date of Birth(dd/MM/YYYY)</string>
 	<string name="home_address_hint">Enter your Home Address</string>
 	<string name="work_address_hint">Enter your Work Address(Optional)</string>
 	<string name="mobile_number_hint">Enter your Mobile Number</string>

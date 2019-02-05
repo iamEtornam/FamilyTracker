@@ -39,7 +39,7 @@
 			android:layout_marginTop="30dp"
 			android:background="@drawable/edit_text_outline"
 			android:hint="@string/first_name_hint"
-			android:inputType="textPersonName"
+			android:inputType="textPersonName|textCapSentences"
 			android:padding="10dp" />
 
 		<com.google.android.material.textfield.TextInputEditText
@@ -49,7 +49,7 @@
 			android:layout_marginTop="10dp"
 			android:background="@drawable/edit_text_outline"
 			android:hint="@string/other_name_hint"
-			android:inputType="textPersonName"
+			android:inputType="textPersonName|textCapSentences"
 			android:padding="10dp" />
 
 
@@ -99,7 +99,7 @@
 			android:layout_marginTop="10dp"
 			android:background="@drawable/edit_text_outline"
 			android:hint="@string/home_address_hint"
-			android:inputType="textPostalAddress"
+			android:inputType="textPostalAddress|textCapSentences"
 			android:padding="10dp" />
 
 		<com.google.android.material.textfield.TextInputEditText
@@ -109,7 +109,7 @@
 			android:layout_marginTop="10dp"
 			android:background="@drawable/edit_text_outline"
 			android:hint="@string/work_address_hint"
-			android:inputType="textPersonName"
+			android:inputType="textPostalAddress|textCapSentences"
 			android:padding="10dp" />
 
 		<com.google.android.material.textfield.TextInputEditText
