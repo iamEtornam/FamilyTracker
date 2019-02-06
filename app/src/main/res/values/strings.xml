@@ -26,5 +26,22 @@
 	<string name="save_contact">Save Contact</string>
 	<string name="enter_full_name">Enter Full Name</string>
 	<string name="enter_mobile_number">Enter Mobile Number</string>
+	<string name="error_msg">Field cannot be Empty</string>
+	<string name="error_msg_photo">Select a Photo</string>
+
+	<string-array name="relation_array">
+		<item>(SELECT RELATION)</item>
+		<item>BROTHER</item>
+		<item>MOTHER</item>
+		<item>FATHER</item>
+		<item>SISTER</item>
+		<item>SON</item>
+		<item>DAUGHTER</item>
+		<item>AUNT</item>
+		<item>UNCLE</item>
+		<item>COUSIN</item>
+		<item>GRANDMOTHER</item>
+		<item>GRANDFATHER</item>
+	</string-array>
 
 </resources>

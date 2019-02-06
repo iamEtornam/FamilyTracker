@@ -169,17 +169,17 @@ public class ProfileEditFragment extends Fragment {
 		if (!firstName.isEmpty() && !otherName.isEmpty() && !dateOfBirth.isEmpty() && !homeAddress.isEmpty() && !workAddress.isEmpty() && !mobileNumber.isEmpty() && resultUri != null) {
 			saveUserDetails();
 		} else if (firstName.isEmpty()) {
-			edtFirstName.setError("Field cannot be Empty");
+			edtFirstName.setError(getResources().getString(R.string.error_msg));
 		} else if (otherName.isEmpty()) {
-			edtOtherName.setError("Field cannot be Empty");
+			edtOtherName.setError(getResources().getString(R.string.error_msg));
 		} else if (dateOfBirth.isEmpty()) {
-			edtDateOfBirth.setError("Field cannot be Empty");
+			edtDateOfBirth.setError(getResources().getString(R.string.error_msg));
 		} else if (homeAddress.isEmpty()) {
-			edtHomeAddress.setError("Field cannot be Empty");
+			edtHomeAddress.setError(getResources().getString(R.string.error_msg));
 		} else if (workAddress.isEmpty()) {
-			edtWorkAddress.setError("Field cannot be Empty");
+			edtWorkAddress.setError(getResources().getString(R.string.error_msg));
 		} else if (mobileNumber.isEmpty()) {
-			edtMobileNumber.setError("Field cannot be Empty");
+			edtMobileNumber.setError(getResources().getString(R.string.error_msg));
 		} else if (resultUri == null) {
 			txtImgSelect.setError("Select a Photo");
 		} else {
