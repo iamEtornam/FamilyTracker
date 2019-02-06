@@ -28,9 +28,9 @@ import androidx.browser.customtabs.CustomTabsIntent;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import co.etornam.familytracker.MainActivity;
 import co.etornam.familytracker.R;
 import co.etornam.familytracker.ui.ContactActivity;
+import co.etornam.familytracker.ui.MainActivity;
 
 public class SignUpActivity extends AppCompatActivity {
 	private static final String TAG = SignUpActivity.class.getSimpleName();

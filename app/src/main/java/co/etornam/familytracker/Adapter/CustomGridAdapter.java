@@ -60,13 +60,13 @@ public class CustomGridAdapter extends BaseAdapter {
 		holder.txtContactName.setText(contact.getName());
 		Picasso.get()
 				.load(contact.getImageUrl())
-				.error(R.drawable.ic_image_placeholder)
+				.error(R.drawable.ic_person)
 				.placeholder(R.drawable.ic_image_placeholder)
 				.into(holder.imgContactProfile);
 		holder.itemLayoutMain.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(mContext, " item: ", Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, " item: " + position, Toast.LENGTH_SHORT).show();
 			}
 		});
 

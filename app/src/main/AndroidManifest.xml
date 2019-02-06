@@ -4,6 +4,8 @@
 	package="co.etornam.familytracker">
 
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.READ_CONTACTS" />
 
 	<application
 		android:allowBackup="true"
@@ -16,11 +18,11 @@
 		<activity
 			android:name=".ui.ContactActivity"
 			android:label="@string/select_contacts"
-			android:parentActivityName=".MainActivity" />
+			android:parentActivityName=".ui.MainActivity" />
 		<activity
 			android:name=".ui.ProfileActivity"
 			android:label="@string/profile"
-			android:parentActivityName=".MainActivity" />
+			android:parentActivityName=".ui.MainActivity" />
 		<activity
 			android:name=".security.SignUpActivity"
 			android:theme="@style/FullscreenUltimate">
@@ -31,7 +33,7 @@
 			</intent-filter>
 		</activity>
 		<activity
-			android:name=".MainActivity"
+			android:name=".ui.MainActivity"
 			android:label="@string/home">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />

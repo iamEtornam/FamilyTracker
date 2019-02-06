@@ -24,10 +24,10 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_gravity="center_horizontal"
-		android:layout_marginTop="10dp"
+		android:layout_margin="@dimen/dp_10"
 		android:textAlignment="center"
 		android:textAppearance="?android:textAppearanceMedium"
 		android:textStyle="bold"
-		tools:text="Etornam Sunu" />
+		tools:text="@string/text_placeholder" />
 
 </LinearLayout>

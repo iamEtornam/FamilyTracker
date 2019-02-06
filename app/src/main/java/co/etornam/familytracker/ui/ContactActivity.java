@@ -2,10 +2,7 @@ package co.etornam.familytracker.ui;
 
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -56,23 +53,21 @@ public class ContactActivity extends AppCompatActivity {
 
 		List<Contact> contactList = getGridData();
 
-		gridContact.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Object o = gridContact.getItemIdAtPosition(position);
-				Contact contact = (Contact) o;
-				Toast.makeText(ContactActivity.this, "selected: " + contact, Toast.LENGTH_SHORT).show();
-			}
-		});
-
 		gridContact.setAdapter(new CustomGridAdapter(contactList, this));
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		getGridData();
 	}
 
 	private List<Contact> getGridData() {
 		List<Contact> contacts = new ArrayList<>();
-		mDatabase.child(CONTACT_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+		mDatabase.child(CONTACT_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).addValueEventListener(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				contacts.clear();
 				for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 					Contact contact = snapshot.getValue(Contact.class);
 					assert contact != null;
