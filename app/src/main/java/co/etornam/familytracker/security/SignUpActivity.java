@@ -30,7 +30,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import co.etornam.familytracker.MainActivity;
 import co.etornam.familytracker.R;
-import co.etornam.familytracker.ui.ProfileActivity;
+import co.etornam.familytracker.ui.ContactActivity;
 
 public class SignUpActivity extends AppCompatActivity {
 	private static final String TAG = SignUpActivity.class.getSimpleName();
@@ -98,7 +98,7 @@ public class SignUpActivity extends AppCompatActivity {
 		super.onStart();
 		user = mAuth.getCurrentUser();
 		if (user != null) {
-			startActivity(new Intent(this, ProfileActivity.class));
+			startActivity(new Intent(this, ContactActivity.class));
 		}
 	}
 
@@ -108,7 +108,6 @@ public class SignUpActivity extends AppCompatActivity {
 		mAuth.signInWithCredential(credential)
 				.addOnCompleteListener(this, task -> {
 					if (task.isSuccessful()) {
-						// Sign in success, update UI with the signed-in user's information
 						Log.d(TAG, "signInWithCredential:success");
 
 						startActivity(new Intent(this, MainActivity.class));

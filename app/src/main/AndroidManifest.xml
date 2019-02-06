@@ -13,7 +13,14 @@
 		android:supportsRtl="true"
 		android:theme="@style/AppTheme"
 		tools:ignore="GoogleAppIndexingWarning">
-		<activity android:name=".ui.ProfileActivity" />
+		<activity
+			android:name=".ui.ContactActivity"
+			android:label="@string/select_contacts"
+			android:parentActivityName=".MainActivity" />
+		<activity
+			android:name=".ui.ProfileActivity"
+			android:label="@string/profile"
+			android:parentActivityName=".MainActivity" />
 		<activity
 			android:name=".security.SignUpActivity"
 			android:theme="@style/FullscreenUltimate">
@@ -23,14 +30,15 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<activity android:name=".MainActivity">
+		<activity
+			android:name=".MainActivity"
+			android:label="@string/home">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 
 				<category android:name="android.intent.category.DEFAULT" />
 			</intent-filter>
 		</activity>
-
 	</application>
 
 </manifest>
