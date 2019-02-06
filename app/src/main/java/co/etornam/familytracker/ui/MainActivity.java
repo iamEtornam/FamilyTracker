@@ -1,8 +1,9 @@
-package co.etornam.familytracker;
+package co.etornam.familytracker.ui;
 
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import co.etornam.familytracker.R;
 
 public class MainActivity extends AppCompatActivity {
 
