@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="vertical"
+	tools:context=".dialogFragment.DoctorDialogFragment">
+
+	<TextView
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/dp_50"
+		android:background="@color/colorPrimary"
+		android:gravity="center"
+		android:text="@string/doctor_details"
+		android:textColor="@color/colorWhite" />
+
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="@dimen/dp_16"
+		android:orientation="vertical">
+
+		<com.google.android.material.textfield.TextInputEditText
+			android:id="@+id/edtDoctorName"
+			android:layout_width="match_parent"
+			android:layout_height="@dimen/dp_45"
+			android:layout_marginBottom="@dimen/dp_10"
+			android:background="@drawable/edit_text_outline"
+			android:hint="@string/enter_doctor_name"
+			android:inputType="textPersonName|textCapWords"
+			android:padding="@dimen/dp_10" />
+
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<com.google.android.material.textfield.TextInputEditText
+				android:id="@+id/edtDoctorNumber"
+				android:layout_width="match_parent"
+				android:layout_height="@dimen/dp_45"
+				android:layout_marginEnd="@dimen/dp_10"
+				android:layout_marginBottom="@dimen/dp_10"
+				android:layout_toStartOf="@id/btnContactSelect"
+				android:background="@drawable/edit_text_outline"
+				android:hint="@string/enter_doctor_number"
+				android:inputType="phone"
+				android:padding="@dimen/dp_10" />
+
+			<ImageButton
+				android:id="@+id/btnContactSelect"
+				android:layout_width="@dimen/dp_45"
+				android:layout_height="@dimen/dp_45"
+				android:layout_alignParentEnd="true"
+				android:background="@android:color/transparent"
+				android:contentDescription="@string/avatar"
+				android:src="@drawable/ic_person_add" />
+		</RelativeLayout>
+
+	</LinearLayout>
+
+</LinearLayout>
