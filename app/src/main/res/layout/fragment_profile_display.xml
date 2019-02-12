@@ -108,6 +108,7 @@
 			android:background="?android:attr/listDivider" />
 
 		<TextView
+			android:id="@+id/txtBloodGroup"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginStart="8dp"
@@ -119,6 +120,7 @@
 			tools:text="@string/text_placeholder" />
 
 		<TextView
+			android:id="@+id/txtBloodPressure"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginStart="8dp"
@@ -130,6 +132,7 @@
 			tools:text="@string/text_placeholder" />
 
 		<TextView
+			android:id="@+id/txtAllergies"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginStart="8dp"
@@ -141,6 +144,7 @@
 			tools:text="@string/text_placeholder" />
 
 		<TextView
+			android:id="@+id/txtMedication"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginStart="8dp"
@@ -152,6 +156,19 @@
 			tools:text="@string/text_placeholder" />
 
 		<TextView
+			android:id="@+id/txtDonor"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginStart="8dp"
+			android:layout_marginTop="15dp"
+			android:drawableStart="@drawable/ic_person"
+			android:drawablePadding="8dp"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textSize="18sp"
+			tools:text="@string/text_placeholder" />
+
+		<TextView
+			android:id="@+id/txtDiabetic"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginStart="8dp"

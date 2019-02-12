@@ -2,9 +2,11 @@ package co.etornam.familytracker.fragments;
 
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -25,9 +27,11 @@ import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.etornam.familytracker.R;
+import co.etornam.familytracker.model.Health;
 import co.etornam.familytracker.model.Profile;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static co.etornam.familytracker.util.Constants.HEALTH_DB;
 import static co.etornam.familytracker.util.Constants.USER_DB;
 
 /**
@@ -35,7 +39,8 @@ import static co.etornam.familytracker.util.Constants.USER_DB;
  */
 public class ProfileDisplayFragment extends Fragment {
 
-
+	@BindView(R.id.txtBloodGroup)
+	TextView txtBloodGroup;
 	@BindView(R.id.imgUserProfile)
 	CircleImageView imgUserProfile;
 	@BindView(R.id.txtUserName)
@@ -54,6 +59,19 @@ public class ProfileDisplayFragment extends Fragment {
 	View divider;
 	@BindView(R.id.fragDisplayMain)
 	ScrollView fragDisplayMain;
+	@BindView(R.id.txtBloodPressure)
+	TextView txtBloodPressure;
+	@BindView(R.id.txtAllergies)
+	TextView txtAllergies;
+	@BindView(R.id.txtMedication)
+	TextView txtMedication;
+	@BindView(R.id.txtDonor)
+	TextView txtDonor;
+	@BindView(R.id.txtDiabetic)
+	TextView txtDiabetic;
+	@BindView(R.id.displayLayout)
+	LinearLayout displayLayout;
+	private String TAG = ProfileDisplayFragment.class.getSimpleName();
 	private DatabaseReference mDatabase;
 	private FirebaseAuth mAuth;
 
@@ -100,6 +118,26 @@ public class ProfileDisplayFragment extends Fragment {
 
 			@Override
 			public void onCancelled(@NonNull DatabaseError databaseError) {
+				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragDisplayMain), "Couldn't Retrieve your Details ", Snackbar.LENGTH_SHORT)
+						.setActionTextColor(getResources().getColor(R.color.colorRed))
+						.setAction("Try Again!", v -> getUserDetails())
+						.show();
+			}
+		});
+
+		mDatabase.child(HEALTH_DB).child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				Health health = dataSnapshot.getValue(Health.class);
+				assert health != null;
+				txtDiabetic.setText(health.getDiabetic());
+				txtDonor.setText(health.getDonor());
+
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+				Log.d(TAG, "onCancelled: " + databaseError.getMessage());
 				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragDisplayMain), "Couldn't Retrieve your Details ", Snackbar.LENGTH_SHORT)
 						.setActionTextColor(getResources().getColor(R.color.colorRed))
 						.setAction("Try Again!", v -> getUserDetails())
