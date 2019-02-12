@@ -34,6 +34,30 @@
 	<string name="open_settings">Open settings</string>
 	<string name="save_file_permission_denied">Action failed: Insufficient permissions</string>
 	<string name="save_file_show_time">All Set</string>
+	<string name="insurance_information">Insurance Information</string>
+	<string name="insurance_company_name">Insurance Company Name</string>
+	<string name="insurance_id_number">Insurance ID Number</string>
+	<string name="state_allergy_here">State Allergy here</string>
+	<string name="are_you_on_any_medication">Are you on any Medication?</string>
+	<string name="diabetic">Diabetic ?</string>
+	<string name="yes">YES</string>
+	<string name="no">NO</string>
+	<string name="state_medication_here">State Medication here</string>
+	<string name="blood_pressure">Blood Pressure</string>
+	<string name="are_you_allergic">Are you Allergic?</string>
+	<string name="bleeder">Bleeder ?</string>
+	<string name="organ_donor">Organ Donor ?</string>
+	<string name="emergency_doctor">Emergency Doctor</string>
+	<string name="add_contact">Add Contact</string>
+	<string name="high">HIGH</string>
+	<string name="normal">NORMAL</string>
+	<string name="low">LOW</string>
+	<string name="save_health_info">Save Health Details</string>
+	<string name="enter_doctor_name">Enter Doctor Name</string>
+	<string name="enter_doctor_number">Enter Doctor\'s Number</string>
+	<string name="doctor_details">Doctor\'s Details</string>
+	<string name="save_doctor_details">Save Doctor Details</string>
+	<string name="cancel">Cancel</string>
 
 	<string-array name="relation_array">
 		<item>(SELECT RELATION)</item>
