@@ -3,6 +3,7 @@ package co.etornam.familytracker.dialogFragment;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -14,11 +15,22 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
@@ -30,10 +42,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import co.etornam.familytracker.R;
+import co.etornam.familytracker.model.Contact;
 import de.hdodenhof.circleimageview.CircleImageView;
 import gun0912.tedbottompicker.TedBottomPicker;
 
 import static android.app.Activity.RESULT_OK;
+import static co.etornam.familytracker.util.Constants.CONTACT_DB;
+import static co.etornam.familytracker.util.RandomStringGenerator.getAlphaNumbericString;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,11 +71,20 @@ public class ContactDialogFragment extends BottomSheetDialogFragment implements 
 	ImageButton imgContactSelector;
 	@BindView(R.id.btnSaveContact)
 	Button btnSaveContact;
+	@BindView(R.id.fragDialogMain)
+	LinearLayout fragDialogMain;
+	@BindView(R.id.progressBar)
+	ProgressBar progressBar;
 	private String TAG = ContactDialogFragment.class.getSimpleName();
 	private String name = null;
 	private String number = null;
 	private Uri resultUri = null;
 	private String photo = null;
+	private Task<Uri> urlTask;
+	private Bitmap imageFile;
+	private StorageReference mStorage, mImageRef;
+	private DatabaseReference mDatabase;
+	private FirebaseAuth mAuth;
 
 	public static ContactDialogFragment newInstance() {
 		return new ContactDialogFragment();
@@ -78,6 +102,10 @@ public class ContactDialogFragment extends BottomSheetDialogFragment implements 
 	@Override
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		mAuth = FirebaseAuth.getInstance();
+		mStorage = FirebaseStorage.getInstance().getReference();
+		mDatabase = FirebaseDatabase.getInstance().getReference();
+
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(Objects.requireNonNull(getContext()),
 				R.array.relation_array, android.R.layout.simple_spinner_item);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -104,18 +132,43 @@ public class ContactDialogFragment extends BottomSheetDialogFragment implements 
 
 
 	private void validateData() {
-		String contactName = edtContactName.getText().toString();
-		String contactNumber = edtContactNumber.getText().toString();
-
-		if (!contactName.isEmpty() && !contactNumber.isEmpty() && resultUri != null) {
-
-		} else if (contactName.isEmpty()) {
+		if (!edtContactName.getText().toString().isEmpty() && !edtContactNumber.getText().toString().isEmpty() && resultUri != null && spinnerRelation != null) {
+			saveContactDetails();
+		} else if (edtContactName.getText().toString().isEmpty()) {
 			edtContactName.setError(getResources().getString(R.string.error_msg));
-		} else if (contactNumber.isEmpty()) {
+		} else if (edtContactNumber.getText().toString().isEmpty()) {
 			edtContactNumber.setError(getResources().getString(R.string.error_msg));
 		} else if (resultUri == null) {
 			txtSelectPhoto.setError(getResources().getString(R.string.error_msg_photo));
 		}
+	}
+
+	private void saveContactDetails() {
+		progressBar.setVisibility(View.VISIBLE);
+		String name = edtContactName.getText().toString();
+		String contact = edtContactNumber.getText().toString();
+		String relation = spinnerRelation.getSelectedItem().toString();
+
+		int size = Objects.requireNonNull(mAuth.getCurrentUser()).getUid().length();
+
+		mImageRef = mStorage.child("contact_images").child(getAlphaNumbericString(size) + ".jpg");
+		UploadTask uploadTask = mImageRef.putFile(resultUri);
+		urlTask = uploadTask.continueWithTask(task -> {
+			if (!task.isSuccessful()) {
+				throw Objects.requireNonNull(task.getException());
+			}
+			return mImageRef.getDownloadUrl();
+		}).addOnCompleteListener(task -> {
+			if (task.isSuccessful()) {
+				final Uri downloadUrl = task.getResult();
+				assert downloadUrl != null;
+
+				writeContactDetails(downloadUrl.toString(), name, contact, relation);
+			} else {
+				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragDialogMain), "Couldn't upload Profile Photo. ", Snackbar.LENGTH_SHORT).show();
+			}
+			progressBar.setVisibility(View.GONE);
+		});
 	}
 
 	private void pickImage() {
@@ -168,11 +221,23 @@ public class ContactDialogFragment extends BottomSheetDialogFragment implements 
 
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-		Log.d(TAG, "onItemSelected: " + parent.getItemAtPosition(position));
+		Log.d(TAG, "onItemSelected: " + parent.getItemAtPosition(position).toString());
 	}
 
 	@Override
 	public void onNothingSelected(AdapterView<?> parent) {
 
+	}
+
+	private void writeContactDetails(String imageUrl, String name, String number, String relation) {
+		Contact contact = new Contact(imageUrl, name, number, relation, ServerValue.TIMESTAMP);
+		mDatabase.child(CONTACT_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).push().setValue(contact).addOnCompleteListener(task -> {
+			if (task.isSuccessful()) {
+				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragDialogMain), "Contact Saved!!! ", Snackbar.LENGTH_SHORT).show();
+				this.dismiss();
+			} else {
+				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragDialogMain), "Couldn't Save Contact ", Snackbar.LENGTH_SHORT).show();
+			}
+		});
 	}
 }
