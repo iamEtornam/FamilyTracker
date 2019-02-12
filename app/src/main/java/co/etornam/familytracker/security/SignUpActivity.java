@@ -29,7 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import co.etornam.familytracker.R;
-import co.etornam.familytracker.ui.ContactActivity;
+import co.etornam.familytracker.ui.HealthActivity;
 import co.etornam.familytracker.ui.MainActivity;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -98,7 +98,7 @@ public class SignUpActivity extends AppCompatActivity {
 		super.onStart();
 		user = mAuth.getCurrentUser();
 		if (user != null) {
-			startActivity(new Intent(this, ContactActivity.class));
+			startActivity(new Intent(this, HealthActivity.class));
 		}
 	}
 
