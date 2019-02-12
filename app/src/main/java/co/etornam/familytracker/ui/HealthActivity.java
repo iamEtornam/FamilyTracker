@@ -2,19 +2,24 @@ package co.etornam.familytracker.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Objects;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
@@ -23,11 +28,14 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import co.etornam.familytracker.R;
 import co.etornam.familytracker.dialogFragment.DoctorDialogFragment;
+import co.etornam.familytracker.model.Health;
 
 import static co.etornam.familytracker.util.Constants.DOCTOR_NAME;
 import static co.etornam.familytracker.util.Constants.DOCTOR_NUMBER;
+import static co.etornam.familytracker.util.Constants.HEALTH_DB;
 
 public class HealthActivity extends AppCompatActivity {
+	private static final String TAG = HealthActivity.class.getSimpleName();
 	@BindView(R.id.txtDiabetic)
 	TextView txtDiabetic;
 	@BindView(R.id.diabeticYes)
@@ -106,14 +114,26 @@ public class HealthActivity extends AppCompatActivity {
 	TextInputEditText edtCompanyName;
 	@BindView(R.id.insuranceId)
 	TextInputEditText insuranceId;
-	@BindView(R.id.btnSaveContact)
-	Button btnSaveContact;
 	@BindView(R.id.btnAddContact)
 	Button btnAddContact;
+	@BindView(R.id.healthLayoutMain)
+	ScrollView healthLayoutMain;
+	@BindView(R.id.progressBar)
+	ProgressBar progressBar;
+	@BindView(R.id.btnSaveHealth)
+	Button btnSaveHealth;
 	private DatabaseReference mDatabase;
 	private FirebaseAuth mAuth;
 	private String doctorName;
 	private String doctorNumber;
+	private String diabetic;
+	private String medication;
+	private String bleeder;
+	private String allergy;
+	private String pressure;
+	private String donor;
+	private String allergyEdit;
+	private String medicationEdit;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -123,30 +143,161 @@ public class HealthActivity extends AppCompatActivity {
 		getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		mAuth = FirebaseAuth.getInstance();
 		mDatabase = FirebaseDatabase.getInstance().getReference();
+		initRadioButtons();
 		Intent intent = getIntent();
 		if (intent != null) {
+			layoutContact.setVisibility(View.VISIBLE);
 			doctorName = intent.getStringExtra(DOCTOR_NAME);
 			doctorNumber = intent.getStringExtra(DOCTOR_NUMBER);
-			Toast.makeText(this, "doctor name: " + doctorName, Toast.LENGTH_SHORT).show();
+			txtContactName.setText("Name: " + doctorName);
+			txtContactNumber.setText("Number: " + doctorNumber);
 		} else {
+			if (layoutContact.getVisibility() == View.VISIBLE) {
+				layoutContact.setVisibility(View.GONE);
+			}
 			doctorName = "";
 			doctorNumber = "";
 		}
 	}
 
-	@OnClick({R.id.btnAddContact, R.id.btnSaveContact})
+	private void initRadioButtons() {
+		diabeticRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+			switch (checkedId) {
+				case R.id.diabeticNo:
+					diabetic = "No";
+					break;
+				case R.id.diabeticYes:
+					diabetic = "Yes";
+					break;
+			}
+		});
+
+		medicationRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+			switch (checkedId) {
+				case R.id.medicationNo:
+					medication = "No";
+					if (edtMedication.getVisibility() == View.VISIBLE) {
+						edtMedication.setVisibility(View.GONE);
+					}
+					break;
+				case R.id.medicationYes:
+					medication = "Yes";
+					if (edtMedication.getVisibility() == View.GONE) {
+						edtMedication.setVisibility(View.VISIBLE);
+					}
+					break;
+			}
+		});
+
+		bleederRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+			switch (checkedId) {
+				case R.id.bleederNo:
+					bleeder = "No";
+					break;
+				case R.id.bleederYes:
+					bleeder = "Yes";
+					break;
+			}
+		});
+
+		allergicRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+			switch (checkedId) {
+				case R.id.allergyNo:
+					allergy = "No";
+					if (edtAllergy.getVisibility() == View.VISIBLE) {
+						edtAllergy.setVisibility(View.GONE);
+					}
+					break;
+				case R.id.allergyYes:
+					allergy = "Yes";
+					if (edtAllergy.getVisibility() == View.GONE) {
+						edtAllergy.setVisibility(View.VISIBLE);
+					}
+					break;
+			}
+		});
+
+		pressureRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+			switch (checkedId) {
+				case R.id.pressureLow:
+					pressure = "Low";
+					break;
+				case R.id.pressureNormal:
+					pressure = "Normal";
+					break;
+				case R.id.pressureHigh:
+					pressure = "High";
+					break;
+			}
+		});
+
+		donorRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+			switch (checkedId) {
+				case R.id.organDonorNo:
+					donor = "No";
+					break;
+				case R.id.organDonorYes:
+					donor = "Yes";
+					break;
+			}
+		});
+
+	}
+
+	private void validateDetails() {
+		String insuranceCompany = edtCompanyName.getText().toString();
+		String insuranceNumber = insuranceId.getText().toString();
+		if (medication.equalsIgnoreCase("Yes")) {
+			medicationEdit = edtMedication.getText().toString();
+		} else {
+			medicationEdit = "";
+		}
+
+		if (allergy.equalsIgnoreCase("Yes")) {
+			allergyEdit = edtAllergy.getText().toString();
+		} else {
+			allergyEdit = "";
+		}
+
+
+		if (!diabetic.isEmpty() && !medication.isEmpty() && !medicationEdit.isEmpty()
+				&& !allergy.isEmpty() && !allergyEdit.isEmpty() && !pressure.isEmpty()
+				&& !bleeder.isEmpty() && !donor.isEmpty() && !insuranceCompany.isEmpty()
+				&& !insuranceNumber.isEmpty() || !doctorName.isEmpty() || !doctorNumber.isEmpty()) {
+			writeUserHealthDetails(diabetic, medication, medicationEdit, allergy, allergyEdit, pressure, bleeder, donor, doctorName, doctorNumber, insuranceCompany, insuranceNumber);
+			Log.d(TAG, "validateDetails: " + medicationEdit);
+		} else {
+			Snackbar.make(findViewById(R.id.healthLayoutMain), "Please, Fill Empty Fields", Snackbar.LENGTH_LONG).show();
+		}
+	}
+
+	private void writeUserHealthDetails(String diabetic, String medication, String medinfo, String allergy, String allergyinfo, String bloodpressure, String bleeder, String donor, String doctorname, String doctornumber, String companyname, String insurancenumber) {
+		progressBar.setVisibility(View.VISIBLE);
+		btnSaveHealth.setVisibility(View.GONE);
+		Health health = new Health(diabetic, medication, medinfo, allergy, allergyinfo, bloodpressure, bleeder, donor, doctorname, doctornumber, companyname, insurancenumber);
+		mDatabase.child(HEALTH_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).setValue(health).addOnCompleteListener(task -> {
+			if (task.isSuccessful()) {
+				Snackbar.make(findViewById(R.id.healthLayoutMain), "Details Saved!!! ", Snackbar.LENGTH_SHORT).show();
+				btnSaveHealth.setVisibility(View.VISIBLE);
+				progressBar.setVisibility(View.GONE);
+			} else {
+				Snackbar.make(findViewById(R.id.healthLayoutMain), "Couldn't Save Details ", Snackbar.LENGTH_SHORT).show();
+				btnSaveHealth.setVisibility(View.VISIBLE);
+				progressBar.setVisibility(View.GONE);
+			}
+		});
+	}
+
+	@OnClick({R.id.btnAddContact, R.id.btnSaveHealth})
 	public void onViewClicked(View view) {
 		switch (view.getId()) {
 			case R.id.btnAddContact:
 				DialogFragment doctorFragment = new DoctorDialogFragment();
 				doctorFragment.show(getSupportFragmentManager(), "doctor");
 				break;
-			case R.id.btnSaveContact:
+			case R.id.btnSaveHealth:
 				validateDetails();
 				break;
 		}
-	}
-
-	private void validateDetails() {
 	}
 }

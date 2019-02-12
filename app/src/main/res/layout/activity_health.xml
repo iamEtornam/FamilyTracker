@@ -7,6 +7,7 @@
 	android:fadeScrollbars="true"
 	android:orientation="vertical"
 	android:scrollbars="none"
+	android:id="@+id/healthLayoutMain"
 	tools:context=".ui.HealthActivity">
 
 	<LinearLayout
@@ -345,8 +346,15 @@
 			android:inputType="textCapSentences"
 			android:padding="@dimen/dp_10" />
 
+		<ProgressBar
+			android:id="@+id/progressBar"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_horizontal"
+			android:visibility="gone" />
+
 		<Button
-			android:id="@+id/btnSaveContact"
+			android:id="@+id/btnSaveHealth"
 			style="@style/Theme.AppCompat.Light"
 			android:layout_width="match_parent"
 			android:layout_height="@dimen/dp_45"
