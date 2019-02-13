@@ -5,12 +5,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -34,7 +37,7 @@ import static co.etornam.familytracker.util.Constants.DOCTOR_NAME;
 import static co.etornam.familytracker.util.Constants.DOCTOR_NUMBER;
 import static co.etornam.familytracker.util.Constants.HEALTH_DB;
 
-public class HealthActivity extends AppCompatActivity {
+public class HealthActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 	private static final String TAG = HealthActivity.class.getSimpleName();
 	@BindView(R.id.txtDiabetic)
 	TextView txtDiabetic;
@@ -122,6 +125,12 @@ public class HealthActivity extends AppCompatActivity {
 	ProgressBar progressBar;
 	@BindView(R.id.btnSaveHealth)
 	Button btnSaveHealth;
+	@BindView(R.id.txtBlood)
+	TextView txtBlood;
+	@BindView(R.id.spinnerBlood)
+	Spinner spinnerBlood;
+	@BindView(R.id.layoutBlood)
+	LinearLayout layoutBlood;
 	private DatabaseReference mDatabase;
 	private FirebaseAuth mAuth;
 	private String doctorName;
@@ -158,6 +167,11 @@ public class HealthActivity extends AppCompatActivity {
 			doctorName = "";
 			doctorNumber = "";
 		}
+
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+				R.array.blood_array, android.R.layout.simple_spinner_item);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		spinnerBlood.setAdapter(adapter);
 	}
 
 	private void initRadioButtons() {
@@ -247,6 +261,7 @@ public class HealthActivity extends AppCompatActivity {
 	private void validateDetails() {
 		String insuranceCompany = edtCompanyName.getText().toString();
 		String insuranceNumber = insuranceId.getText().toString();
+		String bloodGroup = spinnerBlood.getSelectedItem().toString();
 		if (medication.equalsIgnoreCase("Yes")) {
 			medicationEdit = edtMedication.getText().toString();
 		} else {
@@ -260,21 +275,21 @@ public class HealthActivity extends AppCompatActivity {
 		}
 
 
-		if (!diabetic.isEmpty() && !medication.isEmpty() && !medicationEdit.isEmpty()
+		if (!bloodGroup.isEmpty() && !diabetic.isEmpty() && !medication.isEmpty() && !medicationEdit.isEmpty()
 				&& !allergy.isEmpty() && !allergyEdit.isEmpty() && !pressure.isEmpty()
 				&& !bleeder.isEmpty() && !donor.isEmpty() && !insuranceCompany.isEmpty()
 				&& !insuranceNumber.isEmpty() || !doctorName.isEmpty() || !doctorNumber.isEmpty()) {
-			writeUserHealthDetails(diabetic, medication, medicationEdit, allergy, allergyEdit, pressure, bleeder, donor, doctorName, doctorNumber, insuranceCompany, insuranceNumber);
+			writeUserHealthDetails(bloodGroup, diabetic, medication, medicationEdit, allergy, allergyEdit, pressure, bleeder, donor, doctorName, doctorNumber, insuranceCompany, insuranceNumber);
 			Log.d(TAG, "validateDetails: " + medicationEdit);
 		} else {
 			Snackbar.make(findViewById(R.id.healthLayoutMain), "Please, Fill Empty Fields", Snackbar.LENGTH_LONG).show();
 		}
 	}
 
-	private void writeUserHealthDetails(String diabetic, String medication, String medinfo, String allergy, String allergyinfo, String bloodpressure, String bleeder, String donor, String doctorname, String doctornumber, String companyname, String insurancenumber) {
+	private void writeUserHealthDetails(String bloodGroup, String diabetic, String medication, String medinfo, String allergy, String allergyinfo, String bloodpressure, String bleeder, String donor, String doctorname, String doctornumber, String companyname, String insurancenumber) {
 		progressBar.setVisibility(View.VISIBLE);
 		btnSaveHealth.setVisibility(View.GONE);
-		Health health = new Health(diabetic, medication, medinfo, allergy, allergyinfo, bloodpressure, bleeder, donor, doctorname, doctornumber, companyname, insurancenumber);
+		Health health = new Health(bloodGroup, diabetic, medication, medinfo, allergy, allergyinfo, bloodpressure, bleeder, donor, doctorname, doctornumber, companyname, insurancenumber);
 		mDatabase.child(HEALTH_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).setValue(health).addOnCompleteListener(task -> {
 			if (task.isSuccessful()) {
 				Snackbar.make(findViewById(R.id.healthLayoutMain), "Details Saved!!! ", Snackbar.LENGTH_SHORT).show();
@@ -299,5 +314,15 @@ public class HealthActivity extends AppCompatActivity {
 				validateDetails();
 				break;
 		}
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> parent) {
+
 	}
 }

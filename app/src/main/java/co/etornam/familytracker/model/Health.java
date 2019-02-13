@@ -1,6 +1,7 @@
 package co.etornam.familytracker.model;
 
 public class Health {
+	private String bloodgroup;
 	private String diabetic;
 	private String medication;
 	private String medinfo;
@@ -17,7 +18,8 @@ public class Health {
 	public Health() {
 	}
 
-	public Health(String diabetic, String medication, String medinfo, String allergy, String allergyinfo, String bloodpressure, String bleeder, String donor, String doctorname, String doctornumber, String companyname, String insurancenumber) {
+	public Health(String bloodgroup, String diabetic, String medication, String medinfo, String allergy, String allergyinfo, String bloodpressure, String bleeder, String donor, String doctorname, String doctornumber, String companyname, String insurancenumber) {
+		this.bloodgroup = bloodgroup;
 		this.diabetic = diabetic;
 		this.medication = medication;
 		this.medinfo = medinfo;
@@ -30,6 +32,14 @@ public class Health {
 		this.doctornumber = doctornumber;
 		this.companyname = companyname;
 		this.insurancenumber = insurancenumber;
+	}
+
+	public String getBloodgroup() {
+		return bloodgroup;
+	}
+
+	public void setBloodgroup(String bloodgroup) {
+		this.bloodgroup = bloodgroup;
 	}
 
 	public String getDiabetic() {
