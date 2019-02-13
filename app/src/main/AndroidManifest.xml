@@ -15,17 +15,18 @@
 		android:supportsRtl="true"
 		android:theme="@style/AppTheme"
 		tools:ignore="GoogleAppIndexingWarning">
-		<activity android:name=".ui.HealthActivity"></activity>
+
 		<activity
-			android:name=".ui.ContactActivity"
-			android:label="@string/select_contacts"
-			android:parentActivityName=".ui.MainActivity" />
+			android:name=".ui.SettingsActivity"
+			android:label="@string/settings"
+			android:parentActivityName=".ui.MainActivity">
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".ui.MainActivity" />
+		</activity>
+
 		<activity
-			android:name=".ui.ProfileActivity"
-			android:label="@string/profile"
-			android:parentActivityName=".ui.MainActivity" />
-		<activity
-			android:name=".security.SignUpActivity"
+			android:name=".ui.SplashActivity"
 			android:theme="@style/FullscreenUltimate">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
@@ -33,8 +34,40 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
+
+		<activity
+			android:name=".ui.HealthActivity"
+			android:label="@string/health"
+			android:parentActivityName=".ui.MainActivity">
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".ui.MainActivity" />
+		</activity>
+
+		<activity
+			android:name=".ui.ContactActivity"
+			android:label="@string/select_contacts"
+			android:parentActivityName=".ui.MainActivity">
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".ui.MainActivity" />
+		</activity>
+
+		<activity
+			android:name=".ui.ProfileActivity"
+			android:label="@string/profile"
+			android:parentActivityName=".ui.MainActivity">
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".ui.MainActivity" />
+		</activity>
+
+		<activity
+			android:name=".security.SignUpActivity"
+			android:theme="@style/FullscreenUltimate" />
 		<activity
 			android:name=".ui.MainActivity"
+			android:launchMode="singleTop"
 			android:label="@string/home">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
