@@ -14,6 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.etornam.familytracker.R;
@@ -25,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
 	LocationFetcherService fetcherService;
 	@BindView(R.id.mainNavView)
 	BottomNavigationView mainNavView;
+	@BindView(R.id.mainRecView)
+	RecyclerView mainRecView;
 	private ServiceConnection serviceConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			String name = className.getClassName();
