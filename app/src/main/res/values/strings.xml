@@ -21,7 +21,6 @@
 	<string name="text_placeholder">Dummy Text Here</string>
 	<string name="home">Home</string>
 	<string name="select_contacts">Select Contacts</string>
-	<string name="profile">Profile</string>
 	<string name="add_new_contact">Add New Contact</string>
 	<string name="save_contact">Save Contact</string>
 	<string name="enter_full_name">Enter Full Name</string>
@@ -107,4 +106,7 @@
 	<string name="terms_conditions"><![CDATA[Our Terms & Conditions]]></string>
 	<string name="other_actions">Other Actions</string>
 	<string name="actions">Actions</string>
+	<string name="profile">Profile</string>
+	<string name="my_profile">My Profile</string>
+	<string name="tracking">Tracking</string>
 </resources>
