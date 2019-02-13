@@ -44,7 +44,7 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.0.0'
     implementation 'gun0912.ted:tedbottompicker:1.2.6'
     implementation 'com.squareup.picasso:picasso:2.71828'
-    implementation 'me.zhanghai.android.effortlesspermissions:library:1.1.0'
+    implementation 'com.karumi:dexter:5.0.0'
 
     //firebase dependencies
     implementation 'com.google.firebase:firebase-core:16.0.7'
