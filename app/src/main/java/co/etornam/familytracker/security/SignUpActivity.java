@@ -29,8 +29,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import co.etornam.familytracker.R;
-import co.etornam.familytracker.ui.HealthActivity;
 import co.etornam.familytracker.ui.MainActivity;
+import co.etornam.familytracker.ui.SettingsActivity;
 
 public class SignUpActivity extends AppCompatActivity {
 	private static final String TAG = SignUpActivity.class.getSimpleName();
@@ -98,12 +98,11 @@ public class SignUpActivity extends AppCompatActivity {
 		super.onStart();
 		user = mAuth.getCurrentUser();
 		if (user != null) {
-			startActivity(new Intent(this, HealthActivity.class));
+			startActivity(new Intent(this, SettingsActivity.class));
 		}
 	}
 
 	private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
-
 		AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
 		mAuth.signInWithCredential(credential)
 				.addOnCompleteListener(this, task -> {
