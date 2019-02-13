@@ -58,6 +58,7 @@
 	<string name="doctor_details">Doctor\'s Details</string>
 	<string name="save_doctor_details">Save Doctor Details</string>
 	<string name="cancel">Cancel</string>
+	<string name="blood_group">Blood Group</string>
 
 	<string-array name="relation_array">
 		<item>(SELECT RELATION)</item>
@@ -74,4 +75,36 @@
 		<item>GRANDFATHER</item>
 	</string-array>
 
+
+	<string-array name="blood_array">
+		<item>(SELECT BLOOD GROUP)</item>
+		<item>A+</item>
+		<item>A-</item>
+		<item>B+</item>
+		<item>B-</item>
+		<item>O+</item>
+		<item>O-</item>
+		<item>AB+</item>
+		<item>AB-</item>
+	</string-array>
+
+	<string name="sync_pref">Sync</string>
+	<string name="sync_pref_summary">Random dwscription here</string>
+	<string name="settings">Settings</string>
+	<string name="allow_tracking">Allow Tracking</string>
+	<string name="track_summary">Allow your location to be tracked</string>
+	<string name="protect_data">Protect Personnal Information</string>
+	<string name="protect_summary">set pin to protect your data</string>
+	<string name="health">Health Details</string>
+	<string name="tracking_activated">Tracking Enabled</string>
+	<string name="tracking_deactivated">Tracking Disabled</string>
+	<string name="pin_disabled">Pin has been Disabled</string>
+	<string name="pin_enabled">Pin has been Enabled</string>
+	<string name="report_bug">Send Feedback</string>
+	<string name="report_summary">Report technical issues or suggest new features</string>
+	<string name="share_app"><![CDATA[Share App with Friends & Family]]></string>
+	<string name="privacy_title">Our Privacy Policy</string>
+	<string name="terms_conditions"><![CDATA[Our Terms & Conditions]]></string>
+	<string name="other_actions">Other Actions</string>
+	<string name="actions">Actions</string>
 </resources>
