@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<PreferenceCategory android:title="@string/actions">
+		<SwitchPreference
+			android:defaultValue="false"
+			android:key="track_key"
+			android:summary="@string/track_summary"
+			android:summaryOff="@string/tracking_deactivated"
+			android:summaryOn="@string/tracking_activated"
+			android:title="@string/allow_tracking" />
+
+		<SwitchPreference
+			android:defaultValue="false"
+			android:key="protect_key"
+			android:summary="@string/protect_summary"
+			android:summaryOff="@string/pin_disabled"
+			android:summaryOn="@string/pin_enabled"
+			android:title="@string/protect_data" />
+	</PreferenceCategory>
+
+	<PreferenceCategory android:title="@string/other_actions">
+		<Preference
+			android:key="report_key"
+			android:summary="@string/report_summary"
+			android:title="@string/report_bug" />
+
+		<Preference
+			android:key="share_key"
+			android:title="@string/share_app" />
+
+		<Preference
+			android:key="privacy_key"
+			android:title="@string/privacy_title" />
+
+		<Preference
+			android:key="terms_key"
+			android:title="@string/terms_conditions" />
+	</PreferenceCategory>
+
+
+</PreferenceScreen>
