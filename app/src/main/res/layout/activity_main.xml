@@ -6,10 +6,11 @@
 	android:layout_height="match_parent"
 	tools:context=".ui.MainActivity">
 
-	<androidx.recyclerview.widget.RecyclerView
-		android:id="@+id/mainRecView"
+	<FrameLayout
+		android:id="@+id/mainContainer"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent" />
+
 
 	<com.google.android.material.bottomnavigation.BottomNavigationView
 		android:id="@+id/mainNavView"

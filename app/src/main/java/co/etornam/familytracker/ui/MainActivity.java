@@ -14,20 +14,21 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.etornam.familytracker.R;
+import co.etornam.familytracker.fragments.MainFragment;
+import co.etornam.familytracker.fragments.ProfileDisplayFragment;
 import co.etornam.familytracker.services.LocationFetcherService;
 
 public class MainActivity extends AppCompatActivity {
-	boolean isTrackingActivated;
-	boolean isPinActivated;
-	LocationFetcherService fetcherService;
+	private boolean isTrackingActivated;
+	private boolean isPinActivated;
+	private LocationFetcherService fetcherService;
+	private FragmentTransaction transaction;
 	@BindView(R.id.mainNavView)
 	BottomNavigationView mainNavView;
-	@BindView(R.id.mainRecView)
-	RecyclerView mainRecView;
 	private ServiceConnection serviceConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			String name = className.getClassName();
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
+		transaction = getSupportFragmentManager().beginTransaction();
 		setupPreferences();
 		Intent fetchIntent = new Intent(this.getApplication(), LocationFetcherService.class);
 		this.getApplication().startService(fetchIntent);
@@ -66,14 +68,22 @@ public class MainActivity extends AppCompatActivity {
 		mainNavView.setOnNavigationItemSelectedListener(menuItem -> {
 			switch (menuItem.getItemId()) {
 				case R.id.action_home:
+					MainFragment mainFragment = new MainFragment();
+					transaction.replace(R.id.mainContainer, mainFragment);
+					transaction.commit();
 					break;
 				case R.id.action_profile:
-					startActivity(new Intent(this, ProfileActivity.class));
+
+					ProfileDisplayFragment profileDisplayFragment = new ProfileDisplayFragment();
+					transaction.replace(R.id.mainContainer, profileDisplayFragment);
+					transaction.commit();
 					break;
 				case R.id.action_track:
 					break;
 				case R.id.action_setting:
-					startActivity(new Intent(this, SettingsActivity.class));
+					Intent intentSettings = new Intent(getApplication(), SettingsActivity.class);
+					intentSettings.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+					startActivity(intentSettings);
 					break;
 			}
 			return false;
