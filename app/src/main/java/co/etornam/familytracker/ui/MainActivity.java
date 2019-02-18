@@ -14,6 +14,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
 		transaction = getSupportFragmentManager().beginTransaction();
+		displaySelectedScreen(R.id.action_home);
 		setupPreferences();
 		Intent fetchIntent = new Intent(this.getApplication(), LocationFetcherService.class);
 		this.getApplication().startService(fetchIntent);
@@ -66,27 +68,34 @@ public class MainActivity extends AppCompatActivity {
 //		fetcherService.startTracking();
 
 		mainNavView.setOnNavigationItemSelectedListener(menuItem -> {
-			switch (menuItem.getItemId()) {
-				case R.id.action_home:
-					MainFragment mainFragment = new MainFragment();
-					transaction.replace(R.id.mainContainer, mainFragment);
-					transaction.commit();
-					break;
-				case R.id.action_profile:
-
-					ProfileDisplayFragment profileDisplayFragment = new ProfileDisplayFragment();
-					transaction.replace(R.id.mainContainer, profileDisplayFragment);
-					transaction.commit();
-					break;
-				case R.id.action_track:
-					break;
-				case R.id.action_setting:
-					Intent intentSettings = new Intent(getApplication(), SettingsActivity.class);
-					intentSettings.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-					startActivity(intentSettings);
-					break;
-			}
+			displaySelectedScreen(menuItem.getItemId());
 			return false;
 		});
+	}
+
+	private void displaySelectedScreen(int itemId) {
+		Fragment fragment = null;
+
+		switch (itemId) {
+			case R.id.action_home:
+				fragment = new MainFragment();
+				break;
+			case R.id.action_profile:
+				fragment = new ProfileDisplayFragment();
+				break;
+			case R.id.action_track:
+				break;
+			case R.id.action_setting:
+				Intent intentSettings = new Intent(getApplication(), SettingsActivity.class);
+				intentSettings.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+				startActivity(intentSettings);
+				break;
+		}
+
+		if (fragment != null) {
+			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+			transaction.replace(R.id.mainContainer, fragment);
+			transaction.addToBackStack(null);
+		}
 	}
 }
