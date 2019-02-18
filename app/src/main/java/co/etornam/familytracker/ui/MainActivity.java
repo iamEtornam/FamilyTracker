@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
@@ -29,8 +30,11 @@ public class MainActivity extends AppCompatActivity {
 	private boolean isPinActivated;
 	private LocationFetcherService fetcherService;
 	private FragmentTransaction transaction;
+
+	private FirebaseAuth mAuth;
 	@BindView(R.id.mainNavView)
 	BottomNavigationView mainNavView;
+
 	private ServiceConnection serviceConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			String name = className.getClassName();
@@ -66,12 +70,15 @@ public class MainActivity extends AppCompatActivity {
 		Intent fetchIntent = new Intent(this.getApplication(), LocationFetcherService.class);
 		this.getApplication().startService(fetchIntent);
 		this.getApplication().bindService(fetchIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+		mAuth = FirebaseAuth.getInstance();
+
 //		fetcherService.startTracking();
 
 		mainNavView.setOnNavigationItemSelectedListener(menuItem -> {
 			displaySelectedScreen(menuItem.getItemId());
 			return true;
 		});
+
 	}
 
 	private void displaySelectedScreen(int itemId) {

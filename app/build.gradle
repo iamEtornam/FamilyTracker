@@ -36,7 +36,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
-
     //additional dependencies
     implementation 'com.jakewharton:butterknife:10.0.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
@@ -45,12 +44,11 @@ dependencies {
     implementation 'gun0912.ted:tedbottompicker:1.2.6'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.karumi:dexter:5.0.0'
-
     //firebase dependencies
     implementation 'com.google.firebase:firebase-core:16.0.7'
     implementation 'com.google.firebase:firebase-auth:16.1.0'
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
-    implementation 'com.google.firebase:firebase-database:16.0.6'
     implementation 'com.google.firebase:firebase-storage:16.0.5'
+    implementation 'com.firebaseui:firebase-ui-database:4.3.1'
 }
 apply plugin: 'com.google.gms.google-services'
