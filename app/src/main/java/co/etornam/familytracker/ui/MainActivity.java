@@ -13,6 +13,7 @@ import android.preference.PreferenceManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
 		mainNavView.setOnNavigationItemSelectedListener(menuItem -> {
 			displaySelectedScreen(menuItem.getItemId());
-			return false;
+			return true;
 		});
 	}
 
@@ -97,5 +98,16 @@ public class MainActivity extends AppCompatActivity {
 			transaction.replace(R.id.mainContainer, fragment);
 			transaction.addToBackStack(null);
 		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		new AlertDialog.Builder(this)
+				.setMessage("Are you sure you want to exit?")
+				.setCancelable(false)
+				.setPositiveButton("Yes", (dialog, id) -> MainActivity.this.finish())
+				.setNegativeButton("No", (dialog, which) -> displaySelectedScreen(R.id.action_home))
+				.show();
+		super.onBackPressed();
 	}
 }
