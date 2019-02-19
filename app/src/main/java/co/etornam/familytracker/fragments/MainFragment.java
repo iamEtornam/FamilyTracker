@@ -10,8 +10,11 @@ import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,7 +27,8 @@ import co.etornam.familytracker.model.Contact;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainFragment extends Fragment {
-	FirebaseRecyclerAdapter<Contact, ContactViewHolder> recyclerAdapter;
+	private FirebaseRecyclerAdapter<Contact, ContactViewHolder> recyclerAdapter;
+	private FirebaseAuth mAuth;
 	@BindView(R.id.rvMainContact)
 	RecyclerView rvMainContact;
 
@@ -48,9 +52,11 @@ public class MainFragment extends Fragment {
 	@Override
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		mAuth = FirebaseAuth.getInstance();
 		Query query = FirebaseDatabase.getInstance()
 				.getReference()
 				.child("contacts")
+				.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid())
 				.limitToLast(10);
 
 		FirebaseRecyclerOptions<Contact> options = new FirebaseRecyclerOptions.Builder<Contact>()
@@ -72,6 +78,18 @@ public class MainFragment extends Fragment {
 		};
 
 		rvMainContact.setAdapter(recyclerAdapter);
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		recyclerAdapter.startListening();
+	}
+
+	@Override
+	public void onStop() {
+		super.onStop();
+		recyclerAdapter.stopListening();
 	}
 
 	public static class ContactViewHolder extends RecyclerView.ViewHolder {
