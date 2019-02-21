@@ -11,7 +11,6 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,6 +25,7 @@ import butterknife.ButterKnife;
 import co.etornam.familytracker.R;
 import co.etornam.familytracker.fragments.MainFragment;
 import co.etornam.familytracker.fragments.ProfileDisplayFragment;
+import co.etornam.familytracker.fragments.TrackerFragment;
 import co.etornam.familytracker.services.LocationFetcherService;
 
 public class MainActivity extends AppCompatActivity {
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
 				selectedFragment = new ProfileDisplayFragment();
 				break;
 			case R.id.action_track:
-				Toast.makeText(this, "Tracker", Toast.LENGTH_SHORT).show();
+				selectedFragment = new TrackerFragment();
 				break;
 			case R.id.action_setting:
 				Intent settingsIntent = new Intent(getApplication(), SettingsActivity.class);
