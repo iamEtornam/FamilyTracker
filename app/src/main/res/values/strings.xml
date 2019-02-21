@@ -109,4 +109,5 @@
 	<string name="profile">Profile</string>
 	<string name="my_profile">My Profile</string>
 	<string name="tracking">Tracking</string>
+	<string name="mapbox_api" translatable="false">pk.eyJ1IjoicmVnbmV4IiwiYSI6ImNqaXVlb3dxejF5dXgzcXFtNW5naTh4YjgifQ.ETNFvMbm9leMY1dC4x0fCQ</string>
 </resources>
