@@ -71,6 +71,14 @@ public class ProfileDisplayFragment extends Fragment {
 	TextView txtDiabetic;
 	@BindView(R.id.displayLayout)
 	LinearLayout displayLayout;
+	@BindView(R.id.txtInsuranceCompany)
+	TextView txtInsuranceCompany;
+	@BindView(R.id.txtInsuranceId)
+	TextView txtInsuranceId;
+	@BindView(R.id.txtDoctorName)
+	TextView txtDoctorName;
+	@BindView(R.id.txtDoctorNumber)
+	TextView txtDoctorNumber;
 	private String TAG = ProfileDisplayFragment.class.getSimpleName();
 	private DatabaseReference mDatabase;
 	private FirebaseAuth mAuth;
@@ -94,6 +102,35 @@ public class ProfileDisplayFragment extends Fragment {
 		mAuth = FirebaseAuth.getInstance();
 		mDatabase = FirebaseDatabase.getInstance().getReference();
 		getUserDetails();
+		getUserHealthDetails();
+	}
+
+	private void getUserHealthDetails() {
+		mDatabase.child(HEALTH_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				Health health = dataSnapshot.getValue(Health.class);
+				assert health != null;
+				txtDonor.setText(health.getDonor());
+				txtDiabetic.setText(health.getDiabetic());
+				txtBloodGroup.setText(health.getBloodgroup());
+				txtBloodPressure.setText(health.getBloodpressure());
+				txtAllergies.setText(health.getAllergy());
+				txtMedication.setText(health.getMedication());
+				txtInsuranceCompany.setText(health.getCompanyname());
+				txtInsuranceId.setText(health.getInsurancenumber());
+				txtDoctorName.setText(health.getDoctorname());
+				txtDoctorNumber.setText(health.getDoctornumber());
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragDisplayMain), "Couldn't Retrieve your Health Details ", Snackbar.LENGTH_SHORT)
+						.setActionTextColor(getResources().getColor(R.color.colorRed))
+						.setAction("Try Again!", v -> getUserHealthDetails())
+						.show();
+			}
+		});
 	}
 
 	private void getUserDetails() {
@@ -102,13 +139,13 @@ public class ProfileDisplayFragment extends Fragment {
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 				Profile profile = dataSnapshot.getValue(Profile.class);
 				assert profile != null;
-				String fullName = profile.getFirstName() + " " + profile.getOtherName();
+				String fullName = "FULL NAME: " + profile.getFirstName() + " " + profile.getOtherName();
 				txtUserName.setText(fullName);
-				txtUserDob.setText(profile.getDateOfBirth());
-				txtUserHomeAddress.setText(profile.getHomeAddress());
-				txtUserWorkAddress.setText(profile.getWorkAddress());
-				txtUserGender.setText(profile.getGender());
-				txtUserMobileNumber.setText(profile.getMobileNumber());
+				txtUserDob.setText("D.O.B: " + profile.getDateOfBirth());
+				txtUserHomeAddress.setText("HOME: " + profile.getHomeAddress());
+				txtUserWorkAddress.setText("WORK: " + profile.getWorkAddress());
+				txtUserGender.setText("GENDER: " + profile.getGender());
+				txtUserMobileNumber.setText("MOBILE NUMBER: " + profile.getMobileNumber());
 				Picasso.get()
 						.load(profile.getProfileImgUrl())
 						.placeholder(R.drawable.ic_person)
