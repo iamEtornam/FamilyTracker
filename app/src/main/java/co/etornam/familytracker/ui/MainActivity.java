@@ -9,12 +9,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.view.MenuItem;
+import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
@@ -26,14 +29,15 @@ import co.etornam.familytracker.fragments.ProfileDisplayFragment;
 import co.etornam.familytracker.services.LocationFetcherService;
 
 public class MainActivity extends AppCompatActivity {
+	@BindView(R.id.mainContainer)
+	FrameLayout mainContainer;
+	@BindView(R.id.mainNavView)
+	BottomNavigationView mainNavView;
 	private boolean isTrackingActivated;
 	private boolean isPinActivated;
 	private LocationFetcherService fetcherService;
-	private FragmentTransaction transaction;
-
 	private FirebaseAuth mAuth;
-	@BindView(R.id.mainNavView)
-	BottomNavigationView mainNavView;
+
 
 	private ServiceConnection serviceConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
@@ -64,57 +68,53 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
-		transaction = getSupportFragmentManager().beginTransaction();
-		displaySelectedScreen(R.id.action_home);
 		setupPreferences();
 		Intent fetchIntent = new Intent(this.getApplication(), LocationFetcherService.class);
 		this.getApplication().startService(fetchIntent);
 		this.getApplication().bindService(fetchIntent, serviceConnection, Context.BIND_AUTO_CREATE);
 		mAuth = FirebaseAuth.getInstance();
+		displaySelectedScreen(R.id.action_home);
 
 //		fetcherService.startTracking();
 
-		mainNavView.setOnNavigationItemSelectedListener(menuItem -> {
-			displaySelectedScreen(menuItem.getItemId());
-			return true;
+		mainNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+			@Override
+			public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+				int itemId = menuItem.getItemId();
+				displaySelectedScreen(itemId);
+				return true;
+			}
 		});
 
 	}
 
-	private void displaySelectedScreen(int itemId) {
-		Fragment fragment = null;
-
-		switch (itemId) {
+	void displaySelectedScreen(int screenId) {
+		Fragment selectedFragment = null;
+		switch (screenId) {
 			case R.id.action_home:
-				fragment = new MainFragment();
+				selectedFragment = new MainFragment();
 				break;
 			case R.id.action_profile:
-				fragment = new ProfileDisplayFragment();
+				selectedFragment = new ProfileDisplayFragment();
 				break;
 			case R.id.action_track:
+				Toast.makeText(this, "Tracker", Toast.LENGTH_SHORT).show();
 				break;
 			case R.id.action_setting:
-				Intent intentSettings = new Intent(getApplication(), SettingsActivity.class);
-				intentSettings.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-				startActivity(intentSettings);
+				Intent settingsIntent = new Intent(getApplication(), SettingsActivity.class);
+				settingsIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				startActivity(settingsIntent);
 				break;
 		}
-
-		if (fragment != null) {
-			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-			transaction.replace(R.id.mainContainer, fragment);
-			transaction.addToBackStack(null);
-		}
+		assert selectedFragment != null;
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		transaction.replace(R.id.mainContainer, selectedFragment);
+		transaction.commit();
+		transaction.addToBackStack(null);
 	}
 
 	@Override
 	public void onBackPressed() {
-		new AlertDialog.Builder(this)
-				.setMessage("Are you sure you want to exit?")
-				.setCancelable(false)
-				.setPositiveButton("Yes", (dialog, id) -> MainActivity.this.finish())
-				.setNegativeButton("No", (dialog, which) -> displaySelectedScreen(R.id.action_home))
-				.show();
 		super.onBackPressed();
 	}
 }

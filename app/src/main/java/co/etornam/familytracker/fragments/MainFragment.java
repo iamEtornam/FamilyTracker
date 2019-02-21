@@ -13,21 +13,24 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import co.etornam.familytracker.R;
 import co.etornam.familytracker.model.Contact;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainFragment extends Fragment {
-	private FirebaseRecyclerAdapter<Contact, ContactViewHolder> recyclerAdapter;
+	private FirebaseRecyclerAdapter<Contact, ContactViewHolder> adapter;
 	private FirebaseAuth mAuth;
 	@BindView(R.id.rvMainContact)
 	RecyclerView rvMainContact;
@@ -39,6 +42,7 @@ public class MainFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 	}
 
 	@Override
@@ -46,27 +50,45 @@ public class MainFragment extends Fragment {
 	                         Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_main, container, false);
 		Toast.makeText(getContext(), "Horaaay!", Toast.LENGTH_SHORT).show();
-		return view;
-	}
-
-	@Override
-	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-		super.onViewCreated(view, savedInstanceState);
+		ButterKnife.bind(this, view);
 		mAuth = FirebaseAuth.getInstance();
+		LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+		layoutManager.setOrientation(RecyclerView.VERTICAL);
+		rvMainContact.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getContext()), DividerItemDecoration.VERTICAL));
+		rvMainContact.setLayoutManager(layoutManager);
+
 		Query query = FirebaseDatabase.getInstance()
 				.getReference()
 				.child("contacts")
-				.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid())
-				.limitToLast(10);
+				.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
 
 		FirebaseRecyclerOptions<Contact> options = new FirebaseRecyclerOptions.Builder<Contact>()
 				.setQuery(query, Contact.class)
 				.build();
 
-		recyclerAdapter = new FirebaseRecyclerAdapter<Contact, ContactViewHolder>(options) {
+		adapter = new FirebaseRecyclerAdapter<Contact, ContactViewHolder>(options) {
 			@Override
 			protected void onBindViewHolder(@NonNull ContactViewHolder contactViewHolder, int i, @NonNull Contact contact) {
-				Toast.makeText(getContext(), "contact name: " + contactViewHolder.ContactNameTextView, Toast.LENGTH_SHORT).show();
+				final String list_id = getRef(i).getKey();
+				contactViewHolder.ContactNameTextView.setText(contact.getName());
+				contactViewHolder.ContactRelationTextView.setText(contact.getRelation());
+				Picasso.get().load(contact.getImageUrl())
+						.error(R.drawable.img_error)
+						.placeholder(R.drawable.ic_image_placeholder)
+						.into(contactViewHolder.ContactImage);
+				contactViewHolder.ContactTrackBtn.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						initializeTracker(list_id);
+					}
+				});
+
+				contactViewHolder.ContactMainLayout.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						initializeTracker(list_id);
+					}
+				});
 			}
 
 			@NonNull
@@ -77,19 +99,24 @@ public class MainFragment extends Fragment {
 			}
 		};
 
-		rvMainContact.setAdapter(recyclerAdapter);
+		rvMainContact.setAdapter(adapter);
+		return view;
+	}
+
+	private void initializeTracker(String positionId) {
+		Toast.makeText(getContext(), "tracking: " + positionId, Toast.LENGTH_SHORT).show();
 	}
 
 	@Override
 	public void onStart() {
 		super.onStart();
-		recyclerAdapter.startListening();
+		adapter.startListening();
 	}
 
 	@Override
 	public void onStop() {
 		super.onStop();
-		recyclerAdapter.stopListening();
+		adapter.stopListening();
 	}
 
 	public static class ContactViewHolder extends RecyclerView.ViewHolder {

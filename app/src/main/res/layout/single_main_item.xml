@@ -35,6 +35,7 @@
 			android:id="@+id/txtName"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:textAppearance="?android:textAppearanceMedium"
 			tools:text="@string/text_placeholder" />
 
 		<TextView
@@ -42,6 +43,7 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_marginTop="@dimen/dp_8"
+			android:textAppearance="?android:textAppearanceSmall"
 			tools:text="@string/text_placeholder" />
 	</LinearLayout>
 
@@ -55,6 +57,6 @@
 		android:contentDescription="@string/avatar"
 		app:layout_constraintEnd_toEndOf="parent"
 		app:layout_constraintTop_toTopOf="parent"
-		app:srcCompat="@drawable/ic_track" />
+		app:srcCompat="@drawable/ic_arrow_right" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,8 +8,6 @@
 	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/rvMainContact"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		android:fadeScrollbars="true"
-		android:orientation="vertical" />
+		android:layout_height="wrap_content" />
 
 </FrameLayout>
