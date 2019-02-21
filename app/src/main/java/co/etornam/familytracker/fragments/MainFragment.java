@@ -1,5 +1,6 @@
 package co.etornam.familytracker.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.etornam.familytracker.R;
 import co.etornam.familytracker.model.Contact;
+import co.etornam.familytracker.ui.SingleTrackerActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainFragment extends Fragment {
@@ -105,6 +107,7 @@ public class MainFragment extends Fragment {
 
 	private void initializeTracker(String positionId) {
 		Toast.makeText(getContext(), "tracking: " + positionId, Toast.LENGTH_SHORT).show();
+		startActivity(new Intent(getActivity(), SingleTrackerActivity.class));
 	}
 
 	@Override
