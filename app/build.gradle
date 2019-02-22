@@ -45,8 +45,14 @@ dependencies {
     implementation 'gun0912.ted:tedbottompicker:1.2.6'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.karumi:dexter:5.0.0'
-    implementation 'com.hlab.fabrevealmenu:fab-reveal-menu:1.0.3'
+    implementation 'com.github.joaquimley:faboptions:1.2.0'
+
+    //mapbox dependencies
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:7.1.2'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-traffic:0.6.0'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-core:1.1.0'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.30.0'
+
 
     //firebase dependencies
     implementation 'com.google.firebase:firebase-core:16.0.7'
