@@ -19,7 +19,14 @@
 		android:supportsRtl="true"
 		android:theme="@style/AppTheme"
 		tools:ignore="GoogleAppIndexingWarning">
-		<activity android:name=".ui.SingleTrackerActivity"></activity>
+		<activity
+			android:name=".ui.SingleTrackerActivity"
+			android:label="@string/tracker"
+			android:parentActivityName=".ui.MainActivity">
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".ui.MainActivity" />
+		</activity>
 		<activity
 			android:name=".ui.SettingsActivity"
 			android:label="@string/settings"
