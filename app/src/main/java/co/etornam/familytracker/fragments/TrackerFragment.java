@@ -10,6 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineCallback;
 import com.mapbox.android.core.location.LocationEngineProvider;
@@ -17,7 +23,10 @@ import com.mapbox.android.core.location.LocationEngineRequest;
 import com.mapbox.android.core.location.LocationEngineResult;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.modes.CameraMode;
 import com.mapbox.mapboxsdk.location.modes.RenderMode;
@@ -36,8 +45,10 @@ import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.etornam.familytracker.R;
+import co.etornam.familytracker.model.Tracker;
 
 import static android.os.Looper.getMainLooper;
+import static co.etornam.familytracker.util.Constants.TRACKING_DB;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,6 +63,12 @@ public class TrackerFragment extends Fragment implements OnMapReadyCallback, Per
 	private long DEFAULT_INTERVAL_IN_MILLISECONDS = 1000L;
 	private long DEFAULT_MAX_WAIT_TIME = DEFAULT_INTERVAL_IN_MILLISECONDS * 5;
 	private TrackerFragmentLocationCallback callback = new TrackerFragmentLocationCallback(this);
+	private DatabaseReference mDatabase;
+	private FirebaseAuth mAuth;
+	private String TAG = TrackerFragment.class.getSimpleName();
+	private Double destinationLat;
+	private Double destinationLng;
+	private Point destinationPoint;
 
 	public TrackerFragment() {
 		// Required empty public constructor
@@ -61,6 +78,8 @@ public class TrackerFragment extends Fragment implements OnMapReadyCallback, Per
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Mapbox.getInstance(Objects.requireNonNull(getContext()), getResources().getString(R.string.mapbox_api));
+		mDatabase = FirebaseDatabase.getInstance().getReference();
+		mAuth = FirebaseAuth.getInstance();
 	}
 
 	@Override
@@ -149,7 +168,7 @@ public class TrackerFragment extends Fragment implements OnMapReadyCallback, Per
 	@Override
 	public void onMapReady(@NonNull MapboxMap mapboxMap) {
 		this.mapboxMap = mapboxMap;
-		mapboxMap.setStyle(Style.SATELLITE, this::enableLocationComponent);
+		mapboxMap.setStyle(Style.SATELLITE_STREETS, this::enableLocationComponent);
 	}
 
 	@SuppressLint("MissingPermission")
@@ -195,7 +214,26 @@ public class TrackerFragment extends Fragment implements OnMapReadyCallback, Per
 					return;
 				}
 				Toast.makeText(getContext(), "location Updated!!!", Toast.LENGTH_SHORT).show();
+				mDatabase.child(TRACKING_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).addValueEventListener(new ValueEventListener() {
+					@Override
+					public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+						for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+							Tracker tracker = snapshot.getValue(Tracker.class);
+							assert tracker != null;
+							destinationLat = Double.parseDouble(tracker.getLatitude());
+							destinationLng = Double.parseDouble(tracker.getLongitude());
+							LatLng destinationLatLng = new LatLng(destinationLat, destinationLng);
+							destinationPoint = Point.fromLngLat(destinationLatLng.getLongitude(), destinationLatLng.getLatitude());
+							mapboxMap.addMarker(new MarkerOptions().position(destinationLatLng));
+							Toast.makeText(getContext(), "from firebase Fragment", Toast.LENGTH_SHORT).show();
+						}
+					}
 
+					@Override
+					public void onCancelled(@NonNull DatabaseError databaseError) {
+						Log.d(TAG, "onCancelled: " + databaseError.getMessage());
+					}
+				});
 
 				if (fragment.mapboxMap != null && result.getLastLocation() != null) {
 					fragment.mapboxMap.getLocationComponent().forceLocationUpdate(result.getLastLocation());
