@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -13,6 +14,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.joaquimley.faboptions.FabOptions;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineCallback;
 import com.mapbox.android.core.location.LocationEngineProvider;
@@ -57,10 +59,12 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 
-public class SingleTrackerActivity extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener {
+public class SingleTrackerActivity extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener, View.OnClickListener {
 
 	@BindView(R.id.mapViewSingle)
 	MapView mapViewSingle;
+	@BindView(R.id.fabOptions)
+	FabOptions fabOptions;
 	private MapboxMap mapboxMap;
 	private PermissionsManager permissionsManager;
 	private static final String TAG = SingleTrackerActivity.class.getSimpleName();
@@ -89,6 +93,7 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 		mapViewSingle.getMapAsync(this);
 		mAuth = FirebaseAuth.getInstance();
 		mDatabase = FirebaseDatabase.getInstance().getReference();
+		fabOptions.setOnClickListener(this);
 	}
 
 	@SuppressLint("MissingPermission")
@@ -230,6 +235,20 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 		permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
 	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+			case R.id.faboptions_call:
+				Toast.makeText(SingleTrackerActivity.this, "call", Toast.LENGTH_SHORT).show();
+				break;
+
+			case R.id.faboptions_navigate:
+				Toast.makeText(SingleTrackerActivity.this, "Navigate", Toast.LENGTH_SHORT).show();
+				break;
+		}
+	}
+
 
 	private class SingleTrackerLocationCallback implements LocationEngineCallback<LocationEngineResult> {
 		private final WeakReference<SingleTrackerActivity> trackerActivityWeakReference;
