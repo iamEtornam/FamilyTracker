@@ -7,10 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
@@ -26,12 +26,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import co.etornam.familytracker.R;
+import co.etornam.familytracker.dialogFragment.ContactDialogFragment;
 import co.etornam.familytracker.model.Contact;
 import co.etornam.familytracker.ui.SingleTrackerActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainFragment extends Fragment {
+	@BindView(R.id.addContactFab)
+	FloatingActionButton addContactFab;
 	private FirebaseRecyclerAdapter<Contact, ContactViewHolder> adapter;
 	private FirebaseAuth mAuth;
 	@BindView(R.id.rvMainContact)
@@ -51,7 +55,6 @@ public class MainFragment extends Fragment {
 	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_main, container, false);
-		Toast.makeText(getContext(), "Horaaay!", Toast.LENGTH_SHORT).show();
 		ButterKnife.bind(this, view);
 		mAuth = FirebaseAuth.getInstance();
 		LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
@@ -78,19 +81,9 @@ public class MainFragment extends Fragment {
 						.error(R.drawable.img_error)
 						.placeholder(R.drawable.ic_image_placeholder)
 						.into(contactViewHolder.ContactImage);
-				contactViewHolder.ContactTrackBtn.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						initializeTracker(list_id);
-					}
-				});
+				contactViewHolder.ContactTrackBtn.setOnClickListener(v -> initializeTracker(list_id));
 
-				contactViewHolder.ContactMainLayout.setOnClickListener(new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						initializeTracker(list_id);
-					}
-				});
+				contactViewHolder.ContactMainLayout.setOnClickListener(v -> initializeTracker(list_id));
 			}
 
 			@NonNull
@@ -122,6 +115,13 @@ public class MainFragment extends Fragment {
 	public void onStop() {
 		super.onStop();
 		adapter.stopListening();
+	}
+
+	@OnClick(R.id.addContactFab)
+	public void onViewClicked() {
+		ContactDialogFragment contactDialogFragment = ContactDialogFragment.newInstance();
+		assert getFragmentManager() != null;
+		contactDialogFragment.show(getFragmentManager(), "contact_dialog_fragment");
 	}
 
 	public static class ContactViewHolder extends RecyclerView.ViewHolder {

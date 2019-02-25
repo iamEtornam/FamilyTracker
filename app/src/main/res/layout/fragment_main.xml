@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	tools:context=".fragments.MainFragment">
 
 	<androidx.recyclerview.widget.RecyclerView
 		android:id="@+id/rvMainContact"
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content" />
+		android:layout_height="match_parent" />
 
-</FrameLayout>
+	<com.google.android.material.floatingactionbutton.FloatingActionButton
+		android:id="@+id/addContactFab"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentEnd="true"
+		android:layout_alignParentBottom="true"
+		android:layout_marginEnd="@dimen/dp_16"
+		android:layout_marginBottom="@dimen/dp_72"
+		app:srcCompat="@drawable/ic_add_contact" />
+
+</RelativeLayout>

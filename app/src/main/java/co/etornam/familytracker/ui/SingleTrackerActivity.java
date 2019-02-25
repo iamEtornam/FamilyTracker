@@ -82,6 +82,7 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 	private NavigationMapRoute navigationMapRoute;
 	private DatabaseReference mDatabase;
 	private String postionId;
+	private Contact contact;
 	private FirebaseAuth mAuth;
 	private Double destinationLat;
 	private Double destinationLng;
@@ -109,6 +110,18 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 		mDatabase = FirebaseDatabase.getInstance().getReference();
 		fabOptions.setOnClickListener(this);
 		fabOptions.setVisibility(View.GONE);
+
+		mDatabase.child(CONTACT_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(postionId).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				contact = dataSnapshot.getValue(Contact.class);
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+				Log.d(TAG, "onCancelled: " + databaseError.getMessage());
+			}
+		});
 	}
 
 	@SuppressLint("MissingPermission")
@@ -221,6 +234,7 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 						currentRoute = response.body().routes().get(0);
 						if (navigationMapRoute != null) {
 							navigationMapRoute.removeRoute();
+							mapboxMap.clear();
 						} else {
 							navigationMapRoute = new NavigationMapRoute(null, mapViewSingle, mapboxMap, R.style.NavigationMapRoute);
 						}
@@ -262,26 +276,19 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.faboptions_call:
-				mDatabase.child(CONTACT_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(postionId).addListenerForSingleValueEvent(new ValueEventListener() {
-					@Override
-					public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-						Contact contact = dataSnapshot.getValue(Contact.class);
-						Intent callIntent = new Intent(Intent.ACTION_CALL);
-						assert contact != null;
-						callIntent.setData(Uri.parse(contact.getNumber()));
-						if (ActivityCompat.checkSelfPermission(SingleTrackerActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-							return;
-						}
+				Intent callIntent = new Intent(Intent.ACTION_CALL);
+				if (contact != null) {
+					callIntent.setData(Uri.parse("tel:" + contact.getNumber()));
+					if (ActivityCompat.checkSelfPermission(this,
+							Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+						ActivityCompat.requestPermissions(this,
+								new String[]{Manifest.permission.CALL_PHONE},
+								1023);
+					} else {
 						Toast.makeText(SingleTrackerActivity.this, "calling " + contact.getName(), Toast.LENGTH_SHORT).show();
 						startActivity(callIntent);
 					}
-
-					@Override
-					public void onCancelled(@NonNull DatabaseError databaseError) {
-						Log.d(TAG, "onCancelled: " + databaseError.getMessage());
-					}
-				});
-
+				}
 				break;
 
 			case R.id.faboptions_navigate:
@@ -314,11 +321,10 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 				if (originLocation == null) {
 					return;
 				}
-				mDatabase.child(TRACKING_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).addValueEventListener(new ValueEventListener() {
+				mDatabase.child(TRACKING_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(postionId).addValueEventListener(new ValueEventListener() {
 					@Override
 					public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-						for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-							Tracker tracker = snapshot.getValue(Tracker.class);
+						Tracker tracker = dataSnapshot.getValue(Tracker.class);
 							assert tracker != null;
 							destinationLat = Double.parseDouble(tracker.getLatitude());
 							destinationLng = Double.parseDouble(tracker.getLongitude());
@@ -327,7 +333,7 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 							destinationPoint = Point.fromLngLat(destinationLatLng.getLongitude(), destinationLatLng.getLatitude());
 							mapboxMap.addMarker(new MarkerOptions().position(destinationLatLng));
 							getRoute(originPoint, destinationPoint);
-						}
+
 					}
 
 					@Override

@@ -168,7 +168,7 @@ public class TrackerFragment extends Fragment implements OnMapReadyCallback, Per
 	@Override
 	public void onMapReady(@NonNull MapboxMap mapboxMap) {
 		this.mapboxMap = mapboxMap;
-		mapboxMap.setStyle(Style.SATELLITE_STREETS, this::enableLocationComponent);
+		mapboxMap.setStyle(Style.MAPBOX_STREETS, this::enableLocationComponent);
 	}
 
 	@SuppressLint("MissingPermission")
@@ -213,7 +213,6 @@ public class TrackerFragment extends Fragment implements OnMapReadyCallback, Per
 				if (location == null) {
 					return;
 				}
-				Toast.makeText(getContext(), "location Updated!!!", Toast.LENGTH_SHORT).show();
 				mDatabase.child(TRACKING_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).addValueEventListener(new ValueEventListener() {
 					@Override
 					public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -225,7 +224,6 @@ public class TrackerFragment extends Fragment implements OnMapReadyCallback, Per
 							LatLng destinationLatLng = new LatLng(destinationLat, destinationLng);
 							destinationPoint = Point.fromLngLat(destinationLatLng.getLongitude(), destinationLatLng.getLatitude());
 							mapboxMap.addMarker(new MarkerOptions().position(destinationLatLng));
-							Toast.makeText(getContext(), "from firebase Fragment", Toast.LENGTH_SHORT).show();
 						}
 					}
 
