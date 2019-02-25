@@ -106,8 +106,10 @@ public class MainFragment extends Fragment {
 	}
 
 	private void initializeTracker(String positionId) {
-		Toast.makeText(getContext(), "tracking: " + positionId, Toast.LENGTH_SHORT).show();
-		startActivity(new Intent(getActivity(), SingleTrackerActivity.class));
+		Intent trackerIntent = new Intent(getActivity(), SingleTrackerActivity.class);
+		trackerIntent.putExtra("position_id", positionId);
+		trackerIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		startActivity(trackerIntent);
 	}
 
 	@Override

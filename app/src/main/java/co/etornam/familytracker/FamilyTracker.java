@@ -1,10 +1,10 @@
 package co.etornam.familytracker;
 
-import android.app.Application;
-
 import com.google.firebase.database.FirebaseDatabase;
 
-public class FamilyTracker extends Application {
+import androidx.multidex.MultiDexApplication;
+
+public class FamilyTracker extends MultiDexApplication {
 
 	@Override
 	public void onCreate() {

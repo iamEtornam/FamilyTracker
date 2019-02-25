@@ -19,6 +19,7 @@
 		android:supportsRtl="true"
 		android:theme="@style/AppTheme"
 		tools:ignore="GoogleAppIndexingWarning">
+		<activity android:name=".ui.CustomNavigationActivity"></activity>
 		<activity
 			android:name=".ui.SingleTrackerActivity"
 			android:label="@string/tracker"

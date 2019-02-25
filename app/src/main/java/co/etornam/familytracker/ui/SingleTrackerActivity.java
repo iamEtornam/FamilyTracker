@@ -1,8 +1,12 @@
 package co.etornam.familytracker.ui;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +26,7 @@ import com.mapbox.android.core.location.LocationEngineRequest;
 import com.mapbox.android.core.location.LocationEngineResult;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.api.directions.v5.DirectionsCriteria;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.geojson.Point;
@@ -42,18 +47,22 @@ import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.etornam.familytracker.R;
+import co.etornam.familytracker.model.Contact;
 import co.etornam.familytracker.model.Tracker;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static co.etornam.familytracker.util.Constants.CONTACT_DB;
 import static co.etornam.familytracker.util.Constants.TRACKING_DB;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
@@ -72,6 +81,7 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 	private DirectionsRoute currentRoute;
 	private NavigationMapRoute navigationMapRoute;
 	private DatabaseReference mDatabase;
+	private String postionId;
 	private FirebaseAuth mAuth;
 	private Double destinationLat;
 	private Double destinationLng;
@@ -90,10 +100,15 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 		setContentView(R.layout.activity_single_tracker);
 		ButterKnife.bind(this);
 		mapViewSingle.onCreate(savedInstanceState);
+		Intent trackerIntent = getIntent();
+		if (trackerIntent != null) {
+			postionId = trackerIntent.getStringExtra("position_id");
+		}
 		mapViewSingle.getMapAsync(this);
 		mAuth = FirebaseAuth.getInstance();
 		mDatabase = FirebaseDatabase.getInstance().getReference();
 		fabOptions.setOnClickListener(this);
+		fabOptions.setVisibility(View.GONE);
 	}
 
 	@SuppressLint("MissingPermission")
@@ -187,6 +202,10 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 				.accessToken(Mapbox.getAccessToken())
 				.origin(origin)
 				.destination(destination)
+				.alternatives(true)
+				.language(Locale.getDefault())
+				.user(DirectionsCriteria.PROFILE_DEFAULT_USER)
+				.profile(DirectionsCriteria.PROFILE_DRIVING_TRAFFIC)
 				.build()
 				.getRoute(new Callback<DirectionsResponse>() {
 					@Override
@@ -204,6 +223,9 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 							navigationMapRoute.removeRoute();
 						} else {
 							navigationMapRoute = new NavigationMapRoute(null, mapViewSingle, mapboxMap, R.style.NavigationMapRoute);
+						}
+						if (fabOptions.getVisibility() == View.GONE) {
+							fabOptions.setVisibility(View.VISIBLE);
 						}
 						navigationMapRoute.addRoute(currentRoute);
 					}
@@ -240,11 +262,36 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 	public void onClick(View v) {
 		switch (v.getId()) {
 			case R.id.faboptions_call:
-				Toast.makeText(SingleTrackerActivity.this, "call", Toast.LENGTH_SHORT).show();
+				mDatabase.child(CONTACT_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(postionId).addListenerForSingleValueEvent(new ValueEventListener() {
+					@Override
+					public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+						Contact contact = dataSnapshot.getValue(Contact.class);
+						Intent callIntent = new Intent(Intent.ACTION_CALL);
+						assert contact != null;
+						callIntent.setData(Uri.parse(contact.getNumber()));
+						if (ActivityCompat.checkSelfPermission(SingleTrackerActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+							return;
+						}
+						Toast.makeText(SingleTrackerActivity.this, "calling " + contact.getName(), Toast.LENGTH_SHORT).show();
+						startActivity(callIntent);
+					}
+
+					@Override
+					public void onCancelled(@NonNull DatabaseError databaseError) {
+						Log.d(TAG, "onCancelled: " + databaseError.getMessage());
+					}
+				});
+
 				break;
 
 			case R.id.faboptions_navigate:
-				Toast.makeText(SingleTrackerActivity.this, "Navigate", Toast.LENGTH_SHORT).show();
+				Intent navigationIntent = new Intent(SingleTrackerActivity.this, CustomNavigationActivity.class);
+				navigationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+				navigationIntent.putExtra("destinationLatitude", destinationLat);
+				navigationIntent.putExtra("destinationLongitude", destinationLng);
+				navigationIntent.putExtra("originLongitude", originLocation.getLongitude());
+				navigationIntent.putExtra("originLatitude", originLocation.getLatitude());
+				startActivity(navigationIntent);
 				break;
 		}
 	}
@@ -267,7 +314,6 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 				if (originLocation == null) {
 					return;
 				}
-				Toast.makeText(getApplicationContext(), "location Updated!!!", Toast.LENGTH_SHORT).show();
 				mDatabase.child(TRACKING_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).addValueEventListener(new ValueEventListener() {
 					@Override
 					public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -281,7 +327,6 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 							destinationPoint = Point.fromLngLat(destinationLatLng.getLongitude(), destinationLatLng.getLatitude());
 							mapboxMap.addMarker(new MarkerOptions().position(destinationLatLng));
 							getRoute(originPoint, destinationPoint);
-							Toast.makeText(SingleTrackerActivity.this, "from firebase", Toast.LENGTH_SHORT).show();
 						}
 					}
 

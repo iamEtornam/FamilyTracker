@@ -9,4 +9,5 @@
 	<color name="colorPink">#FC075E</color>
 	<color name="colorYellow">#FFEB3B</color>
 	<color name="colorBlue">#03A9F4</color>
+	<color name="buttonDisableColor">#FCB4627F</color>
 </resources>
