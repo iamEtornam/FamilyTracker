@@ -12,12 +12,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 import com.joaquimley.faboptions.FabOptions;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineCallback;
@@ -62,7 +66,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static co.etornam.familytracker.util.Constants.CONTACT_DB;
 import static co.etornam.familytracker.util.Constants.TRACKING_DB;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
@@ -111,7 +114,28 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 		fabOptions.setOnClickListener(this);
 		fabOptions.setVisibility(View.GONE);
 
-		mDatabase.child(CONTACT_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(postionId).addListenerForSingleValueEvent(new ValueEventListener() {
+		FirebaseDynamicLinks.getInstance()
+				.getDynamicLink(getIntent())
+				.addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
+					@Override
+					public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
+						// Get deep link from result (may be null if no link is found)
+						Uri deepLink = null;
+						if (pendingDynamicLinkData != null) {
+							deepLink = pendingDynamicLinkData.getLink();
+							Log.d(TAG, "onSuccess: DeepLink: " + deepLink);
+						}
+
+					}
+				})
+				.addOnFailureListener(this, new OnFailureListener() {
+					@Override
+					public void onFailure(@NonNull Exception e) {
+						Log.w(TAG, "getDynamicLink:onFailure", e);
+					}
+				});
+
+	/*	mDatabase.child(CONTACT_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(postionId).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 				contact = dataSnapshot.getValue(Contact.class);
@@ -121,7 +145,7 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 			public void onCancelled(@NonNull DatabaseError databaseError) {
 				Log.d(TAG, "onCancelled: " + databaseError.getMessage());
 			}
-		});
+		});*/
 	}
 
 	@SuppressLint("MissingPermission")

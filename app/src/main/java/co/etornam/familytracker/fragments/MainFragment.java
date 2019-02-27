@@ -1,7 +1,8 @@
 package co.etornam.familytracker.fragments;
 
-import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
@@ -30,7 +32,6 @@ import butterknife.OnClick;
 import co.etornam.familytracker.R;
 import co.etornam.familytracker.dialogFragment.ContactDialogFragment;
 import co.etornam.familytracker.model.Contact;
-import co.etornam.familytracker.ui.SingleTrackerActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainFragment extends Fragment {
@@ -40,6 +41,7 @@ public class MainFragment extends Fragment {
 	private FirebaseAuth mAuth;
 	@BindView(R.id.rvMainContact)
 	RecyclerView rvMainContact;
+	private String TAG = MainFragment.class.getSimpleName();
 
 	public MainFragment() {
 
@@ -99,10 +101,70 @@ public class MainFragment extends Fragment {
 	}
 
 	private void initializeTracker(String positionId) {
-		Intent trackerIntent = new Intent(getActivity(), SingleTrackerActivity.class);
+/*
+		DynamicLink dynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
+				.setLink(Uri.parse("https://www.etornam.com/"))
+				.setDomainUriPrefix("https://etornam.page.link&"+positionId)
+				.setAndroidParameters(new DynamicLink.AndroidParameters.Builder().build())
+				.buildDynamicLink();
+
+		Uri dynamicLinkUri = dynamicLink.getUri();
+		Log.d(TAG, "initializeTracker: "+Uri.decode(dynamicLinkUri.toString()));
+		Intent sendIntent = new Intent();
+		String msg = "Hey, check this out: " + Uri.decode(dynamicLinkUri.toString()) ;
+		sendIntent.setAction(Intent.ACTION_SEND);
+		sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
+		sendIntent.setType("text/plain");
+		startActivity(sendIntent);
+*/
+
+
+		FirebaseDynamicLinks.getInstance().createDynamicLink()
+				.setLongLink(Uri.parse("https://example.page.link/?link=https://www.example.com/&apn=com.example.android&ibn=com.example.ios"))
+				.buildShortDynamicLink()
+				.addOnCompleteListener(task -> {
+					if (task.isSuccessful()) {
+						// Short link created
+						Uri shortLink = Objects.requireNonNull(task.getResult()).getShortLink();
+						Uri flowchartLink = task.getResult().getPreviewLink();
+						Log.d(TAG, "onComplete: SHORT LINK: " + shortLink);
+					} else {
+						Log.d(TAG, "initializeTracker: " + task.getException());
+					}
+				});
+
+
+/*
+
+		FirebaseDynamicLinks.getInstance().createDynamicLink()
+				.setLink(Uri.parse("https://www.example.com/"))
+				.setDomainUriPrefix("https://example.page.link&"+positionId)
+				.setAndroidParameters(new DynamicLink.AndroidParameters.Builder().build())
+				.buildShortDynamicLink()
+				.addOnCompleteListener(new OnCompleteListener<ShortDynamicLink>() {
+					@Override
+					public void onComplete(@NonNull Task<ShortDynamicLink> task) {
+						Log.d(TAG, "onComplete: "+task.getResult().toString());
+						if (task.isSuccessful()){
+							Uri dynamicLink = Objects.requireNonNull(task.getResult()).getShortLink();
+							Intent sendIntent = new Intent();
+							String msg = "Hey, check this out: " + dynamicLinkUri.toString();
+							sendIntent.setAction(Intent.ACTION_SEND);
+							sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
+							sendIntent.setType("text/plain");
+							startActivity(sendIntent);
+						}else {
+							Log.d(TAG, "onComplete: "+task.getException());
+						}
+					}
+				});
+*/
+
+
+		/*Intent trackerIntent = new Intent(getActivity(), SingleTrackerActivity.class);
 		trackerIntent.putExtra("position_id", positionId);
 		trackerIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		startActivity(trackerIntent);
+		startActivity(trackerIntent);*/
 	}
 
 	@Override
