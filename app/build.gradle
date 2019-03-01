@@ -48,6 +48,7 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.karumi:dexter:5.0.0'
     implementation 'com.github.joaquimley:faboptions:1.2.0'
+    implementation 'com.github.florent37:expansionpanel:1.2.2'
 
     //mapbox dependencies
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:7.1.2'
@@ -59,7 +60,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.7'
     implementation 'com.google.firebase:firebase-auth:16.1.0'
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
-    implementation 'com.google.firebase:firebase-storage:16.0.5'
+    implementation 'com.google.firebase:firebase-storage:16.1.0'
     implementation 'com.firebaseui:firebase-ui-database:4.3.1'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
     implementation 'com.google.firebase:firebase-dynamic-links:16.1.7'

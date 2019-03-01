@@ -18,10 +18,32 @@
 		android:layout_marginBottom="@dimen/dp_60"
 		android:orientation="vertical">
 
+		<RelativeLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+
+			<ImageButton
+				android:id="@+id/btnHealth"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:background="@android:color/transparent"
+				android:contentDescription="@string/avatar"
+				app:srcCompat="@drawable/ic_hospital" />
+
+			<ImageButton
+				android:id="@+id/btnEdit"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_alignParentEnd="true"
+				android:background="@android:color/transparent"
+				android:contentDescription="@string/avatar"
+				app:srcCompat="@drawable/ic_edit" />
+		</RelativeLayout>
+
 		<de.hdodenhof.circleimageview.CircleImageView
 			android:id="@+id/imgUserProfile"
-			android:layout_width="120dp"
-			android:layout_height="120dp"
+			android:layout_width="100dp"
+			android:layout_height="100dp"
 			android:layout_gravity="center_horizontal"
 			android:layout_marginTop="15dp"
 			android:gravity="center_horizontal"
@@ -102,137 +124,6 @@
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textSize="18sp"
 			tools:text="@string/text_placeholder" />
-
-		<View
-			android:id="@+id/divider"
-			android:layout_width="match_parent"
-			android:layout_height="1dp"
-			android:layout_margin="15dp"
-			android:background="?android:attr/listDivider" />
-
-		<TextView
-			android:id="@+id/txtBloodGroup"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="8dp"
-			android:layout_marginTop="15dp"
-			android:drawableStart="@drawable/ic_person"
-			android:drawablePadding="8dp"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:textSize="18sp"
-			tools:text="@string/text_placeholder" />
-
-		<TextView
-			android:id="@+id/txtBloodPressure"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="8dp"
-			android:layout_marginTop="15dp"
-			android:drawableStart="@drawable/ic_person"
-			android:drawablePadding="8dp"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:textSize="18sp"
-			tools:text="@string/text_placeholder" />
-
-		<TextView
-			android:id="@+id/txtAllergies"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="8dp"
-			android:layout_marginTop="15dp"
-			android:drawableStart="@drawable/ic_person"
-			android:drawablePadding="8dp"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:textSize="18sp"
-			tools:text="@string/text_placeholder" />
-
-		<TextView
-			android:id="@+id/txtMedication"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="8dp"
-			android:layout_marginTop="15dp"
-			android:drawableStart="@drawable/ic_person"
-			android:drawablePadding="8dp"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:textSize="18sp"
-			tools:text="@string/text_placeholder" />
-
-		<TextView
-			android:id="@+id/txtDonor"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="8dp"
-			android:layout_marginTop="15dp"
-			android:drawableStart="@drawable/ic_person"
-			android:drawablePadding="8dp"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:textSize="18sp"
-			tools:text="@string/text_placeholder" />
-
-		<TextView
-			android:id="@+id/txtDiabetic"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="8dp"
-			android:layout_marginTop="15dp"
-			android:drawableStart="@drawable/ic_person"
-			android:drawablePadding="8dp"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:textSize="18sp"
-			tools:text="@string/text_placeholder" />
-
-		<TextView
-			android:id="@+id/txtInsuranceCompany"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="8dp"
-			android:layout_marginTop="15dp"
-			android:drawableStart="@drawable/ic_person"
-			android:drawablePadding="8dp"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:textSize="18sp"
-			tools:text="@string/text_placeholder" />
-
-		<TextView
-			android:id="@+id/txtInsuranceId"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="8dp"
-			android:layout_marginTop="15dp"
-			android:drawableStart="@drawable/ic_person"
-			android:drawablePadding="8dp"
-			android:textAppearance="?android:attr/textAppearanceMedium"
-			android:textSize="18sp"
-			tools:text="@string/text_placeholder" />
-
-		<LinearLayout
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="15dp"
-			android:orientation="horizontal">
-
-			<TextView
-				android:id="@+id/txtDoctorName"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginStart="8dp"
-				android:drawableStart="@drawable/ic_person"
-				android:drawablePadding="8dp"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:textSize="18sp"
-				tools:text="@string/text_placeholder" />
-
-			<TextView
-				android:id="@+id/txtDoctorNumber"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginStart="8dp"
-				android:textAppearance="?android:attr/textAppearanceMedium"
-				android:textSize="18sp"
-				tools:text="@string/text_placeholder" />
-		</LinearLayout>
-
 
 	</LinearLayout>
 

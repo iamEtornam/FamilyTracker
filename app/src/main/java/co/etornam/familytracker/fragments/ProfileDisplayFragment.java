@@ -1,12 +1,13 @@
 package co.etornam.familytracker.fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -26,12 +27,12 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import co.etornam.familytracker.R;
-import co.etornam.familytracker.model.Health;
 import co.etornam.familytracker.model.Profile;
+import co.etornam.familytracker.ui.DisplayHealthInfoActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static co.etornam.familytracker.util.Constants.HEALTH_DB;
 import static co.etornam.familytracker.util.Constants.USER_DB;
 
 /**
@@ -39,8 +40,7 @@ import static co.etornam.familytracker.util.Constants.USER_DB;
  */
 public class ProfileDisplayFragment extends Fragment {
 
-	@BindView(R.id.txtBloodGroup)
-	TextView txtBloodGroup;
+
 	@BindView(R.id.imgUserProfile)
 	CircleImageView imgUserProfile;
 	@BindView(R.id.txtUserName)
@@ -55,30 +55,13 @@ public class ProfileDisplayFragment extends Fragment {
 	TextView txtUserWorkAddress;
 	@BindView(R.id.txtUserMobileNumber)
 	TextView txtUserMobileNumber;
-	@BindView(R.id.divider)
-	View divider;
 	@BindView(R.id.fragDisplayMain)
 	ScrollView fragDisplayMain;
-	@BindView(R.id.txtBloodPressure)
-	TextView txtBloodPressure;
-	@BindView(R.id.txtAllergies)
-	TextView txtAllergies;
-	@BindView(R.id.txtMedication)
-	TextView txtMedication;
-	@BindView(R.id.txtDonor)
-	TextView txtDonor;
-	@BindView(R.id.txtDiabetic)
-	TextView txtDiabetic;
-	@BindView(R.id.displayLayout)
-	LinearLayout displayLayout;
-	@BindView(R.id.txtInsuranceCompany)
-	TextView txtInsuranceCompany;
-	@BindView(R.id.txtInsuranceId)
-	TextView txtInsuranceId;
-	@BindView(R.id.txtDoctorName)
-	TextView txtDoctorName;
-	@BindView(R.id.txtDoctorNumber)
-	TextView txtDoctorNumber;
+	@BindView(R.id.btnHealth)
+	ImageButton btnHealth;
+	@BindView(R.id.btnEdit)
+	ImageButton btnEdit;
+
 	private String TAG = ProfileDisplayFragment.class.getSimpleName();
 	private DatabaseReference mDatabase;
 	private FirebaseAuth mAuth;
@@ -102,36 +85,8 @@ public class ProfileDisplayFragment extends Fragment {
 		mAuth = FirebaseAuth.getInstance();
 		mDatabase = FirebaseDatabase.getInstance().getReference();
 		getUserDetails();
-		getUserHealthDetails();
 	}
 
-	private void getUserHealthDetails() {
-		mDatabase.child(HEALTH_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				Health health = dataSnapshot.getValue(Health.class);
-				assert health != null;
-				txtDonor.setText(health.getDonor());
-				txtDiabetic.setText(health.getDiabetic());
-				txtBloodGroup.setText(health.getBloodgroup());
-				txtBloodPressure.setText(health.getBloodpressure());
-				txtAllergies.setText(health.getAllergy());
-				txtMedication.setText(health.getMedication());
-				txtInsuranceCompany.setText(health.getCompanyname());
-				txtInsuranceId.setText(health.getInsurancenumber());
-				txtDoctorName.setText(health.getDoctorname());
-				txtDoctorNumber.setText(health.getDoctornumber());
-			}
-
-			@Override
-			public void onCancelled(@NonNull DatabaseError databaseError) {
-				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragDisplayMain), "Couldn't Retrieve your Health Details ", Snackbar.LENGTH_SHORT)
-						.setActionTextColor(getResources().getColor(R.color.colorRed))
-						.setAction("Try Again!", v -> getUserHealthDetails())
-						.show();
-			}
-		});
-	}
 
 	private void getUserDetails() {
 		mDatabase.child(USER_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -140,36 +95,22 @@ public class ProfileDisplayFragment extends Fragment {
 				Profile profile = dataSnapshot.getValue(Profile.class);
 				assert profile != null;
 				String fullName = "FULL NAME: " + profile.getFirstName() + " " + profile.getOtherName();
+				String dob = "D.O.B: " + profile.getDateOfBirth();
+				String homeAddress = "HOME: " + profile.getHomeAddress();
+				String workAddress = "WORK: " + profile.getWorkAddress();
+				String gender = "GENDER: " + profile.getGender();
+				String mobileNumber = "MOBILE NUMBER: " + profile.getMobileNumber();
 				txtUserName.setText(fullName);
-				txtUserDob.setText("D.O.B: " + profile.getDateOfBirth());
-				txtUserHomeAddress.setText("HOME: " + profile.getHomeAddress());
-				txtUserWorkAddress.setText("WORK: " + profile.getWorkAddress());
-				txtUserGender.setText("GENDER: " + profile.getGender());
-				txtUserMobileNumber.setText("MOBILE NUMBER: " + profile.getMobileNumber());
+				txtUserDob.setText(dob);
+				txtUserHomeAddress.setText(homeAddress);
+				txtUserWorkAddress.setText(workAddress);
+				txtUserGender.setText(gender);
+				txtUserMobileNumber.setText(mobileNumber);
 				Picasso.get()
 						.load(profile.getProfileImgUrl())
 						.placeholder(R.drawable.ic_person)
 						.error(R.drawable.ic_image_placeholder)
 						.into(imgUserProfile);
-			}
-
-			@Override
-			public void onCancelled(@NonNull DatabaseError databaseError) {
-				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragDisplayMain), "Couldn't Retrieve your Details ", Snackbar.LENGTH_SHORT)
-						.setActionTextColor(getResources().getColor(R.color.colorRed))
-						.setAction("Try Again!", v -> getUserDetails())
-						.show();
-			}
-		});
-
-		mDatabase.child(HEALTH_DB).child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				Health health = dataSnapshot.getValue(Health.class);
-				assert health != null;
-				txtDiabetic.setText(health.getDiabetic());
-				txtDonor.setText(health.getDonor());
-
 			}
 
 			@Override
@@ -181,5 +122,18 @@ public class ProfileDisplayFragment extends Fragment {
 						.show();
 			}
 		});
+	}
+
+	@OnClick({R.id.btnHealth, R.id.btnEdit})
+	public void onViewClicked(View view) {
+		switch (view.getId()) {
+			case R.id.btnHealth:
+				Intent healthIntent = new Intent(getContext(), DisplayHealthInfoActivity.class);
+				healthIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+				startActivity(healthIntent);
+				break;
+			case R.id.btnEdit:
+				break;
+		}
 	}
 }

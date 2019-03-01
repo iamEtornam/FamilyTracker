@@ -20,6 +20,14 @@
 		android:supportsRtl="true"
 		android:theme="@style/AppTheme"
 		tools:ignore="GoogleAppIndexingWarning">
+		<activity
+			android:name=".ui.DisplayHealthInfoActivity"
+			android:label="@string/health"
+			android:parentActivityName=".ui.MainActivity">
+			<meta-data
+				android:name="android.support.PARENT_ACTIVITY"
+				android:value=".ui.MainActivity" />
+		</activity>
 		<activity android:name=".ui.CustomNavigationActivity" />
 		<activity
 			android:name=".ui.SingleTrackerActivity"
@@ -28,6 +36,7 @@
 			<meta-data
 				android:name="android.support.PARENT_ACTIVITY"
 				android:value=".ui.MainActivity" />
+
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW" />
 
