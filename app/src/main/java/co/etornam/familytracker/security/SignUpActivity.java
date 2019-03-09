@@ -20,7 +20,11 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.tuyenmonkey.mkloader.MKLoader;
+
+import java.util.Objects;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -47,6 +51,7 @@ public class SignUpActivity extends AppCompatActivity {
 	private FirebaseUser user;
 	private FirebaseAuth mAuth;
 	private GoogleSignInClient mGoogleSignInClient;
+	DatabaseReference mDatabase, userReference, contactReference;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +60,7 @@ public class SignUpActivity extends AppCompatActivity {
 		ButterKnife.bind(this);
 
 		mAuth = FirebaseAuth.getInstance();
+		mDatabase = FirebaseDatabase.getInstance().getReference();
 		GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
 				.requestIdToken(getResources().getString(R.string.default_web_client_id))
 				.requestEmail()
@@ -107,7 +113,7 @@ public class SignUpActivity extends AppCompatActivity {
 				.addOnCompleteListener(this, task -> {
 					if (task.isSuccessful()) {
 						Log.d(TAG, "signInWithCredential:success");
-
+						doesUserExist(Objects.requireNonNull(task.getResult()).getUser().getUid());
 						startActivity(new Intent(this, MainActivity.class));
 
 					} else {
@@ -126,6 +132,31 @@ public class SignUpActivity extends AppCompatActivity {
 				});
 	}
 
+	private void doesUserExist(String uid) {
+	/*	contactReference = mDatabase.child(CONTACT_DB);
+		userReference = mDatabase.child(USER_DB);
+
+		userReference.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				String key = dataSnapshot.getKey();
+				if (dataSnapshot.exists()){
+					Intent userIntent = new Intent(getApplicationContext(), ProfileActivity.class);
+					userIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					startActivity(userIntent);
+				}else{
+
+				}
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+
+			}
+		});*/
+
+	}
+
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -137,6 +168,7 @@ public class SignUpActivity extends AppCompatActivity {
 				assert account != null;
 				firebaseAuthWithGoogle(account);
 				Snackbar.make(findViewById(R.id.signupLayout), "Welcome " + account.getDisplayName(), Snackbar.LENGTH_SHORT).show();
+
 			} catch (ApiException e) {
 				Snackbar.make(findViewById(R.id.signupLayout), "Error: Something went wrong.", Snackbar.LENGTH_SHORT).show();
 				Log.w(TAG, "Google sign in failed", e);

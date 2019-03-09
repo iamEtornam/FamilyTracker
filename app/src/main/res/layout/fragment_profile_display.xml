@@ -15,7 +15,7 @@
 		android:layout_marginStart="@dimen/dp_24"
 		android:layout_marginTop="@dimen/dp_24"
 		android:layout_marginEnd="@dimen/dp_24"
-		android:layout_marginBottom="@dimen/dp_60"
+		android:layout_marginBottom="@dimen/dp_72"
 		android:orientation="vertical">
 
 		<RelativeLayout
@@ -124,6 +124,16 @@
 			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textSize="18sp"
 			tools:text="@string/text_placeholder" />
+
+		<Button
+			android:id="@+id/btnLogout"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginTop="@dimen/dp_30"
+			android:layout_marginBottom="@dimen/dp_72"
+			android:background="@color/colorPrimary"
+			android:text="@string/logout"
+			android:textColor="@color/colorWhite" />
 
 	</LinearLayout>
 

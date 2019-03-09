@@ -2,6 +2,7 @@ package co.etornam.familytracker.ui;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -48,6 +49,10 @@ public class DisplayHealthInfoActivity extends AppCompatActivity {
 	TextView txtDoctorNumber;
 	@BindView(R.id.layoutMain)
 	LinearLayout layoutMain;
+	@BindView(R.id.txtAllergyInfo)
+	TextView txtAllergyInfo;
+	@BindView(R.id.txtMedicationInfo)
+	TextView txtMedicationInfo;
 	private String TAG = DisplayHealthInfoActivity.class.getSimpleName();
 	private DatabaseReference mDatabase;
 	private FirebaseAuth mAuth;
@@ -68,16 +73,43 @@ public class DisplayHealthInfoActivity extends AppCompatActivity {
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 				Health health = dataSnapshot.getValue(Health.class);
 				assert health != null;
-				txtDonor.setText(health.getDonor());
-				txtDiabetic.setText(health.getDiabetic());
-				txtBloodGroup.setText(health.getBloodgroup());
-				txtBloodPressure.setText(health.getBloodpressure());
-				txtAllergies.setText(health.getAllergy());
-				txtMedication.setText(health.getMedication());
-				txtInsuranceCompany.setText(health.getCompanyname());
-				txtInsuranceId.setText(health.getInsurancenumber());
-				txtDoctorName.setText(health.getDoctorname());
-				txtDoctorNumber.setText(health.getDoctornumber());
+				String donor = "DONOR: " + health.getDonor();
+				String diabetic = "DIABETIC: " + health.getDiabetic();
+				String bloodGroup = "BLOOD GROUP: " + health.getBloodgroup();
+				String bloodPressure = "BLOOD PRESSURE: " + health.getBloodpressure();
+				String allergy = "ALLERGY: " + health.getAllergy();
+				String allergyInfo = "ALLERGY INFO. : " + health.getAllergyinfo();
+				String medication = "MEDICATION: " + health.getMedication();
+				String medicationInfo = "MEDICATION INFO. : " + health.getMedinfo();
+				String insuranceName = "INSURANCE COMPANY: " + health.getCompanyname();
+				String insuranceNumber = "INSURANCE NUMBER: " + health.getInsurancenumber();
+				String doctorName = "DOCTOR: " + health.getDoctorname();
+				String doctorNumber = "(" + health.getDoctornumber() + ")";
+
+				txtDonor.setText(donor);
+				txtDiabetic.setText(diabetic);
+				txtBloodGroup.setText(bloodGroup);
+				txtBloodPressure.setText(bloodPressure);
+				txtAllergies.setText(allergy);
+				txtMedication.setText(medication);
+				txtInsuranceCompany.setText(insuranceName);
+				txtInsuranceId.setText(insuranceNumber);
+				txtDoctorName.setText(doctorName);
+				txtDoctorNumber.setText(doctorNumber);
+
+				if (allergy.equalsIgnoreCase("yes")) {
+					txtAllergyInfo.setVisibility(View.VISIBLE);
+					txtAllergyInfo.setText(allergyInfo);
+				} else {
+					txtAllergyInfo.setVisibility(View.GONE);
+				}
+
+				if (medication.equalsIgnoreCase("yes")) {
+					txtMedicationInfo.setVisibility(View.VISIBLE);
+					txtMedicationInfo.setText(medicationInfo);
+				} else {
+					txtMedicationInfo.setVisibility(View.GONE);
+				}
 			}
 
 			@Override

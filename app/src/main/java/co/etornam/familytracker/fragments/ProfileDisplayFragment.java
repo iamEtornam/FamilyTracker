@@ -7,7 +7,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -30,7 +32,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import co.etornam.familytracker.R;
 import co.etornam.familytracker.model.Profile;
+import co.etornam.familytracker.security.SignUpActivity;
 import co.etornam.familytracker.ui.DisplayHealthInfoActivity;
+import co.etornam.familytracker.ui.ProfileActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static co.etornam.familytracker.util.Constants.USER_DB;
@@ -57,6 +61,10 @@ public class ProfileDisplayFragment extends Fragment {
 	TextView txtUserMobileNumber;
 	@BindView(R.id.fragDisplayMain)
 	ScrollView fragDisplayMain;
+	@BindView(R.id.displayLayout)
+	LinearLayout displayLayout;
+	@BindView(R.id.btnLogout)
+	Button btnLogout;
 	@BindView(R.id.btnHealth)
 	ImageButton btnHealth;
 	@BindView(R.id.btnEdit)
@@ -124,6 +132,16 @@ public class ProfileDisplayFragment extends Fragment {
 		});
 	}
 
+	@OnClick(R.id.btnLogout)
+	public void onViewClicked() {
+		if (mAuth.getCurrentUser() != null) {
+			mAuth.signOut();
+			Intent logoutIntent = new Intent(getContext(), SignUpActivity.class);
+			logoutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(logoutIntent);
+		}
+	}
+
 	@OnClick({R.id.btnHealth, R.id.btnEdit})
 	public void onViewClicked(View view) {
 		switch (view.getId()) {
@@ -133,6 +151,9 @@ public class ProfileDisplayFragment extends Fragment {
 				startActivity(healthIntent);
 				break;
 			case R.id.btnEdit:
+				Intent profileIntent = new Intent(getContext(), ProfileActivity.class);
+				profileIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+				startActivity(profileIntent);
 				break;
 		}
 	}

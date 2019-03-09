@@ -3,6 +3,7 @@ package co.etornam.familytracker.ui;
 import android.Manifest;
 import android.os.Bundle;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.karumi.dexter.Dexter;
@@ -14,18 +15,17 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import co.etornam.familytracker.R;
-import co.etornam.familytracker.fragments.ProfileDisplayFragment;
+import co.etornam.familytracker.fragments.ProfileEditFragment;
 
 public class ProfileActivity extends AppCompatActivity {
 	@BindView(R.id.fragContainer)
 	FrameLayout fragContainer;
 	@BindView(R.id.profileMainLayout)
-	ConstraintLayout profileMainLayout;
+	LinearLayout profileMainLayout;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +33,8 @@ public class ProfileActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_profile);
 		ButterKnife.bind(this);
 
-		ProfileDisplayFragment profileEditFragment = new ProfileDisplayFragment();
-
+		ProfileEditFragment profileEditFragment = new ProfileEditFragment();
+		assert getSupportFragmentManager() != null;
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		transaction.replace(R.id.fragContainer, profileEditFragment);
 		transaction.commit();
@@ -53,12 +53,10 @@ public class ProfileActivity extends AppCompatActivity {
 				}
 			}
 
-
 			@Override
 			public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
 				token.continuePermissionRequest();
 			}
 		}).check();
 	}
-
 }

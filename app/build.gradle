@@ -51,10 +51,10 @@ dependencies {
     implementation 'com.github.florent37:expansionpanel:1.2.2'
 
     //mapbox dependencies
-    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:7.1.2'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:7.2.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-traffic:0.6.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-core:1.1.0'
-    implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.30.0'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.31.0'
 
     //firebase dependencies
     implementation 'com.google.firebase:firebase-core:16.0.7'

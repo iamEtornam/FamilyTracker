@@ -44,7 +44,31 @@
 		tools:text="@string/text_placeholder" />
 
 	<TextView
+		android:id="@+id/txtAllergyInfo"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="8dp"
+		android:layout_marginTop="15dp"
+		android:drawableStart="@drawable/ic_person"
+		android:drawablePadding="8dp"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textSize="18sp"
+		tools:text="@string/text_placeholder" />
+
+	<TextView
 		android:id="@+id/txtMedication"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="8dp"
+		android:layout_marginTop="15dp"
+		android:drawableStart="@drawable/ic_person"
+		android:drawablePadding="8dp"
+		android:textAppearance="?android:attr/textAppearanceMedium"
+		android:textSize="18sp"
+		tools:text="@string/text_placeholder" />
+
+	<TextView
+		android:id="@+id/txtMedicationInfo"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginStart="8dp"
@@ -98,7 +122,7 @@
 		android:layout_height="wrap_content"
 		android:layout_marginStart="8dp"
 		android:layout_marginTop="15dp"
-
+		android:drawableStart="@drawable/ic_person"
 		android:textAppearance="?android:attr/textAppearanceMedium"
 		android:textSize="18sp"
 		tools:text="@string/text_placeholder" />
