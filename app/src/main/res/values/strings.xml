@@ -120,4 +120,19 @@
 	<string name="appwidget_text">EXAMPLE</string>
 	<string name="add_widget">Add widget</string>
 	<string name="logout">Logout</string>
+	<string name="no_data">No Data</string>
+	<string name="enter_digit_code">Enter 4 digit code</string>
+	<string name="pin_code_desc">Set your App protection PIN code</string>
+	<string name="enter_digit_code_repeat">Enter 4 digit code again.</string>
+	<string name="submit">Set Pin</string>
+	<string name="pref_track_key" translatable="false">track_key</string>
+	<string name="pref_protect_key" translatable="false">protect_key</string>
+	<string name="pref_report_key" translatable="false">report_key</string>
+	<string name="pref_share_key" translatable="false">share_key</string>
+	<string name="pref_privacy_key" translatable="false">privacy_key</string>
+	<string name="pref_terms_key" translatable="false">terms_key</string>
+	<string name="isAuthSet_key">isAuthSet</string>
+	<string name="enter_your_passcode_to_continue">Enter your Passcode to continue...</string>
+	<string name="validate">Validate</string>
+	<string name="forgot_passcode">Forgot Passcode? Reset here.</string>
 </resources>

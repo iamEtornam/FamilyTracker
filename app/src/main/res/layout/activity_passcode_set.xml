@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:background="@color/colorPrimary"
+	android:orientation="vertical"
+	tools:context=".ui.PasscodeSetActivity">
+
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:layout_marginTop="@dimen/dp_72"
+		android:text="@string/pin_code_desc"
+		android:textColor="@color/colorWhite"
+		android:textSize="21sp"
+		android:textStyle="bold" />
+
+	<EditText
+		android:id="@+id/edtPinOne"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="@dimen/dp_45"
+		android:layout_marginTop="@dimen/dp_25"
+		android:layout_marginEnd="@dimen/dp_45"
+		android:background="@drawable/pin_text_outline"
+		android:hint="@string/enter_digit_code"
+		android:inputType="numberPassword"
+		android:maxLength="4"
+		android:padding="@dimen/dp_10"
+		android:singleLine="true"
+		android:textAlignment="center" />
+
+	<EditText
+		android:id="@+id/edtPinTwo"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="@dimen/dp_45"
+		android:layout_marginTop="@dimen/dp_25"
+		android:layout_marginEnd="@dimen/dp_45"
+		android:background="@drawable/pin_text_outline"
+		android:hint="@string/enter_digit_code_repeat"
+		android:inputType="numberPassword"
+		android:maxLength="4"
+		android:padding="@dimen/dp_10"
+		android:singleLine="true"
+		android:textAlignment="center" />
+
+	<Button
+		android:id="@+id/btnSubmit"
+		style="@style/Theme.AppCompat.Light"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="@dimen/dp_16"
+		android:layout_marginTop="@dimen/dp_25"
+		android:layout_marginEnd="@dimen/dp_16"
+		android:background="@color/colorYellow"
+		android:padding="@dimen/dp_10"
+		android:text="@string/submit"
+		android:textColor="@color/colorBlack" />
+
+	<Button
+		android:id="@+id/btnForgotPasscode"
+		style="@style/Theme.AppCompat.Light"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginStart="@dimen/dp_16"
+		android:layout_marginTop="@dimen/dp_8"
+		android:layout_marginEnd="@dimen/dp_16"
+		android:background="@android:color/transparent"
+		android:padding="@dimen/dp_10"
+		android:text="@string/forgot_passcode"
+		android:textAlignment="textEnd"
+		android:textColor="@color/colorBlack" />
+</LinearLayout>

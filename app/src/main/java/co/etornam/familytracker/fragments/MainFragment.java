@@ -1,5 +1,6 @@
 package co.etornam.familytracker.fragments;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,14 +9,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.dynamiclinks.DynamicLink;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
+import com.google.firebase.dynamiclinks.ShortDynamicLink;
 import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
@@ -33,6 +43,10 @@ import co.etornam.familytracker.R;
 import co.etornam.familytracker.dialogFragment.ContactDialogFragment;
 import co.etornam.familytracker.model.Contact;
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.paperdb.Paper;
+
+import static co.etornam.familytracker.util.Constants.CONTACT_DB;
+import static co.etornam.familytracker.util.Constants.TRACKING_DB;
 
 public class MainFragment extends Fragment {
 	@BindView(R.id.addContactFab)
@@ -41,6 +55,7 @@ public class MainFragment extends Fragment {
 	private FirebaseAuth mAuth;
 	@BindView(R.id.rvMainContact)
 	RecyclerView rvMainContact;
+	private DatabaseReference mDatabase, mContactDb, mTrackingDb;
 	private String TAG = MainFragment.class.getSimpleName();
 
 	public MainFragment() {
@@ -50,7 +65,7 @@ public class MainFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		mDatabase = FirebaseDatabase.getInstance().getReference();
 	}
 
 	@Override
@@ -86,6 +101,10 @@ public class MainFragment extends Fragment {
 				contactViewHolder.ContactTrackBtn.setOnClickListener(v -> initializeTracker(list_id));
 
 				contactViewHolder.ContactMainLayout.setOnClickListener(v -> initializeTracker(list_id));
+				contactViewHolder.ContactMainLayout.setOnLongClickListener(v -> {
+					addToPaperDb(list_id);
+					return false;
+				});
 			}
 
 			@NonNull
@@ -98,6 +117,30 @@ public class MainFragment extends Fragment {
 
 		rvMainContact.setAdapter(adapter);
 		return view;
+	}
+
+	private void addToPaperDb(String list_id) {
+		mContactDb = mDatabase.child(CONTACT_DB);
+		mTrackingDb = mDatabase.child(TRACKING_DB);
+		mContactDb.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(list_id).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				Contact contact = dataSnapshot.getValue(Contact.class);
+				assert contact != null;
+				Paper.book().write("id", list_id);
+				Paper.book().write("data", contact);
+				Toast.makeText(getContext(), "Added to Widget!", Toast.LENGTH_SHORT).show();
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+				Log.d(TAG, "onCancelled: " + databaseError.getMessage());
+				Toast.makeText(getContext(), "Something went wrong. Try again.", Toast.LENGTH_SHORT).show();
+			}
+		});
+
+		mTrackingDb.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child("authorized").child(list_id).setValue(true);
+
 	}
 
 	private void initializeTracker(String positionId) {
@@ -118,20 +161,46 @@ public class MainFragment extends Fragment {
 		startActivity(sendIntent);
 */
 
-
 		FirebaseDynamicLinks.getInstance().createDynamicLink()
-				.setLongLink(Uri.parse("https://example.page.link/?link=https://www.example.com/&apn=com.example.android&ibn=com.example.ios"))
+				.setLink(Uri.parse("https://www.etornam.com/tracker?id=" + positionId))
+				.setDomainUriPrefix("https://etornam.page.link")
+				// Open links with this app on Android
+				.setAndroidParameters(new DynamicLink.AndroidParameters.Builder().build())
 				.buildShortDynamicLink()
-				.addOnCompleteListener(task -> {
-					if (task.isSuccessful()) {
-						// Short link created
-						Uri shortLink = Objects.requireNonNull(task.getResult()).getShortLink();
-						Uri flowchartLink = task.getResult().getPreviewLink();
-						Log.d(TAG, "onComplete: SHORT LINK: " + shortLink);
-					} else {
-						Log.d(TAG, "initializeTracker: " + task.getException());
+				.addOnCompleteListener(new OnCompleteListener<ShortDynamicLink>() {
+					@Override
+					public void onComplete(@NonNull Task<ShortDynamicLink> task) {
+						if (task.isSuccessful()) {
+							// Short link created
+							Uri shortLink = Objects.requireNonNull(task.getResult()).getShortLink();
+							Log.d(TAG, "onComplete: SHORT LINK " + shortLink);
+
+							Intent sendIntent = new Intent();
+							String msg = "Hey, check this out: " + shortLink;
+							sendIntent.setAction(Intent.ACTION_SEND);
+							sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
+							sendIntent.setType("text/plain");
+							startActivity(sendIntent);
+						} else {
+							Log.d(TAG, "onComplete: " + task.getException());
+						}
 					}
 				});
+
+//
+//		FirebaseDynamicLinks.getInstance().createDynamicLink()
+//				.setLongLink(Uri.parse("https://example.page.link/?link=https://www.example.com/&apn=com.example.android&ibn=com.example.ios"))
+//				.buildShortDynamicLink()
+//				.addOnCompleteListener(task -> {
+//					if (task.isSuccessful()) {
+//						// Short link created
+//						Uri shortLink = Objects.requireNonNull(task.getResult()).getShortLink();
+//						Uri flowchartLink = task.getResult().getPreviewLink();
+//						Log.d(TAG, "onComplete: SHORT LINK: " + shortLink);
+//					} else {
+//						Log.d(TAG, "initializeTracker: " + task.getException());
+//					}
+//				});
 
 
 /*
@@ -165,6 +234,15 @@ public class MainFragment extends Fragment {
 		trackerIntent.putExtra("position_id", positionId);
 		trackerIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		startActivity(trackerIntent);*/
+	}
+
+	public void onboardingShare(ShortDynamicLink dl) {
+		// [START ddl_onboarding_share]
+		Intent intent = new Intent(Intent.ACTION_SEND);
+		intent.setType("text/plain");
+		intent.putExtra(Intent.EXTRA_TEXT, "Try this amazing app: " + dl.getShortLink());
+		startActivity(Intent.createChooser(intent, "Share using"));
+		// [END ddl_onboarding_share]
 	}
 
 	@Override

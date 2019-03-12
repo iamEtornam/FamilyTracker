@@ -1,115 +1,157 @@
 package co.etornam.familytracker.services;
 
-import android.Manifest;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.LocationListener;
+import android.location.Location;
 import android.location.LocationManager;
-import android.os.Binder;
-import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Objects;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 
 public class LocationFetcherService extends Service {
-	private final LocationServiceBinder binder = new LocationServiceBinder();
-	private final String TAG = LocationFetcherService.class.getSimpleName();
-	private final int LOCATION_INTERVAL = 500;
-	private final int LOCATION_DISTANCE = 10;
-	private LocationListener mLocationListener;
-	private LocationManager mLocationManager;
-	private NotificationManager notificationManager;
+	private static final String TAG = "MyLocationService";
+	private static final int LOCATION_INTERVAL = 500;
+	private static final float LOCATION_DISTANCE = 1f;
+	LocationListener[] mLocationListeners = new LocationListener[]{
+			new LocationListener(LocationManager.PASSIVE_PROVIDER),
+			new LocationListener(LocationManager.GPS_PROVIDER),
+			new LocationListener(LocationManager.NETWORK_PROVIDER)
+	};
+	private LocationManager mLocationManager = null;
+	private DatabaseReference mReference, mLocationDb;
+	private FirebaseAuth mAuth;
 
-	@Nullable
 	@Override
-	public IBinder onBind(Intent intent) {
-		return binder;
+	public IBinder onBind(Intent arg0) {
+		return null;
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		Log.e(TAG, "onStartCommand");
 		super.onStartCommand(intent, flags, startId);
-		return START_NOT_STICKY;
+		return START_STICKY;
 	}
 
 	@Override
 	public void onCreate() {
-		super.onCreate();
-		Log.d(TAG, "onCreate: ");
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-			startForeground(1900, getNotification());
-		} else {
+		Log.e(TAG, "onCreate");
+		mReference = FirebaseDatabase.getInstance().getReference();
+		mAuth = FirebaseAuth.getInstance();
+		initializeLocationManager();
 
+		try {
+			mLocationManager.requestLocationUpdates(
+					LocationManager.PASSIVE_PROVIDER,
+					LOCATION_INTERVAL,
+					LOCATION_DISTANCE,
+					mLocationListeners[0]
+			);
+		} catch (java.lang.SecurityException ex) {
+			Log.d(TAG, "fail to request location update, ignore", ex);
+		} catch (IllegalArgumentException ex) {
+			Log.d(TAG, "network provider does not exist, " + ex.getMessage());
 		}
 	}
 
 	@Override
 	public void onDestroy() {
+		Log.e(TAG, "onDestroy");
 		super.onDestroy();
 		if (mLocationManager != null) {
-			try {
-				mLocationManager.removeUpdates(mLocationListener);
-			} catch (Exception ex) {
-				Log.d(TAG, "onDestroy: " + ex);
+			for (int i = 0; i < mLocationListeners.length; i++) {
+				try {
+					if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+						return;
+					}
+					mLocationManager.removeUpdates(mLocationListeners[i]);
+				} catch (Exception ex) {
+					Log.i(TAG, "fail to remove location listener, ignore", ex);
+				}
 			}
 		}
 	}
 
 	private void initializeLocationManager() {
+		Log.e(TAG, "initializeLocationManager - LOCATION_INTERVAL: " + LOCATION_INTERVAL + " LOCATION_DISTANCE: " + LOCATION_DISTANCE);
 		if (mLocationManager == null) {
 			mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+			initializeLocationManager();
 		}
 	}
 
-	@RequiresApi(api = Build.VERSION_CODES.M)
-	public void startTracking() {
-		initializeLocationManager();
-		mLocationListener = new co.etornam.familytracker.Listeners.LocationListener(LocationManager.GPS_PROVIDER);
-		try {
-			if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-				// TODO: Consider calling
-				//    Activity#requestPermissions
-				// here to request the missing permissions, and then overriding
-				//   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-				//                                          int[] grantResults)
-				// to handle the case where the user grants the permission. See the documentation
-				// for Activity#requestPermissions for more details.
-				return;
+	private class LocationListener implements android.location.LocationListener {
+		Location mLastLocation;
+
+		LocationListener(String provider) {
+			Log.e(TAG, "LocationListener " + provider);
+			mLastLocation = new Location(provider);
+		}
+
+		@Override
+		public void onLocationChanged(Location location) {
+			Log.e(TAG, "onLocationChanged: " + location);
+
+			try {
+
+				mLocationDb = mReference.child("tracking").child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+				HashMap<String, String> stringMap = new HashMap<>();
+				stringMap.put("accuracy", String.valueOf(location.getAccuracy()));
+				stringMap.put("altitude", String.valueOf(location.getAltitude()));
+				stringMap.put("bearing", String.valueOf(location.getBearing()));
+				stringMap.put("elapsedRealtimeNanos", String.valueOf(location.getElapsedRealtimeNanos()));
+				stringMap.put("fromMockProvider", String.valueOf(location.isFromMockProvider()));
+				stringMap.put("latitude", String.valueOf(location.getLatitude()));
+				stringMap.put("longitude", String.valueOf(location.getLongitude()));
+				stringMap.put("provider", location.getProvider());
+				stringMap.put("speed", String.valueOf(location.getSpeed()));
+				stringMap.put("time", String.valueOf(location.getTime()));
+				mLocationDb.push().setValue(stringMap)
+						.addOnSuccessListener(new OnSuccessListener<Void>() {
+							@Override
+							public void onSuccess(Void aVoid) {
+								Log.d(TAG, "UserTracking onSuccess: Uploaded");
+							}
+						}).addOnFailureListener(new OnFailureListener() {
+					@Override
+					public void onFailure(@NonNull Exception e) {
+						Log.d(TAG, "UserTracking onFailure: failed to upload");
+					}
+				});
+
+				mLastLocation.set(location);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE, mLocationListener);
-		} catch (java.lang.SecurityException ex) {
-			// Log.i(TAG, "fail to request location update, ignore", ex);
-		} catch (IllegalArgumentException ex) {
-			// Log.d(TAG, "gps provider does not exist " + ex.getMessage());
 		}
-	}
 
-	public void stopTracking() {
-		this.onDestroy();
-	}
+		@Override
+		public void onProviderDisabled(String provider) {
+			Log.e(TAG, "onProviderDisabled: " + provider);
+		}
 
-	@RequiresApi(api = Build.VERSION_CODES.O)
-	private Notification getNotification() {
+		@Override
+		public void onProviderEnabled(String provider) {
+			Log.e(TAG, "onProviderEnabled: " + provider);
+		}
 
-		NotificationChannel channel = new NotificationChannel("channel_01", "My Channel", NotificationManager.IMPORTANCE_DEFAULT);
-
-		NotificationManager notificationManager = getSystemService(NotificationManager.class);
-		notificationManager.createNotificationChannel(channel);
-
-		Notification.Builder builder = new Notification.Builder(getApplicationContext(), "channel_01").setAutoCancel(true);
-		return builder.build();
-	}
-
-	public class LocationServiceBinder extends Binder {
-		public LocationFetcherService getService() {
-			return LocationFetcherService.this;
+		@Override
+		public void onStatusChanged(String provider, int status, Bundle extras) {
+			Log.e(TAG, "onStatusChanged: " + provider);
 		}
 	}
 }

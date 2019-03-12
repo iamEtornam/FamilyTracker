@@ -4,7 +4,7 @@
 	<PreferenceCategory android:title="@string/actions">
 		<SwitchPreference
 			android:defaultValue="false"
-			android:key="track_key"
+			android:key="@string/pref_track_key"
 			android:summary="@string/track_summary"
 			android:summaryOff="@string/tracking_deactivated"
 			android:summaryOn="@string/tracking_activated"
@@ -12,7 +12,7 @@
 
 		<SwitchPreference
 			android:defaultValue="false"
-			android:key="protect_key"
+			android:key="@string/pref_protect_key"
 			android:summary="@string/protect_summary"
 			android:summaryOff="@string/pin_disabled"
 			android:summaryOn="@string/pin_enabled"
@@ -21,20 +21,20 @@
 
 	<PreferenceCategory android:title="@string/other_actions">
 		<Preference
-			android:key="report_key"
+			android:key="@string/pref_report_key"
 			android:summary="@string/report_summary"
 			android:title="@string/report_bug" />
 
 		<Preference
-			android:key="share_key"
+			android:key="@string/pref_share_key"
 			android:title="@string/share_app" />
 
 		<Preference
-			android:key="privacy_key"
+			android:key="@string/pref_privacy_key"
 			android:title="@string/privacy_title" />
 
 		<Preference
-			android:key="terms_key"
+			android:key="@string/pref_terms_key"
 			android:title="@string/terms_conditions" />
 	</PreferenceCategory>
 

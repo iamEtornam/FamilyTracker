@@ -49,6 +49,8 @@ dependencies {
     implementation 'com.karumi:dexter:5.0.0'
     implementation 'com.github.joaquimley:faboptions:1.2.0'
     implementation 'com.github.florent37:expansionpanel:1.2.2'
+    implementation 'io.paperdb:paperdb:2.6'
+    implementation 'com.github.nanchen2251:PinView:1.0.1'
 
     //mapbox dependencies
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:7.2.0'
