@@ -12,16 +12,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
-import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 import com.joaquimley.faboptions.FabOptions;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineCallback;
@@ -84,7 +80,7 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 	private DirectionsRoute currentRoute;
 	private NavigationMapRoute navigationMapRoute;
 	private DatabaseReference mDatabase;
-	private String postionId;
+	private String positionId;
 	private Contact contact;
 	private FirebaseAuth mAuth;
 	private Double destinationLat;
@@ -106,34 +102,13 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 		mapViewSingle.onCreate(savedInstanceState);
 		Intent trackerIntent = getIntent();
 		if (trackerIntent != null) {
-			postionId = trackerIntent.getStringExtra("position_id");
+			positionId = trackerIntent.getStringExtra("id");
 		}
 		mapViewSingle.getMapAsync(this);
 		mAuth = FirebaseAuth.getInstance();
 		mDatabase = FirebaseDatabase.getInstance().getReference();
 		fabOptions.setOnClickListener(this);
 		fabOptions.setVisibility(View.GONE);
-
-		FirebaseDynamicLinks.getInstance()
-				.getDynamicLink(getIntent())
-				.addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
-					@Override
-					public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
-						// Get deep link from result (may be null if no link is found)
-						Uri deepLink = null;
-						if (pendingDynamicLinkData != null) {
-							deepLink = pendingDynamicLinkData.getLink();
-							Log.d(TAG, "onSuccess: DeepLink: " + deepLink);
-						}
-
-					}
-				})
-				.addOnFailureListener(this, new OnFailureListener() {
-					@Override
-					public void onFailure(@NonNull Exception e) {
-						Log.w(TAG, "getDynamicLink:onFailure", e);
-					}
-				});
 
 	/*	mDatabase.child(CONTACT_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(postionId).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
@@ -345,10 +320,11 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 				if (originLocation == null) {
 					return;
 				}
-				mDatabase.child(TRACKING_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(postionId).addValueEventListener(new ValueEventListener() {
-					@Override
-					public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-						Tracker tracker = dataSnapshot.getValue(Tracker.class);
+				if (!positionId.isEmpty()) {
+					mDatabase.child(TRACKING_DB).child(positionId).addValueEventListener(new ValueEventListener() {
+						@Override
+						public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+							Tracker tracker = dataSnapshot.getValue(Tracker.class);
 							assert tracker != null;
 							destinationLat = Double.parseDouble(tracker.getLatitude());
 							destinationLng = Double.parseDouble(tracker.getLongitude());
@@ -358,13 +334,16 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 							mapboxMap.addMarker(new MarkerOptions().position(destinationLatLng));
 							getRoute(originPoint, destinationPoint);
 
-					}
+						}
 
-					@Override
-					public void onCancelled(@NonNull DatabaseError databaseError) {
-						Log.d(TAG, "onCancelled: " + databaseError.getMessage());
-					}
-				});
+						@Override
+						public void onCancelled(@NonNull DatabaseError databaseError) {
+							Log.d(TAG, "onCancelled: " + databaseError.getMessage());
+						}
+					});
+				} else {
+					Log.d(TAG, "onSuccess: POSITION ID IS EMPTY");
+				}
 				Log.d(TAG, "onSuccess: " + result.getLocations());
 
 				if (trackerActivity.mapboxMap != null && result.getLastLocation() != null) {

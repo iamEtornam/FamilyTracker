@@ -5,19 +5,18 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
-import com.google.firebase.dynamiclinks.PendingDynamicLinkData;
 
-import androidx.annotation.NonNull;
+import java.util.Objects;
+
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +35,7 @@ import co.etornam.familytracker.services.LocationFetcherService;
 import io.paperdb.Paper;
 
 import static co.etornam.familytracker.util.Constants.AUTH_STATUS;
+import static co.etornam.familytracker.util.Constants.ID_KEY;
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 	private static final String TAG = MainActivity.class.getSimpleName();
@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 	BottomNavigationView mainNavView;
 	private boolean isTrackingActivated;
 	private boolean isPinActivated;
+	private String key;
 	private FirebaseAuth mAuth;
 	private SharedPreferences sharedPreferences;
 
@@ -68,24 +69,30 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
 		FirebaseDynamicLinks.getInstance()
 				.getDynamicLink(getIntent())
-				.addOnSuccessListener(this, new OnSuccessListener<PendingDynamicLinkData>() {
-					@Override
-					public void onSuccess(PendingDynamicLinkData pendingDynamicLinkData) {
-						// Get deep link from result (may be null if no link is found)
-						Uri deepLink = null;
-						if (pendingDynamicLinkData != null) {
-							deepLink = pendingDynamicLinkData.getLink();
-							Log.d(TAG, "onSuccess: DeepLink: " + deepLink);
-						}
+				.addOnSuccessListener(this, pendingDynamicLinkData -> {
+					// Get deep link from result (may be null if no link is found)
+					Uri deepLink = null;
+					if (pendingDynamicLinkData != null) {
+						deepLink = pendingDynamicLinkData.getLink();
+						handleDeepLink(deepLink);
+						Log.d(TAG, "onSuccess: DeepLink: " + deepLink);
+					}
 
-					}
 				})
-				.addOnFailureListener(this, new OnFailureListener() {
-					@Override
-					public void onFailure(@NonNull Exception e) {
-						Log.w(TAG, "getDynamicLink:onFailure", e);
-					}
-				});
+				.addOnFailureListener(this, e -> Log.w(TAG, "getDynamicLink:onFailure", e));
+	}
+
+	private void handleDeepLink(Uri deepLink) {
+		if (Objects.equals(deepLink.getPath(), "/tracker")) {
+			key = deepLink.getQueryParameter("id");
+			Toast.makeText(this, "key from MainActivity: " + key, Toast.LENGTH_SHORT).show();
+			new Handler().postDelayed(() -> {
+				Intent intent = new Intent(MainActivity.this, SingleTrackerActivity.class);
+				intent.putExtra("id", deepLink.getQueryParameter("id"));
+				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+				startActivity(intent);
+			}, 5000);
+		}
 	}
 
 	private void checkPinStatus() {
@@ -101,9 +108,12 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 
 	void displaySelectedScreen(int screenId) {
 		Fragment selectedFragment = null;
+		Bundle bundle = new Bundle();
+		bundle.putString(ID_KEY, key);
 		switch (screenId) {
 			case R.id.action_home:
 				selectedFragment = new MainFragment();
+				selectedFragment.setArguments(bundle);
 				break;
 			case R.id.action_profile:
 				selectedFragment = new ProfileDisplayFragment();

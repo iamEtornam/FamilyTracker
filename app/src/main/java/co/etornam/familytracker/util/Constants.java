@@ -8,4 +8,5 @@ public class Constants {
 	public static final String DOCTOR_NAME = "DOCTOR_NAME";
 	public static final String DOCTOR_NUMBER = "DOCTOR_NUMBER";
 	public static final String AUTH_STATUS = "AUTH_STATUS";
+	public static final String ID_KEY = "id_key";
 }

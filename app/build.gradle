@@ -12,6 +12,9 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
+        buildConfigField("String", "SMS_API_URL", SMS_API_URL)
+        buildConfigField("String", "SMS_USERNAME", SMS_USERNAME)
+        buildConfigField("String", "SMS_PASSWORD", SMS_PASSWORD)
     }
     buildTypes {
         release {

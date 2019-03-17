@@ -2,6 +2,7 @@ package co.etornam.familytracker.fragments;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,9 +29,15 @@ import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.ShortDynamicLink;
 import com.squareup.picasso.Picasso;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -39,14 +46,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import co.etornam.familytracker.BuildConfig;
 import co.etornam.familytracker.R;
 import co.etornam.familytracker.dialogFragment.ContactDialogFragment;
 import co.etornam.familytracker.model.Contact;
+import co.etornam.familytracker.model.Profile;
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.paperdb.Paper;
 
 import static co.etornam.familytracker.util.Constants.CONTACT_DB;
+import static co.etornam.familytracker.util.Constants.ID_KEY;
 import static co.etornam.familytracker.util.Constants.TRACKING_DB;
+import static co.etornam.familytracker.util.Constants.USER_DB;
 
 public class MainFragment extends Fragment {
 	@BindView(R.id.addContactFab)
@@ -55,8 +66,9 @@ public class MainFragment extends Fragment {
 	private FirebaseAuth mAuth;
 	@BindView(R.id.rvMainContact)
 	RecyclerView rvMainContact;
-	private DatabaseReference mDatabase, mContactDb, mTrackingDb;
+	private DatabaseReference mDatabase, mContactDb, mTrackingDb, mUserDb;
 	private String TAG = MainFragment.class.getSimpleName();
+	private String userFullName;
 
 	public MainFragment() {
 
@@ -71,13 +83,34 @@ public class MainFragment extends Fragment {
 	@Override
 	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
+		assert getArguments() != null;
+		String key = getArguments().getString(ID_KEY);
 		View view = inflater.inflate(R.layout.fragment_main, container, false);
 		ButterKnife.bind(this, view);
 		mAuth = FirebaseAuth.getInstance();
+		mContactDb = mDatabase.child(CONTACT_DB);
+		mTrackingDb = mDatabase.child(TRACKING_DB);
+		mUserDb = mDatabase.child(USER_DB);
 		LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
 		layoutManager.setOrientation(RecyclerView.VERTICAL);
 		rvMainContact.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getContext()), DividerItemDecoration.VERTICAL));
 		rvMainContact.setLayoutManager(layoutManager);
+
+		Toast.makeText(getContext(), "key from fragment: " + key, Toast.LENGTH_SHORT).show();
+
+		mUserDb.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				Profile profile = dataSnapshot.getValue(Profile.class);
+				assert profile != null;
+				userFullName = profile.getFirstName() + " " + profile.getOtherName();
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+				Log.d(TAG, "onCancelled: " + databaseError.getMessage());
+			}
+		});
 
 		Query query = FirebaseDatabase.getInstance()
 				.getReference()
@@ -98,7 +131,24 @@ public class MainFragment extends Fragment {
 						.error(R.drawable.img_error)
 						.placeholder(R.drawable.ic_image_placeholder)
 						.into(contactViewHolder.ContactImage);
-				contactViewHolder.ContactTrackBtn.setOnClickListener(v -> initializeTracker(list_id));
+				contactViewHolder.ContactDeleteBtn.setOnClickListener(v -> {
+					new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+							.setMessage("Are you sure you want to Delete this?")
+							.setCancelable(false)
+							.setPositiveButton("Yes", (dialog, id) -> {
+								adapter.getRef(i).removeValue();
+								notifyItemRemoved(contactViewHolder.getAdapterPosition());
+								notifyDataSetChanged();
+
+								Toast.makeText(getContext(), "Deleted! ", Toast
+										.LENGTH_SHORT)
+										.show();
+							})
+							.setNegativeButton("No", (dialog, which) -> {
+
+									}
+							).show();
+				});
 
 				contactViewHolder.ContactMainLayout.setOnClickListener(v -> initializeTracker(list_id));
 				contactViewHolder.ContactMainLayout.setOnLongClickListener(v -> {
@@ -120,8 +170,6 @@ public class MainFragment extends Fragment {
 	}
 
 	private void addToPaperDb(String list_id) {
-		mContactDb = mDatabase.child(CONTACT_DB);
-		mTrackingDb = mDatabase.child(TRACKING_DB);
 		mContactDb.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(list_id).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -144,25 +192,9 @@ public class MainFragment extends Fragment {
 	}
 
 	private void initializeTracker(String positionId) {
-/*
-		DynamicLink dynamicLink = FirebaseDynamicLinks.getInstance().createDynamicLink()
-				.setLink(Uri.parse("https://www.etornam.com/"))
-				.setDomainUriPrefix("https://etornam.page.link&"+positionId)
-				.setAndroidParameters(new DynamicLink.AndroidParameters.Builder().build())
-				.buildDynamicLink();
-
-		Uri dynamicLinkUri = dynamicLink.getUri();
-		Log.d(TAG, "initializeTracker: "+Uri.decode(dynamicLinkUri.toString()));
-		Intent sendIntent = new Intent();
-		String msg = "Hey, check this out: " + Uri.decode(dynamicLinkUri.toString()) ;
-		sendIntent.setAction(Intent.ACTION_SEND);
-		sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
-		sendIntent.setType("text/plain");
-		startActivity(sendIntent);
-*/
 
 		FirebaseDynamicLinks.getInstance().createDynamicLink()
-				.setLink(Uri.parse("https://www.etornam.com/tracker?id=" + positionId))
+				.setLink(Uri.parse("https://www.etornam.com/tracker?id=" + Objects.requireNonNull(mAuth.getCurrentUser()).getUid()))
 				.setDomainUriPrefix("https://etornam.page.link")
 				// Open links with this app on Android
 				.setAndroidParameters(new DynamicLink.AndroidParameters.Builder().build())
@@ -175,8 +207,13 @@ public class MainFragment extends Fragment {
 							Uri shortLink = Objects.requireNonNull(task.getResult()).getShortLink();
 							Log.d(TAG, "onComplete: SHORT LINK " + shortLink);
 
+
+							//send link thru sms api
+							sendSms(shortLink, positionId);
+
+
 							Intent sendIntent = new Intent();
-							String msg = "Hey, check this out: " + shortLink;
+							String msg = "Hey, here is a link to my current location: " + shortLink + " you can track me using FamilyTracker App.";
 							sendIntent.setAction(Intent.ACTION_SEND);
 							sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
 							sendIntent.setType("text/plain");
@@ -186,63 +223,60 @@ public class MainFragment extends Fragment {
 						}
 					}
 				});
+	}
 
-//
-//		FirebaseDynamicLinks.getInstance().createDynamicLink()
-//				.setLongLink(Uri.parse("https://example.page.link/?link=https://www.example.com/&apn=com.example.android&ibn=com.example.ios"))
-//				.buildShortDynamicLink()
-//				.addOnCompleteListener(task -> {
-//					if (task.isSuccessful()) {
-//						// Short link created
-//						Uri shortLink = Objects.requireNonNull(task.getResult()).getShortLink();
-//						Uri flowchartLink = task.getResult().getPreviewLink();
-//						Log.d(TAG, "onComplete: SHORT LINK: " + shortLink);
-//					} else {
-//						Log.d(TAG, "initializeTracker: " + task.getException());
-//					}
-//				});
+	private void sendSms(Uri shortLink, String positionId) {
+
+//		https://app.helliomessaging.com/api/sms?username=regnex&password=xxxxxx&senderId=TEST&msisdn=233xxxxxxxxx&message=Hello_World
+
+		mContactDb.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(positionId).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				Contact contact = dataSnapshot.getValue(Contact.class);
+				assert contact != null;
+				String msisdn = "&msisdn=" + contact.getNumber();
+				String username = "username=" + BuildConfig.SMS_USERNAME;
+				String password = "&password=" + BuildConfig.SMS_PASSWORD;
+				String message = "&message=" + "Hey, here is a link to my current location: " + shortLink + " you can track me using FamilyTracker App.";
+				String senderId = "&senderId=" + userFullName;
+				String SMS_API_URL = BuildConfig.SMS_API_URL;
 
 
-/*
-
-		FirebaseDynamicLinks.getInstance().createDynamicLink()
-				.setLink(Uri.parse("https://www.example.com/"))
-				.setDomainUriPrefix("https://example.page.link&"+positionId)
-				.setAndroidParameters(new DynamicLink.AndroidParameters.Builder().build())
-				.buildShortDynamicLink()
-				.addOnCompleteListener(new OnCompleteListener<ShortDynamicLink>() {
+				// Send data
+				AsyncTask.execute(new Runnable() {
 					@Override
-					public void onComplete(@NonNull Task<ShortDynamicLink> task) {
-						Log.d(TAG, "onComplete: "+task.getResult().toString());
-						if (task.isSuccessful()){
-							Uri dynamicLink = Objects.requireNonNull(task.getResult()).getShortLink();
-							Intent sendIntent = new Intent();
-							String msg = "Hey, check this out: " + dynamicLinkUri.toString();
-							sendIntent.setAction(Intent.ACTION_SEND);
-							sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
-							sendIntent.setType("text/plain");
-							startActivity(sendIntent);
-						}else {
-							Log.d(TAG, "onComplete: "+task.getException());
+					public void run() {
+						try {
+							HttpURLConnection conn = (HttpURLConnection) new URL(SMS_API_URL).openConnection();
+							String data = username + password + senderId + message + msisdn + message;
+							conn.setDoOutput(true);
+							conn.setRequestMethod("POST");
+							conn.setRequestProperty("Content-Length", Integer.toString(data.length()));
+							conn.getOutputStream().write(data.getBytes(StandardCharsets.UTF_8));
+							final BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+							final StringBuilder stringBuffer = new StringBuilder();
+							String line;
+							while ((line = rd.readLine()) != null) {
+								stringBuffer.append(line);
+							}
+							Log.d(TAG, "run: " + conn.getURL());
+							rd.close();
+							Toast.makeText(getContext(), "Location sent to contact through our SMS gateway", Toast.LENGTH_SHORT).show();
+							Log.d(TAG, "onDataChange: " + stringBuffer.toString());
+						} catch (Exception e) {
+							Log.d(TAG, "onDataChange: " + e);
+							Toast.makeText(getContext(), "Couldn't send Location. Try Again.", Toast.LENGTH_SHORT).show();
 						}
 					}
 				});
-*/
 
+			}
 
-		/*Intent trackerIntent = new Intent(getActivity(), SingleTrackerActivity.class);
-		trackerIntent.putExtra("position_id", positionId);
-		trackerIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-		startActivity(trackerIntent);*/
-	}
-
-	public void onboardingShare(ShortDynamicLink dl) {
-		// [START ddl_onboarding_share]
-		Intent intent = new Intent(Intent.ACTION_SEND);
-		intent.setType("text/plain");
-		intent.putExtra(Intent.EXTRA_TEXT, "Try this amazing app: " + dl.getShortLink());
-		startActivity(Intent.createChooser(intent, "Share using"));
-		// [END ddl_onboarding_share]
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+				Log.d(TAG, "onCancelled: " + databaseError.getMessage());
+			}
+		});
 	}
 
 	@Override
@@ -269,7 +303,7 @@ public class MainFragment extends Fragment {
 		TextView ContactNameTextView;
 		CircleImageView ContactImage;
 		TextView ContactRelationTextView;
-		ImageButton ContactTrackBtn;
+		ImageButton ContactDeleteBtn;
 		ConstraintLayout ContactMainLayout;
 
 		ContactViewHolder(View v) {
@@ -277,7 +311,7 @@ public class MainFragment extends Fragment {
 			ContactNameTextView = v.findViewById(R.id.txtName);
 			ContactRelationTextView = v.findViewById(R.id.txtRelation);
 			ContactImage = v.findViewById(R.id.imgProfilePic);
-			ContactTrackBtn = v.findViewById(R.id.btnTrack);
+			ContactDeleteBtn = v.findViewById(R.id.btnDelete);
 			ContactMainLayout = v.findViewById(R.id.contactMainLayout);
 		}
 	}

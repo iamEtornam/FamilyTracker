@@ -22,6 +22,8 @@ import java.util.Objects;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
+import static co.etornam.familytracker.util.Constants.TRACKING_DB;
+
 public class LocationFetcherService extends Service {
 	private static final String TAG = "MyLocationService";
 	private static final int LOCATION_INTERVAL = 500;
@@ -108,7 +110,7 @@ public class LocationFetcherService extends Service {
 
 			try {
 
-				mLocationDb = mReference.child("tracking").child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+				mLocationDb = mReference.child(TRACKING_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
 				HashMap<String, String> stringMap = new HashMap<>();
 				stringMap.put("accuracy", String.valueOf(location.getAccuracy()));
 				stringMap.put("altitude", String.valueOf(location.getAltitude()));
@@ -120,7 +122,7 @@ public class LocationFetcherService extends Service {
 				stringMap.put("provider", location.getProvider());
 				stringMap.put("speed", String.valueOf(location.getSpeed()));
 				stringMap.put("time", String.valueOf(location.getTime()));
-				mLocationDb.push().setValue(stringMap)
+				mLocationDb.setValue(stringMap)
 						.addOnSuccessListener(new OnSuccessListener<Void>() {
 							@Override
 							public void onSuccess(Void aVoid) {
