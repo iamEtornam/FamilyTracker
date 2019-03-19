@@ -1,6 +1,7 @@
 package co.etornam.familytracker.model;
 
 public class Contact {
+
 	private String imageUrl;
 	private String name;
 	private String number;

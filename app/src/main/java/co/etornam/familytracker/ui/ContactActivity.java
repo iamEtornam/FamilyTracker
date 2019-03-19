@@ -21,7 +21,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import co.etornam.familytracker.Adapter.CustomGridAdapter;
+import co.etornam.familytracker.Adapter.CustomAdapter;
 import co.etornam.familytracker.R;
 import co.etornam.familytracker.dialogFragment.ContactDialogFragment;
 import co.etornam.familytracker.model.Contact;
@@ -53,7 +53,7 @@ public class ContactActivity extends AppCompatActivity {
 
 		List<Contact> contactList = getGridData();
 
-		gridContact.setAdapter(new CustomGridAdapter(contactList, this));
+		gridContact.setAdapter(new CustomAdapter(contactList, this));
 	}
 
 	@Override

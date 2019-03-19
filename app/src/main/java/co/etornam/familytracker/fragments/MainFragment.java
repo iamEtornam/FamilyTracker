@@ -1,8 +1,8 @@
 package co.etornam.familytracker.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +12,9 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,11 +32,8 @@ import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.google.firebase.dynamiclinks.ShortDynamicLink;
 import com.squareup.picasso.Picasso;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -58,6 +58,7 @@ import static co.etornam.familytracker.util.Constants.CONTACT_DB;
 import static co.etornam.familytracker.util.Constants.ID_KEY;
 import static co.etornam.familytracker.util.Constants.TRACKING_DB;
 import static co.etornam.familytracker.util.Constants.USER_DB;
+import static co.etornam.familytracker.util.NetworkUtil.isNetworkAvailable;
 
 public class MainFragment extends Fragment {
 	@BindView(R.id.addContactFab)
@@ -69,6 +70,7 @@ public class MainFragment extends Fragment {
 	private DatabaseReference mDatabase, mContactDb, mTrackingDb, mUserDb;
 	private String TAG = MainFragment.class.getSimpleName();
 	private String userFullName;
+	private ProgressDialog progressDialog;
 
 	public MainFragment() {
 
@@ -87,6 +89,7 @@ public class MainFragment extends Fragment {
 		String key = getArguments().getString(ID_KEY);
 		View view = inflater.inflate(R.layout.fragment_main, container, false);
 		ButterKnife.bind(this, view);
+		progressDialog = new ProgressDialog(getContext());
 		mAuth = FirebaseAuth.getInstance();
 		mContactDb = mDatabase.child(CONTACT_DB);
 		mTrackingDb = mDatabase.child(TRACKING_DB);
@@ -115,7 +118,8 @@ public class MainFragment extends Fragment {
 		Query query = FirebaseDatabase.getInstance()
 				.getReference()
 				.child("contacts")
-				.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+				.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid())
+				.orderByValue();
 
 		FirebaseRecyclerOptions<Contact> options = new FirebaseRecyclerOptions.Builder<Contact>()
 				.setQuery(query, Contact.class)
@@ -131,11 +135,13 @@ public class MainFragment extends Fragment {
 						.error(R.drawable.img_error)
 						.placeholder(R.drawable.ic_image_placeholder)
 						.into(contactViewHolder.ContactImage);
-				contactViewHolder.ContactDeleteBtn.setOnClickListener(v -> {
-					new AlertDialog.Builder(Objects.requireNonNull(getContext()))
-							.setMessage("Are you sure you want to Delete this?")
-							.setCancelable(false)
-							.setPositiveButton("Yes", (dialog, id) -> {
+				contactViewHolder.ContactDeleteBtn.setOnClickListener(v -> new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+						.setMessage("Are you sure you want to Delete this?")
+						.setCancelable(false)
+						.setPositiveButton("Yes", (dialog, id) -> {
+							if (!isNetworkAvailable(Objects.requireNonNull(getContext()))) {
+								Toast.makeText(getContext(), "No internet Connection.", Toast.LENGTH_SHORT).show();
+							} else {
 								adapter.getRef(i).removeValue();
 								notifyItemRemoved(contactViewHolder.getAdapterPosition());
 								notifyDataSetChanged();
@@ -143,16 +149,50 @@ public class MainFragment extends Fragment {
 								Toast.makeText(getContext(), "Deleted! ", Toast
 										.LENGTH_SHORT)
 										.show();
-							})
+							}
+						})
+						.setNegativeButton("No", (dialog, which) -> {
+
+								}
+						).show()
+
+				);
+
+				contactViewHolder.ContactMainLayout.setOnClickListener(v ->
+						new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+								.setMessage("Do you want to share Location with this contact?")
+								.setCancelable(false)
+								.setPositiveButton("Yes", (dialog, id) -> {
+									if (!isNetworkAvailable(Objects.requireNonNull(getContext()))) {
+										Toast.makeText(getContext(), "No internet Connection.", Toast.LENGTH_SHORT).show();
+									} else {
+
+										initializeTracker(list_id);
+									}
+								})
+								.setNegativeButton("No", (dialog, which) -> {
+
+										}
+								).show()
+				);
+				contactViewHolder.ContactMainLayout.setOnLongClickListener(v -> {
+					new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+							.setMessage("Do you want to add this Contact to your Widget?")
+							.setCancelable(false)
+							.setPositiveButton("Yes", (dialog, id) -> {
+										if (!isNetworkAvailable(Objects.requireNonNull(getContext()))) {
+											Toast.makeText(getContext(), "No internet Connection.", Toast.LENGTH_SHORT).show();
+										} else {
+											addToPaperDb(list_id);
+										}
+									}
+
+							)
 							.setNegativeButton("No", (dialog, which) -> {
 
 									}
 							).show();
-				});
 
-				contactViewHolder.ContactMainLayout.setOnClickListener(v -> initializeTracker(list_id));
-				contactViewHolder.ContactMainLayout.setOnLongClickListener(v -> {
-					addToPaperDb(list_id);
 					return false;
 				});
 			}
@@ -175,7 +215,6 @@ public class MainFragment extends Fragment {
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 				Contact contact = dataSnapshot.getValue(Contact.class);
 				assert contact != null;
-				Paper.book().write("id", list_id);
 				Paper.book().write("data", contact);
 				Toast.makeText(getContext(), "Added to Widget!", Toast.LENGTH_SHORT).show();
 			}
@@ -192,7 +231,8 @@ public class MainFragment extends Fragment {
 	}
 
 	private void initializeTracker(String positionId) {
-
+		progressDialog.setMessage("Loading...");
+		progressDialog.show();
 		FirebaseDynamicLinks.getInstance().createDynamicLink()
 				.setLink(Uri.parse("https://www.etornam.com/tracker?id=" + Objects.requireNonNull(mAuth.getCurrentUser()).getUid()))
 				.setDomainUriPrefix("https://etornam.page.link")
@@ -221,6 +261,7 @@ public class MainFragment extends Fragment {
 						} else {
 							Log.d(TAG, "onComplete: " + task.getException());
 						}
+						progressDialog.dismiss();
 					}
 				});
 	}
@@ -234,41 +275,38 @@ public class MainFragment extends Fragment {
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 				Contact contact = dataSnapshot.getValue(Contact.class);
 				assert contact != null;
-				String msisdn = "&msisdn=" + contact.getNumber();
-				String username = "username=" + BuildConfig.SMS_USERNAME;
+				String msisdn = contact.getNumber();
+				String username = BuildConfig.SMS_USERNAME;
 				String password = "&password=" + BuildConfig.SMS_PASSWORD;
 				String message = "&message=" + "Hey, here is a link to my current location: " + shortLink + " you can track me using FamilyTracker App.";
 				String senderId = "&senderId=" + userFullName;
 				String SMS_API_URL = BuildConfig.SMS_API_URL;
 
 
-				// Send data
-				AsyncTask.execute(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							HttpURLConnection conn = (HttpURLConnection) new URL(SMS_API_URL).openConnection();
-							String data = username + password + senderId + message + msisdn + message;
-							conn.setDoOutput(true);
-							conn.setRequestMethod("POST");
-							conn.setRequestProperty("Content-Length", Integer.toString(data.length()));
-							conn.getOutputStream().write(data.getBytes(StandardCharsets.UTF_8));
-							final BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-							final StringBuilder stringBuffer = new StringBuilder();
-							String line;
-							while ((line = rd.readLine()) != null) {
-								stringBuffer.append(line);
+				StringRequest postRequest = new StringRequest(Request.Method.POST, SMS_API_URL,
+						response -> {
+							try {
+								Log.d(TAG, "onResponse: " + response);
+							} catch (Exception e) {
+								e.printStackTrace();
 							}
-							Log.d(TAG, "run: " + conn.getURL());
-							rd.close();
-							Toast.makeText(getContext(), "Location sent to contact through our SMS gateway", Toast.LENGTH_SHORT).show();
-							Log.d(TAG, "onDataChange: " + stringBuffer.toString());
-						} catch (Exception e) {
-							Log.d(TAG, "onDataChange: " + e);
-							Toast.makeText(getContext(), "Couldn't send Location. Try Again.", Toast.LENGTH_SHORT).show();
-						}
+						},
+						error -> error.printStackTrace()
+				) {
+					@Override
+					protected Map<String, String> getParams() {
+						Map<String, String> params = new HashMap<>();
+						// the POST parameters:
+						params.put("username", username);
+						params.put("password", password);
+						params.put("senderId", senderId);
+						params.put("msisdn", msisdn);
+						params.put("message", message);
+
+						return params;
 					}
-				});
+				};
+				Volley.newRequestQueue(Objects.requireNonNull(getContext())).add(postRequest);
 
 			}
 
@@ -278,6 +316,7 @@ public class MainFragment extends Fragment {
 			}
 		});
 	}
+
 
 	@Override
 	public void onStart() {

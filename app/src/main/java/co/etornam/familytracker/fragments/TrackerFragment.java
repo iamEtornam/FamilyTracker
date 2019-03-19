@@ -49,6 +49,7 @@ import co.etornam.familytracker.model.Tracker;
 
 import static android.os.Looper.getMainLooper;
 import static co.etornam.familytracker.util.Constants.TRACKING_DB;
+import static co.etornam.familytracker.util.NetworkUtil.isNetworkAvailable;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -213,25 +214,29 @@ public class TrackerFragment extends Fragment implements OnMapReadyCallback, Per
 				if (location == null) {
 					return;
 				}
-				mDatabase.child(TRACKING_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).addValueEventListener(new ValueEventListener() {
-					@Override
-					public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-						for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-							Tracker tracker = snapshot.getValue(Tracker.class);
-							assert tracker != null;
-							destinationLat = Double.parseDouble(tracker.getLatitude());
-							destinationLng = Double.parseDouble(tracker.getLongitude());
-							LatLng destinationLatLng = new LatLng(destinationLat, destinationLng);
-							destinationPoint = Point.fromLngLat(destinationLatLng.getLongitude(), destinationLatLng.getLatitude());
-							mapboxMap.addMarker(new MarkerOptions().position(destinationLatLng));
+				if (!isNetworkAvailable(Objects.requireNonNull(getContext()))) {
+					Toast.makeText(getContext(), "No Internet Connection.", Toast.LENGTH_SHORT).show();
+				} else {
+					mDatabase.child(TRACKING_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).addValueEventListener(new ValueEventListener() {
+						@Override
+						public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+							for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+								Tracker tracker = snapshot.getValue(Tracker.class);
+								assert tracker != null;
+								destinationLat = Double.parseDouble(tracker.getLatitude());
+								destinationLng = Double.parseDouble(tracker.getLongitude());
+								LatLng destinationLatLng = new LatLng(destinationLat, destinationLng);
+								destinationPoint = Point.fromLngLat(destinationLatLng.getLongitude(), destinationLatLng.getLatitude());
+								mapboxMap.addMarker(new MarkerOptions().position(destinationLatLng));
+							}
 						}
-					}
 
-					@Override
-					public void onCancelled(@NonNull DatabaseError databaseError) {
-						Log.d(TAG, "onCancelled: " + databaseError.getMessage());
-					}
-				});
+						@Override
+						public void onCancelled(@NonNull DatabaseError databaseError) {
+							Log.d(TAG, "onCancelled: " + databaseError.getMessage());
+						}
+					});
+				}
 
 				if (fragment.mapboxMap != null && result.getLastLocation() != null) {
 					fragment.mapboxMap.getLocationComponent().forceLocationUpdate(result.getLastLocation());

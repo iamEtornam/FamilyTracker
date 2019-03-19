@@ -19,12 +19,12 @@ import co.etornam.familytracker.R;
 import co.etornam.familytracker.model.Contact;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class CustomGridAdapter extends BaseAdapter {
+public class CustomAdapter extends BaseAdapter {
 	private List<Contact> listContact;
 	private LayoutInflater layoutInflater;
 	private Context mContext;
 
-	public CustomGridAdapter(List<Contact> listContact, Context mContext) {
+	public CustomAdapter(List<Contact> listContact, Context mContext) {
 		this.listContact = listContact;
 		this.mContext = mContext;
 		layoutInflater = LayoutInflater.from(mContext);

@@ -13,6 +13,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
@@ -42,6 +43,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import gun0912.tedbottompicker.TedBottomPicker;
 
 import static co.etornam.familytracker.util.Constants.USER_DB;
+import static co.etornam.familytracker.util.NetworkUtil.isNetworkAvailable;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -141,7 +143,12 @@ public class ProfileEditFragment extends Fragment {
 				pickImage();
 				break;
 			case R.id.btnUpdateDetail:
-				validateUserDetails();
+				if (!isNetworkAvailable(Objects.requireNonNull(getContext()))) {
+					Toast.makeText(getContext(), "No internet Connection.", Toast.LENGTH_SHORT).show();
+				} else {
+					validateUserDetails();
+				}
+
 				Log.d(TAG, "onViewClicked: " + gender);
 				break;
 		}

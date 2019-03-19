@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,6 +39,7 @@ import co.etornam.familytracker.ui.ProfileActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static co.etornam.familytracker.util.Constants.USER_DB;
+import static co.etornam.familytracker.util.NetworkUtil.isNetworkAvailable;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -135,10 +137,15 @@ public class ProfileDisplayFragment extends Fragment {
 	@OnClick(R.id.btnLogout)
 	public void onViewClicked() {
 		if (mAuth.getCurrentUser() != null) {
-			mAuth.signOut();
-			Intent logoutIntent = new Intent(getContext(), SignUpActivity.class);
-			logoutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(logoutIntent);
+			if (!isNetworkAvailable(Objects.requireNonNull(getContext()))) {
+				Toast.makeText(getContext(), "No internet Connection.", Toast.LENGTH_SHORT).show();
+			} else {
+				mAuth.signOut();
+				Intent logoutIntent = new Intent(getContext(), SignUpActivity.class);
+				logoutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				startActivity(logoutIntent);
+			}
+
 		}
 	}
 

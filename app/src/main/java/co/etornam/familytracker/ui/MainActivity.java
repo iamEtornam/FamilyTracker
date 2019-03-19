@@ -21,7 +21,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -128,8 +127,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 		assert selectedFragment != null;
 		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 		transaction.replace(R.id.mainContainer, selectedFragment);
-		transaction.commit();
 		transaction.addToBackStack(null);
+		transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+		transaction.commit();
+
 	}
 
 	@Override
@@ -138,8 +139,10 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 				.setMessage("Are you sure you want to exit?")
 				.setCancelable(false)
 				.setPositiveButton("Yes", (dialog, id) -> {
-					getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-					finish();
+					Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+					homeIntent.addCategory(Intent.CATEGORY_HOME);
+					homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					startActivity(homeIntent);
 				})
 				.setNegativeButton("No", (dialog, which) ->
 						displaySelectedScreen(R.id.action_home)

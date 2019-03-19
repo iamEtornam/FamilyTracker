@@ -15,6 +15,7 @@ import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
@@ -36,6 +37,7 @@ import co.etornam.familytracker.model.Health;
 import static co.etornam.familytracker.util.Constants.DOCTOR_NAME;
 import static co.etornam.familytracker.util.Constants.DOCTOR_NUMBER;
 import static co.etornam.familytracker.util.Constants.HEALTH_DB;
+import static co.etornam.familytracker.util.NetworkUtil.isNetworkAvailable;
 
 public class HealthActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 	private static final String TAG = HealthActivity.class.getSimpleName();
@@ -311,7 +313,12 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 				doctorFragment.show(getSupportFragmentManager(), "doctor");
 				break;
 			case R.id.btnSaveHealth:
-				validateDetails();
+				if (!isNetworkAvailable(this)) {
+					Toast.makeText(this, "No internet Connection.", Toast.LENGTH_SHORT).show();
+				} else {
+					validateDetails();
+				}
+
 				break;
 		}
 	}

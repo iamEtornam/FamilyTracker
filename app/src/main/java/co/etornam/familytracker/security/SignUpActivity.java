@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -34,6 +35,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import co.etornam.familytracker.R;
 import co.etornam.familytracker.ui.MainActivity;
+
+import static co.etornam.familytracker.util.NetworkUtil.isNetworkAvailable;
 
 public class SignUpActivity extends AppCompatActivity {
 	private static final String TAG = SignUpActivity.class.getSimpleName();
@@ -73,7 +76,12 @@ public class SignUpActivity extends AppCompatActivity {
 	public void onViewClicked(View view) {
 		switch (view.getId()) {
 			case R.id.btnSignup:
-				signupUser();
+				if (!isNetworkAvailable(this)) {
+					Toast.makeText(this, "No internet Connection.", Toast.LENGTH_SHORT).show();
+				} else {
+					signupUser();
+				}
+
 				break;
 			case R.id.txtTerms:
 				readTermCondition();

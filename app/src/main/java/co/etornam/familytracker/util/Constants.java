@@ -9,4 +9,5 @@ public class Constants {
 	public static final String DOCTOR_NUMBER = "DOCTOR_NUMBER";
 	public static final String AUTH_STATUS = "AUTH_STATUS";
 	public static final String ID_KEY = "id_key";
+	public static final String OFFLINE_DB = "contact_db";
 }

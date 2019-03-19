@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -48,6 +49,7 @@ import gun0912.tedbottompicker.TedBottomPicker;
 
 import static android.app.Activity.RESULT_OK;
 import static co.etornam.familytracker.util.Constants.CONTACT_DB;
+import static co.etornam.familytracker.util.NetworkUtil.isNetworkAvailable;
 import static co.etornam.familytracker.util.RandomStringGenerator.getAlphaNumbericString;
 
 /**
@@ -125,7 +127,11 @@ public class ContactDialogFragment extends BottomSheetDialogFragment implements 
 				selectContact();
 				break;
 			case R.id.btnSaveContact:
-				validateData();
+				if (!isNetworkAvailable(Objects.requireNonNull(getContext()))) {
+					Toast.makeText(getContext(), "No internet Connection.", Toast.LENGTH_SHORT).show();
+				} else {
+					validateData();
+				}
 				break;
 		}
 	}

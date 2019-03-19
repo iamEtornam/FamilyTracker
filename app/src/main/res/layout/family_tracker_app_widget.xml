@@ -37,6 +37,15 @@
 			app:srcCompat="@drawable/ic_person_add" />
 	</RelativeLayout>
 
+	<TextView
+		android:id="@+id/desc"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center"
+		android:layout_marginBottom="@dimen/dp_8"
+		android:textColor="@color/colorWhite"
+		tools:text="In case of Emergency, Call..." />
+
 	<LinearLayout
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"

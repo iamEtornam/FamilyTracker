@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,6 +25,7 @@ import co.etornam.familytracker.R;
 import co.etornam.familytracker.model.Health;
 
 import static co.etornam.familytracker.util.Constants.HEALTH_DB;
+import static co.etornam.familytracker.util.NetworkUtil.isNetworkAvailable;
 
 public class DisplayHealthInfoActivity extends AppCompatActivity {
 
@@ -64,7 +66,12 @@ public class DisplayHealthInfoActivity extends AppCompatActivity {
 		ButterKnife.bind(this);
 		mAuth = FirebaseAuth.getInstance();
 		mDatabase = FirebaseDatabase.getInstance().getReference();
-		getUserHealthDetails();
+		if (!isNetworkAvailable(this)) {
+			Toast.makeText(this, "No internet Connection.", Toast.LENGTH_SHORT).show();
+		} else {
+			getUserHealthDetails();
+		}
+
 	}
 
 	private void getUserHealthDetails() {
