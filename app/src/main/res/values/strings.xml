@@ -108,7 +108,7 @@
 	<string name="actions">Actions</string>
 	<string name="profile">Profile</string>
 	<string name="my_profile">My Profile</string>
-	<string name="tracking">Tracking</string>
+	<string name="my_map">My Map</string>
 	<string name="mapbox_api" translatable="false">pk.eyJ1IjoicmVnbmV4IiwiYSI6ImNqaXVlb3dxejF5dXgzcXFtNW5naTh4YjgifQ.ETNFvMbm9leMY1dC4x0fCQ</string>
 	<string name="user_location_permission_explanation">FamilyTracker required permission to be able to display your current location on the map and keep your location updated to your friends and family.</string>
 	<string name="user_location_permission_not_granted">Location Permission is not G</string>
@@ -135,4 +135,10 @@
 	<string name="enter_your_passcode_to_continue">Enter your Passcode to continue...</string>
 	<string name="validate">Validate</string>
 	<string name="forgot_passcode">Forgot Passcode? Reset here.</string>
+	<string name="in_case_of_emergency_contact">In case of Emergency, contact...</string>
+	<string name="no_internet">No internet Connection.</string>
+	<string name="couldnt_save">Couldn\'t Save Details</string>
+	<string name="details_saved">Details Saved!!!</string>
+	<string name="field_error">Please, Fill Empty Fields</string>
+	<string name="edit_details">Update Details</string>
 </resources>

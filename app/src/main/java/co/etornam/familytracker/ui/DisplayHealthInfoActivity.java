@@ -1,8 +1,10 @@
 package co.etornam.familytracker.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,9 +20,11 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import co.etornam.familytracker.R;
 import co.etornam.familytracker.model.Health;
 
@@ -55,6 +59,8 @@ public class DisplayHealthInfoActivity extends AppCompatActivity {
 	TextView txtAllergyInfo;
 	@BindView(R.id.txtMedicationInfo)
 	TextView txtMedicationInfo;
+	@BindView(R.id.btnEdit)
+	Button btnEdit;
 	private String TAG = DisplayHealthInfoActivity.class.getSimpleName();
 	private DatabaseReference mDatabase;
 	private FirebaseAuth mAuth;
@@ -78,44 +84,59 @@ public class DisplayHealthInfoActivity extends AppCompatActivity {
 		mDatabase.child(HEALTH_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				Health health = dataSnapshot.getValue(Health.class);
-				assert health != null;
-				String donor = "DONOR: " + health.getDonor();
-				String diabetic = "DIABETIC: " + health.getDiabetic();
-				String bloodGroup = "BLOOD GROUP: " + health.getBloodgroup();
-				String bloodPressure = "BLOOD PRESSURE: " + health.getBloodpressure();
-				String allergy = "ALLERGY: " + health.getAllergy();
-				String allergyInfo = "ALLERGY INFO. : " + health.getAllergyinfo();
-				String medication = "MEDICATION: " + health.getMedication();
-				String medicationInfo = "MEDICATION INFO. : " + health.getMedinfo();
-				String insuranceName = "INSURANCE COMPANY: " + health.getCompanyname();
-				String insuranceNumber = "INSURANCE NUMBER: " + health.getInsurancenumber();
-				String doctorName = "DOCTOR: " + health.getDoctorname();
-				String doctorNumber = "(" + health.getDoctornumber() + ")";
+				if (dataSnapshot.exists()) {
+					Health health = dataSnapshot.getValue(Health.class);
+					assert health != null;
+					String donor = "DONOR: " + health.getDonor();
+					String diabetic = "DIABETIC: " + health.getDiabetic();
+					String bloodGroup = "BLOOD GROUP: " + health.getBloodgroup();
+					String bloodPressure = "BLOOD PRESSURE: " + health.getBloodpressure();
+					String allergy = "ALLERGY: " + health.getAllergy();
+					String allergyInfo = "ALLERGY INFO. : " + health.getAllergyinfo();
+					String medication = "MEDICATION: " + health.getMedication();
+					String medicationInfo = "MEDICATION INFO. : " + health.getMedinfo();
+					String insuranceName = "INSURANCE COMPANY: " + health.getCompanyname();
+					String insuranceNumber = "INSURANCE NUMBER: " + health.getInsurancenumber();
+					String doctorName = "DOCTOR: " + health.getDoctorname();
+					String doctorNumber = "(" + health.getDoctornumber() + ")";
 
-				txtDonor.setText(donor);
-				txtDiabetic.setText(diabetic);
-				txtBloodGroup.setText(bloodGroup);
-				txtBloodPressure.setText(bloodPressure);
-				txtAllergies.setText(allergy);
-				txtMedication.setText(medication);
-				txtInsuranceCompany.setText(insuranceName);
-				txtInsuranceId.setText(insuranceNumber);
-				txtDoctorName.setText(doctorName);
-				txtDoctorNumber.setText(doctorNumber);
+					txtDonor.setText(donor);
+					txtDiabetic.setText(diabetic);
+					txtBloodGroup.setText(bloodGroup);
+					txtBloodPressure.setText(bloodPressure);
+					txtAllergies.setText(allergy);
+					txtMedication.setText(medication);
+					txtInsuranceCompany.setText(insuranceName);
+					txtInsuranceId.setText(insuranceNumber);
+					txtDoctorName.setText(doctorName);
+					txtDoctorNumber.setText(doctorNumber);
 
-				if (allergy.equalsIgnoreCase("yes")) {
-					txtAllergyInfo.setVisibility(View.VISIBLE);
-					txtAllergyInfo.setText(allergyInfo);
+					if (health.getAllergy().equalsIgnoreCase("yes")) {
+						txtAllergyInfo.setVisibility(View.VISIBLE);
+						txtAllergyInfo.setText(allergyInfo);
+					} else {
+						txtAllergyInfo.setVisibility(View.GONE);
+					}
+
+					if (health.getMedication().equalsIgnoreCase("yes")) {
+						txtMedicationInfo.setVisibility(View.VISIBLE);
+						txtMedicationInfo.setText(medicationInfo);
+					} else {
+						txtMedicationInfo.setVisibility(View.GONE);
+					}
 				} else {
-					txtAllergyInfo.setVisibility(View.GONE);
-				}
+					new AlertDialog.Builder(DisplayHealthInfoActivity.this)
+							.setMessage("Set up your Personal Health Information")
+							.setCancelable(false)
+							.setPositiveButton("Ok", (dialog, id) -> {
+								Intent intent = new Intent(DisplayHealthInfoActivity.this, HealthActivity.class);
+								intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+								startActivity(intent);
+							})
+							.setNegativeButton("Cancel", (dialog, which) -> {
 
-				if (medication.equalsIgnoreCase("yes")) {
-					txtMedicationInfo.setVisibility(View.VISIBLE);
-					txtMedicationInfo.setText(medicationInfo);
-				} else {
-					txtMedicationInfo.setVisibility(View.GONE);
+									}
+							).show();
 				}
 			}
 
@@ -128,5 +149,12 @@ public class DisplayHealthInfoActivity extends AppCompatActivity {
 						.show();
 			}
 		});
+	}
+
+	@OnClick(R.id.btnEdit)
+	public void onViewClicked() {
+		Intent intent = new Intent(this, HealthActivity.class);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+		startActivity(intent);
 	}
 }

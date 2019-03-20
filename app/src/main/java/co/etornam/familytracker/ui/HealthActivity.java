@@ -20,11 +20,15 @@ import android.widget.Toast;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import butterknife.BindView;
@@ -33,6 +37,7 @@ import butterknife.OnClick;
 import co.etornam.familytracker.R;
 import co.etornam.familytracker.dialogFragment.DoctorDialogFragment;
 import co.etornam.familytracker.model.Health;
+import io.paperdb.Paper;
 
 import static co.etornam.familytracker.util.Constants.DOCTOR_NAME;
 import static co.etornam.familytracker.util.Constants.DOCTOR_NUMBER;
@@ -155,13 +160,14 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 		mAuth = FirebaseAuth.getInstance();
 		mDatabase = FirebaseDatabase.getInstance().getReference();
 		initRadioButtons();
+		Paper.init(this);
 		Intent intent = getIntent();
 		if (intent != null) {
 			layoutContact.setVisibility(View.VISIBLE);
-			doctorName = intent.getStringExtra(DOCTOR_NAME);
-			doctorNumber = intent.getStringExtra(DOCTOR_NUMBER);
-			txtContactName.setText("Name: " + doctorName);
-			txtContactNumber.setText("Number: " + doctorNumber);
+			doctorName = "Name: " + intent.getStringExtra(DOCTOR_NAME);
+			doctorNumber = "Number: " + intent.getStringExtra(DOCTOR_NUMBER);
+			txtContactName.setText(doctorName);
+			txtContactNumber.setText(doctorNumber);
 		} else {
 			if (layoutContact.getVisibility() == View.VISIBLE) {
 				layoutContact.setVisibility(View.GONE);
@@ -169,6 +175,20 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 			doctorName = "";
 			doctorNumber = "";
 		}
+
+		mDatabase.child(HEALTH_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).addValueEventListener(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				if (dataSnapshot.exists()) {
+					getUserHealthDetails();
+				}
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+				Log.d(TAG, "onCancelled: " + databaseError.getMessage());
+			}
+		});
 
 		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
 				R.array.blood_array, android.R.layout.simple_spinner_item);
@@ -180,10 +200,10 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 		diabeticRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
 			switch (checkedId) {
 				case R.id.diabeticNo:
-					diabetic = "No";
+					diabetic = getResources().getString(R.string.no);
 					break;
 				case R.id.diabeticYes:
-					diabetic = "Yes";
+					diabetic = getResources().getString(R.string.yes);
 					break;
 			}
 		});
@@ -191,13 +211,13 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 		medicationRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
 			switch (checkedId) {
 				case R.id.medicationNo:
-					medication = "No";
+					medication = getResources().getString(R.string.no);
 					if (edtMedication.getVisibility() == View.VISIBLE) {
 						edtMedication.setVisibility(View.GONE);
 					}
 					break;
 				case R.id.medicationYes:
-					medication = "Yes";
+					medication = getResources().getString(R.string.yes);
 					if (edtMedication.getVisibility() == View.GONE) {
 						edtMedication.setVisibility(View.VISIBLE);
 					}
@@ -208,10 +228,10 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 		bleederRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
 			switch (checkedId) {
 				case R.id.bleederNo:
-					bleeder = "No";
+					bleeder = getResources().getString(R.string.no);
 					break;
 				case R.id.bleederYes:
-					bleeder = "Yes";
+					bleeder = getResources().getString(R.string.yes);
 					break;
 			}
 		});
@@ -219,13 +239,13 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 		allergicRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
 			switch (checkedId) {
 				case R.id.allergyNo:
-					allergy = "No";
+					allergy = getResources().getString(R.string.no);
 					if (edtAllergy.getVisibility() == View.VISIBLE) {
 						edtAllergy.setVisibility(View.GONE);
 					}
 					break;
 				case R.id.allergyYes:
-					allergy = "Yes";
+					allergy = getResources().getString(R.string.yes);
 					if (edtAllergy.getVisibility() == View.GONE) {
 						edtAllergy.setVisibility(View.VISIBLE);
 					}
@@ -236,13 +256,13 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 		pressureRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
 			switch (checkedId) {
 				case R.id.pressureLow:
-					pressure = "Low";
+					pressure = getResources().getString(R.string.low);
 					break;
 				case R.id.pressureNormal:
-					pressure = "Normal";
+					pressure = getResources().getString(R.string.normal);
 					break;
 				case R.id.pressureHigh:
-					pressure = "High";
+					pressure = getResources().getString(R.string.high);
 					break;
 			}
 		});
@@ -250,10 +270,10 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 		donorRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
 			switch (checkedId) {
 				case R.id.organDonorNo:
-					donor = "No";
+					donor = getResources().getString(R.string.no);
 					break;
 				case R.id.organDonorYes:
-					donor = "Yes";
+					donor = getResources().getString(R.string.yes);
 					break;
 			}
 		});
@@ -282,9 +302,10 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 				&& !bleeder.isEmpty() && !donor.isEmpty() && !insuranceCompany.isEmpty()
 				&& !insuranceNumber.isEmpty() || !doctorName.isEmpty() || !doctorNumber.isEmpty()) {
 			writeUserHealthDetails(bloodGroup, diabetic, medication, medicationEdit, allergy, allergyEdit, pressure, bleeder, donor, doctorName, doctorNumber, insuranceCompany, insuranceNumber);
-			Log.d(TAG, "validateDetails: " + medicationEdit);
+			Paper.book().write("name", doctorName);
+			Paper.book().write("number", doctorNumber);
 		} else {
-			Snackbar.make(findViewById(R.id.healthLayoutMain), "Please, Fill Empty Fields", Snackbar.LENGTH_LONG).show();
+			Snackbar.make(findViewById(R.id.healthLayoutMain), getString(R.string.field_error), Snackbar.LENGTH_LONG).show();
 		}
 	}
 
@@ -294,11 +315,11 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 		Health health = new Health(bloodGroup, diabetic, medication, medinfo, allergy, allergyinfo, bloodpressure, bleeder, donor, doctorname, doctornumber, companyname, insurancenumber);
 		mDatabase.child(HEALTH_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).setValue(health).addOnCompleteListener(task -> {
 			if (task.isSuccessful()) {
-				Snackbar.make(findViewById(R.id.healthLayoutMain), "Details Saved!!! ", Snackbar.LENGTH_SHORT).show();
+				Snackbar.make(findViewById(R.id.healthLayoutMain), getString(R.string.details_saved), Snackbar.LENGTH_SHORT).show();
 				btnSaveHealth.setVisibility(View.VISIBLE);
 				progressBar.setVisibility(View.GONE);
 			} else {
-				Snackbar.make(findViewById(R.id.healthLayoutMain), "Couldn't Save Details ", Snackbar.LENGTH_SHORT).show();
+				Snackbar.make(findViewById(R.id.healthLayoutMain), getString(R.string.couldnt_save), Snackbar.LENGTH_SHORT).show();
 				btnSaveHealth.setVisibility(View.VISIBLE);
 				progressBar.setVisibility(View.GONE);
 			}
@@ -314,7 +335,7 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 				break;
 			case R.id.btnSaveHealth:
 				if (!isNetworkAvailable(this)) {
-					Toast.makeText(this, "No internet Connection.", Toast.LENGTH_SHORT).show();
+					Toast.makeText(this, getString(R.string.no_internet), Toast.LENGTH_SHORT).show();
 				} else {
 					validateDetails();
 				}
@@ -331,5 +352,80 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 	@Override
 	public void onNothingSelected(AdapterView<?> parent) {
 
+	}
+
+	private void getUserHealthDetails() {
+		mDatabase.child(HEALTH_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+				if (dataSnapshot.exists()) {
+					Health health = dataSnapshot.getValue(Health.class);
+					assert health != null;
+					edtCompanyName.setText(health.getCompanyname());
+					insuranceId.setText(health.getInsurancenumber());
+					txtContactName.setText(health.getDoctorname());
+					txtContactNumber.setText(health.getDoctornumber());
+					if (health.getDonor().equalsIgnoreCase("Yes")) {
+						donorRadioGroup.check(R.id.organDonorYes);
+					} else {
+						donorRadioGroup.check(R.id.organDonorNo);
+					}
+
+					if (health.getBleeder().equalsIgnoreCase("Yes")) {
+						bleederRadioGroup.check(R.id.bleederYes);
+					} else {
+						bleederRadioGroup.check(R.id.bleederNo);
+					}
+
+					if (health.getBloodpressure().equalsIgnoreCase("high")) {
+						pressureRadioGroup.check(R.id.pressureHigh);
+					} else if (health.getBloodpressure().equalsIgnoreCase("normal")) {
+						pressureRadioGroup.check(R.id.pressureNormal);
+					} else {
+						pressureRadioGroup.check(R.id.pressureLow);
+					}
+
+					if (health.getDiabetic().equalsIgnoreCase("Yes")) {
+						diabeticRadioGroup.check(R.id.diabeticYes);
+					} else {
+						diabeticRadioGroup.check(R.id.diabeticNo);
+					}
+
+					if (health.getAllergy().equalsIgnoreCase("Yes")) {
+						allergicRadioGroup.check(R.id.allergyYes);
+						edtAllergy.setText(health.getAllergyinfo());
+					} else {
+						allergicRadioGroup.check(R.id.allergyNo);
+					}
+
+
+					if (health.getMedication().equalsIgnoreCase("Yes")) {
+						medicationRadioGroup.check(R.id.medicationYes);
+						edtMedication.setText(health.getMedinfo());
+					} else {
+						medicationRadioGroup.check(R.id.medicationNo);
+					}
+
+					ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(HealthActivity.this, R.array.blood_array, android.R.layout.simple_spinner_item);
+					adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+					spinnerBlood.setAdapter(adapter);
+					if (health.getBloodgroup() != null) {
+						int spinnerPosition = adapter.getPosition(health.getBloodgroup());
+						spinnerBlood.setSelection(spinnerPosition);
+					}
+				}
+
+
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+				Log.d(TAG, "onCancelled: " + databaseError.getMessage());
+				Snackbar.make(findViewById(R.id.layoutMain), "Couldn't Retrieve your Health Details ", Snackbar.LENGTH_SHORT)
+						.setActionTextColor(getResources().getColor(R.color.colorRed))
+						.setAction("Try Again!", v -> getUserHealthDetails())
+						.show();
+			}
+		});
 	}
 }

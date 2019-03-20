@@ -17,8 +17,6 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -29,7 +27,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.dynamiclinks.DynamicLink;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
-import com.google.firebase.dynamiclinks.ShortDynamicLink;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -51,11 +48,11 @@ import co.etornam.familytracker.R;
 import co.etornam.familytracker.dialogFragment.ContactDialogFragment;
 import co.etornam.familytracker.model.Contact;
 import co.etornam.familytracker.model.Profile;
+import co.etornam.familytracker.ui.ProfileActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.paperdb.Paper;
 
+import static androidx.browser.customtabs.CustomTabsIntent.KEY_ID;
 import static co.etornam.familytracker.util.Constants.CONTACT_DB;
-import static co.etornam.familytracker.util.Constants.ID_KEY;
 import static co.etornam.familytracker.util.Constants.TRACKING_DB;
 import static co.etornam.familytracker.util.Constants.USER_DB;
 import static co.etornam.familytracker.util.NetworkUtil.isNetworkAvailable;
@@ -85,8 +82,6 @@ public class MainFragment extends Fragment {
 	@Override
 	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
-		assert getArguments() != null;
-		String key = getArguments().getString(ID_KEY);
 		View view = inflater.inflate(R.layout.fragment_main, container, false);
 		ButterKnife.bind(this, view);
 		progressDialog = new ProgressDialog(getContext());
@@ -99,14 +94,27 @@ public class MainFragment extends Fragment {
 		rvMainContact.addItemDecoration(new DividerItemDecoration(Objects.requireNonNull(getContext()), DividerItemDecoration.VERTICAL));
 		rvMainContact.setLayoutManager(layoutManager);
 
-		Toast.makeText(getContext(), "key from fragment: " + key, Toast.LENGTH_SHORT).show();
-
 		mUserDb.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				Profile profile = dataSnapshot.getValue(Profile.class);
-				assert profile != null;
-				userFullName = profile.getFirstName() + " " + profile.getOtherName();
+				if (dataSnapshot.exists()) {
+					Profile profile = dataSnapshot.getValue(Profile.class);
+					assert profile != null;
+					userFullName = profile.getFirstName() + " " + profile.getOtherName();
+				} else {
+					new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+							.setMessage("Set up your Personal profile")
+							.setCancelable(false)
+							.setPositiveButton("Ok", (dialog, id) -> {
+								Intent intent = new Intent(getContext(), ProfileActivity.class);
+								intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+								startActivity(intent);
+							})
+							.setNegativeButton("Cancel", (dialog, which) -> {
+
+									}
+							).show();
+				}
 			}
 
 			@Override
@@ -177,13 +185,18 @@ public class MainFragment extends Fragment {
 				);
 				contactViewHolder.ContactMainLayout.setOnLongClickListener(v -> {
 					new AlertDialog.Builder(Objects.requireNonNull(getContext()))
-							.setMessage("Do you want to add this Contact to your Widget?")
+							.setMessage("Do you want to Edit this Contact?")
 							.setCancelable(false)
 							.setPositiveButton("Yes", (dialog, id) -> {
 										if (!isNetworkAvailable(Objects.requireNonNull(getContext()))) {
 											Toast.makeText(getContext(), "No internet Connection.", Toast.LENGTH_SHORT).show();
 										} else {
-											addToPaperDb(list_id);
+											Bundle bundle = new Bundle();
+											bundle.putString(KEY_ID, list_id);
+											ContactDialogFragment contactDialogFragment = ContactDialogFragment.newInstance();
+											contactDialogFragment.setArguments(bundle);
+											assert getFragmentManager() != null;
+											contactDialogFragment.show(getFragmentManager(), "contact_dialog_fragment");
 										}
 									}
 
@@ -209,27 +222,6 @@ public class MainFragment extends Fragment {
 		return view;
 	}
 
-	private void addToPaperDb(String list_id) {
-		mContactDb.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(list_id).addListenerForSingleValueEvent(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				Contact contact = dataSnapshot.getValue(Contact.class);
-				assert contact != null;
-				Paper.book().write("data", contact);
-				Toast.makeText(getContext(), "Added to Widget!", Toast.LENGTH_SHORT).show();
-			}
-
-			@Override
-			public void onCancelled(@NonNull DatabaseError databaseError) {
-				Log.d(TAG, "onCancelled: " + databaseError.getMessage());
-				Toast.makeText(getContext(), "Something went wrong. Try again.", Toast.LENGTH_SHORT).show();
-			}
-		});
-
-		mTrackingDb.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child("authorized").child(list_id).setValue(true);
-
-	}
-
 	private void initializeTracker(String positionId) {
 		progressDialog.setMessage("Loading...");
 		progressDialog.show();
@@ -239,30 +231,27 @@ public class MainFragment extends Fragment {
 				// Open links with this app on Android
 				.setAndroidParameters(new DynamicLink.AndroidParameters.Builder().build())
 				.buildShortDynamicLink()
-				.addOnCompleteListener(new OnCompleteListener<ShortDynamicLink>() {
-					@Override
-					public void onComplete(@NonNull Task<ShortDynamicLink> task) {
-						if (task.isSuccessful()) {
-							// Short link created
-							Uri shortLink = Objects.requireNonNull(task.getResult()).getShortLink();
-							Log.d(TAG, "onComplete: SHORT LINK " + shortLink);
+				.addOnCompleteListener(task -> {
+					if (task.isSuccessful()) {
+						// Short link created
+						Uri shortLink = Objects.requireNonNull(task.getResult()).getShortLink();
+						Log.d(TAG, "onComplete: SHORT LINK " + shortLink);
 
 
-							//send link thru sms api
-							sendSms(shortLink, positionId);
+						//send link thru sms api
+						sendSms(shortLink, positionId);
 
 
-							Intent sendIntent = new Intent();
-							String msg = "Hey, here is a link to my current location: " + shortLink + " you can track me using FamilyTracker App.";
-							sendIntent.setAction(Intent.ACTION_SEND);
-							sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
-							sendIntent.setType("text/plain");
-							startActivity(sendIntent);
-						} else {
-							Log.d(TAG, "onComplete: " + task.getException());
-						}
-						progressDialog.dismiss();
+						Intent sendIntent = new Intent();
+						String msg = "Hey, here is a link to my current location: " + shortLink + " you can track me using FamilyTracker App.";
+						sendIntent.setAction(Intent.ACTION_SEND);
+						sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
+						sendIntent.setType("text/plain");
+						startActivity(sendIntent);
+					} else {
+						Log.d(TAG, "onComplete: " + task.getException());
 					}
+					progressDialog.dismiss();
 				});
 	}
 

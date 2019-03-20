@@ -15,8 +15,8 @@
 
 	<item
 		android:id="@+id/action_track"
-		android:icon="@drawable/ic_track"
-		android:title="@string/tracking"
+		android:icon="@drawable/ic_map"
+		android:title="@string/my_map"
 		app:showAsAction="ifRoom" />
 	<item
 		android:id="@+id/action_setting"

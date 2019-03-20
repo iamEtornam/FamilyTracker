@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -47,10 +46,7 @@ public class ProfileActivity extends AppCompatActivity {
 		).withListener(new MultiplePermissionsListener() {
 			@Override
 			public void onPermissionsChecked(MultiplePermissionsReport report) {
-				if (report.areAllPermissionsGranted()) {
-					Snackbar.make(findViewById(R.id.profileMainLayout), "Thank you!", Snackbar.LENGTH_SHORT)
-							.show();
-				}
+
 			}
 
 			@Override

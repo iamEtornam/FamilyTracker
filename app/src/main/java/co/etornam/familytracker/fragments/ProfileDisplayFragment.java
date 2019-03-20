@@ -27,6 +27,7 @@ import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -102,25 +103,40 @@ public class ProfileDisplayFragment extends Fragment {
 		mDatabase.child(USER_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				Profile profile = dataSnapshot.getValue(Profile.class);
-				assert profile != null;
-				String fullName = "FULL NAME: " + profile.getFirstName() + " " + profile.getOtherName();
-				String dob = "D.O.B: " + profile.getDateOfBirth();
-				String homeAddress = "HOME: " + profile.getHomeAddress();
-				String workAddress = "WORK: " + profile.getWorkAddress();
-				String gender = "GENDER: " + profile.getGender();
-				String mobileNumber = "MOBILE NUMBER: " + profile.getMobileNumber();
-				txtUserName.setText(fullName);
-				txtUserDob.setText(dob);
-				txtUserHomeAddress.setText(homeAddress);
-				txtUserWorkAddress.setText(workAddress);
-				txtUserGender.setText(gender);
-				txtUserMobileNumber.setText(mobileNumber);
-				Picasso.get()
-						.load(profile.getProfileImgUrl())
-						.placeholder(R.drawable.ic_person)
-						.error(R.drawable.ic_image_placeholder)
-						.into(imgUserProfile);
+				if (dataSnapshot.exists()) {
+					Profile profile = dataSnapshot.getValue(Profile.class);
+					assert profile != null;
+					String fullName = "FULL NAME: " + profile.getFirstName() + " " + profile.getOtherName();
+					String dob = "D.O.B: " + profile.getDateOfBirth();
+					String homeAddress = "HOME: " + profile.getHomeAddress();
+					String workAddress = "WORK: " + profile.getWorkAddress();
+					String gender = "GENDER: " + profile.getGender();
+					String mobileNumber = "MOBILE NUMBER: " + profile.getMobileNumber();
+					txtUserName.setText(fullName);
+					txtUserDob.setText(dob);
+					txtUserHomeAddress.setText(homeAddress);
+					txtUserWorkAddress.setText(workAddress);
+					txtUserGender.setText(gender);
+					txtUserMobileNumber.setText(mobileNumber);
+					Picasso.get()
+							.load(profile.getProfileImgUrl())
+							.placeholder(R.drawable.ic_person)
+							.error(R.drawable.ic_image_placeholder)
+							.into(imgUserProfile);
+				} else {
+					new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+							.setMessage("Set up your Personal profile")
+							.setCancelable(false)
+							.setPositiveButton("Ok", (dialog, id) -> {
+								Intent intent = new Intent(getContext(), ProfileActivity.class);
+								intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+								startActivity(intent);
+							})
+							.setNegativeButton("Cancel", (dialog, which) -> {
+
+									}
+							).show();
+				}
 			}
 
 			@Override

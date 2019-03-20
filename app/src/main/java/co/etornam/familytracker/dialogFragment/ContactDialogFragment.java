@@ -26,9 +26,12 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -48,6 +51,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import gun0912.tedbottompicker.TedBottomPicker;
 
 import static android.app.Activity.RESULT_OK;
+import static androidx.browser.customtabs.CustomTabsIntent.KEY_ID;
 import static co.etornam.familytracker.util.Constants.CONTACT_DB;
 import static co.etornam.familytracker.util.NetworkUtil.isNetworkAvailable;
 import static co.etornam.familytracker.util.RandomStringGenerator.getAlphaNumbericString;
@@ -87,6 +91,7 @@ public class ContactDialogFragment extends BottomSheetDialogFragment implements 
 	private StorageReference mStorage, mImageRef;
 	private DatabaseReference mDatabase;
 	private FirebaseAuth mAuth;
+	private String key;
 
 	public static ContactDialogFragment newInstance() {
 		return new ContactDialogFragment();
@@ -104,6 +109,8 @@ public class ContactDialogFragment extends BottomSheetDialogFragment implements 
 	@Override
 	public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
+		Bundle bundle = getArguments();
+
 		mAuth = FirebaseAuth.getInstance();
 		mStorage = FirebaseStorage.getInstance().getReference();
 		mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -112,6 +119,41 @@ public class ContactDialogFragment extends BottomSheetDialogFragment implements 
 				R.array.relation_array, android.R.layout.simple_spinner_item);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinnerRelation.setAdapter(adapter);
+
+		assert bundle != null;
+		if (!bundle.isEmpty()) {
+			key = bundle.getString(KEY_ID);
+			mDatabase.child(CONTACT_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+				@Override
+				public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+					if (dataSnapshot.exists()) {
+						Contact contact = dataSnapshot.getValue(Contact.class);
+						assert contact != null;
+						edtContactName.setText(contact.getName());
+						edtContactNumber.setText(contact.getNumber());
+						Picasso.get()
+								.load(contact.getImageUrl())
+								.placeholder(getResources().getDrawable(R.drawable.ic_image_placeholder))
+								.error(getResources().getDrawable(R.drawable.img_error))
+								.into(imgContactProfile);
+
+						ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(Objects.requireNonNull(getContext()), R.array.blood_array, android.R.layout.simple_spinner_item);
+						adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+						spinnerRelation.setAdapter(adapter);
+						if (contact.getRelation() != null) {
+							int spinnerPosition = adapter.getPosition(contact.getRelation());
+							spinnerRelation.setSelection(spinnerPosition);
+						}
+					}
+				}
+
+				@Override
+				public void onCancelled(@NonNull DatabaseError databaseError) {
+					Log.d(TAG, "onCancelled: " + databaseError.getMessage());
+				}
+			});
+
+		}
 	}
 
 	@OnClick({R.id.imgContactProfile, R.id.txtSelectPhoto, R.id.imgContactSelector, R.id.btnSaveContact})
