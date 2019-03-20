@@ -25,10 +25,4 @@
 		<item name="routeScale">1.0</item>
 	</style>
 
-	<style name="NavigationView" parent="Theme.AppCompat.NoActionBar">
-		<item name="navigationViewPrimary">@color/colorWhite</item>
-		<item name="navigationViewSecondary">@color/colorBlue</item>
-		<item name="navigationViewAccent">@color/colorPink</item>
-	</style>
-
 </resources>

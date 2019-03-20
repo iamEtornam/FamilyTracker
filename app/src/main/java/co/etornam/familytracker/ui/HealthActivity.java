@@ -164,8 +164,8 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 		Intent intent = getIntent();
 		if (intent != null) {
 			layoutContact.setVisibility(View.VISIBLE);
-			doctorName = "Name: " + intent.getStringExtra(DOCTOR_NAME);
-			doctorNumber = "Number: " + intent.getStringExtra(DOCTOR_NUMBER);
+			doctorName = intent.getStringExtra(DOCTOR_NAME);
+			doctorNumber = intent.getStringExtra(DOCTOR_NUMBER);
 			txtContactName.setText(doctorName);
 			txtContactNumber.setText(doctorNumber);
 		} else {
@@ -211,13 +211,13 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 		medicationRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
 			switch (checkedId) {
 				case R.id.medicationNo:
-					medication = getResources().getString(R.string.no);
+					medication = "no";
 					if (edtMedication.getVisibility() == View.VISIBLE) {
 						edtMedication.setVisibility(View.GONE);
 					}
 					break;
 				case R.id.medicationYes:
-					medication = getResources().getString(R.string.yes);
+					medication = "YES";
 					if (edtMedication.getVisibility() == View.GONE) {
 						edtMedication.setVisibility(View.VISIBLE);
 					}
@@ -228,10 +228,10 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 		bleederRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
 			switch (checkedId) {
 				case R.id.bleederNo:
-					bleeder = getResources().getString(R.string.no);
+					bleeder = "NO";
 					break;
 				case R.id.bleederYes:
-					bleeder = getResources().getString(R.string.yes);
+					bleeder = "YES";
 					break;
 			}
 		});
@@ -239,13 +239,13 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 		allergicRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
 			switch (checkedId) {
 				case R.id.allergyNo:
-					allergy = getResources().getString(R.string.no);
+					allergy = "NO";
 					if (edtAllergy.getVisibility() == View.VISIBLE) {
 						edtAllergy.setVisibility(View.GONE);
 					}
 					break;
 				case R.id.allergyYes:
-					allergy = getResources().getString(R.string.yes);
+					allergy = "YES";
 					if (edtAllergy.getVisibility() == View.GONE) {
 						edtAllergy.setVisibility(View.VISIBLE);
 					}
@@ -256,13 +256,13 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 		pressureRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
 			switch (checkedId) {
 				case R.id.pressureLow:
-					pressure = getResources().getString(R.string.low);
+					pressure = "LOW";
 					break;
 				case R.id.pressureNormal:
-					pressure = getResources().getString(R.string.normal);
+					pressure = "NORMAL";
 					break;
 				case R.id.pressureHigh:
-					pressure = getResources().getString(R.string.high);
+					pressure = "HIGH";
 					break;
 			}
 		});
@@ -270,10 +270,10 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 		donorRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
 			switch (checkedId) {
 				case R.id.organDonorNo:
-					donor = getResources().getString(R.string.no);
+					donor = "NO";
 					break;
 				case R.id.organDonorYes:
-					donor = getResources().getString(R.string.yes);
+					donor = "YES";
 					break;
 			}
 		});
@@ -318,6 +318,9 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 				Snackbar.make(findViewById(R.id.healthLayoutMain), getString(R.string.details_saved), Snackbar.LENGTH_SHORT).show();
 				btnSaveHealth.setVisibility(View.VISIBLE);
 				progressBar.setVisibility(View.GONE);
+				Intent intent = new Intent(getApplicationContext(), DisplayHealthInfoActivity.class);
+				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+				startActivity(intent);
 			} else {
 				Snackbar.make(findViewById(R.id.healthLayoutMain), getString(R.string.couldnt_save), Snackbar.LENGTH_SHORT).show();
 				btnSaveHealth.setVisibility(View.VISIBLE);

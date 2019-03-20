@@ -22,8 +22,6 @@ public class TrackerAppWidget extends AppWidgetProvider {
 		RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.tracker_app_widget);
 		views.setTextViewText(R.id.txtPersonName, widgetName);
 		views.setTextViewText(R.id.txtPersonNumber, widgetNumber);
-		views.setEmptyView(R.id.txtPersonName, R.id.txtNoPersonName);
-		views.setEmptyView(R.id.txtPersonNumber, R.id.txtNoPersonNumber);
 
 		// Instruct the widget manager to update the widget
 		appWidgetManager.updateAppWidget(appWidgetId, views);
