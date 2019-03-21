@@ -3,9 +3,18 @@
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:tools="http://schemas.android.com/tools"
 	android:id="@+id/signupLayout"
+	android:background="@color/colorWhite"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	tools:context=".security.SignUpActivity">
+
+	<ImageView
+		android:layout_width="@dimen/dp_100"
+		android:layout_height="@dimen/dp_100"
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="@dimen/dp_100"
+		android:contentDescription="@string/avatar"
+		android:src="@drawable/main_logo" />
 
 	<TextView
 		android:id="@+id/txtGettingStarted"
@@ -14,7 +23,7 @@
 		android:layout_above="@+id/progressIndicator"
 		android:layout_alignParentStart="true"
 		android:layout_alignParentEnd="true"
-		android:layout_marginBottom="70dp"
+		android:layout_marginBottom="@dimen/dp_70"
 		android:text="@string/getting_started"
 		android:textAlignment="center"
 		android:textAppearance="?android:textAppearanceLarge"
@@ -27,7 +36,7 @@
 		android:layout_height="wrap_content"
 		android:layout_above="@id/btnSignup"
 		android:layout_centerHorizontal="true"
-		android:layout_marginBottom="150dp"
+		android:layout_marginBottom="@dimen/dp_150"
 		android:visibility="gone"
 		app:mk_color="@color/colorAccent"
 		app:mk_type="Whirlpool" />
@@ -36,7 +45,7 @@
 		android:id="@+id/btnSignup"
 		style="@style/Theme.AppCompat.Light"
 		android:layout_width="wrap_content"
-		android:layout_height="50dp"
+		android:layout_height="@dimen/dp_50"
 		android:layout_above="@id/txtTerms"
 		android:layout_centerHorizontal="true"
 		android:layout_marginStart="24dp"
@@ -54,9 +63,9 @@
 		android:layout_alignParentStart="true"
 		android:layout_alignParentEnd="true"
 		android:layout_alignParentBottom="true"
-		android:layout_marginStart="24dp"
-		android:layout_marginEnd="24dp"
-		android:layout_marginBottom="16dp"
+		android:layout_marginStart="@dimen/dp_24"
+		android:layout_marginEnd="@dimen/dp_24"
+		android:layout_marginBottom="@dimen/dp_16"
 		android:text="@string/terms_and_conditions"
 		android:textAlignment="center"
 		android:textAppearance="?android:textAppearanceSmall" />

@@ -38,6 +38,7 @@ import co.etornam.familytracker.security.SignUpActivity;
 import co.etornam.familytracker.ui.DisplayHealthInfoActivity;
 import co.etornam.familytracker.ui.ProfileActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
+import io.paperdb.Paper;
 
 import static co.etornam.familytracker.util.Constants.USER_DB;
 import static co.etornam.familytracker.util.NetworkUtil.isNetworkAvailable;
@@ -156,10 +157,24 @@ public class ProfileDisplayFragment extends Fragment {
 			if (!isNetworkAvailable(Objects.requireNonNull(getContext()))) {
 				Toast.makeText(getContext(), "No internet Connection.", Toast.LENGTH_SHORT).show();
 			} else {
-				mAuth.signOut();
-				Intent logoutIntent = new Intent(getContext(), SignUpActivity.class);
-				logoutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				startActivity(logoutIntent);
+				new AlertDialog.Builder(Objects.requireNonNull(getContext()))
+						.setMessage("Do you want to Logout?")
+						.setCancelable(false)
+						.setPositiveButton("Yes", (dialog, id) -> {
+							Paper.book().destroy();
+							mAuth.signOut();
+							Intent logoutIntent = new Intent(getContext(), SignUpActivity.class);
+							logoutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+							startActivity(logoutIntent);
+						})
+						.setNegativeButton("No", (dialog, which) -> {
+
+								}
+						).show();
+
+
+
+
 			}
 
 		}

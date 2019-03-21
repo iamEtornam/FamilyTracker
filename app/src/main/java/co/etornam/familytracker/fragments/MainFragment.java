@@ -51,7 +51,6 @@ import co.etornam.familytracker.model.Profile;
 import co.etornam.familytracker.ui.ProfileActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static androidx.browser.customtabs.CustomTabsIntent.KEY_ID;
 import static co.etornam.familytracker.util.Constants.CONTACT_DB;
 import static co.etornam.familytracker.util.Constants.TRACKING_DB;
 import static co.etornam.familytracker.util.Constants.USER_DB;
@@ -126,8 +125,8 @@ public class MainFragment extends Fragment {
 		Query query = FirebaseDatabase.getInstance()
 				.getReference()
 				.child("contacts")
-				.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid())
-				.orderByValue();
+				.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+
 
 		FirebaseRecyclerOptions<Contact> options = new FirebaseRecyclerOptions.Builder<Contact>()
 				.setQuery(query, Contact.class)
@@ -183,31 +182,6 @@ public class MainFragment extends Fragment {
 										}
 								).show()
 				);
-				contactViewHolder.ContactMainLayout.setOnLongClickListener(v -> {
-					new AlertDialog.Builder(Objects.requireNonNull(getContext()))
-							.setMessage("Do you want to Edit this Contact?")
-							.setCancelable(false)
-							.setPositiveButton("Yes", (dialog, id) -> {
-										if (!isNetworkAvailable(Objects.requireNonNull(getContext()))) {
-											Toast.makeText(getContext(), "No internet Connection.", Toast.LENGTH_SHORT).show();
-										} else {
-											Bundle bundle = new Bundle();
-											bundle.putString(KEY_ID, list_id);
-											ContactDialogFragment contactDialogFragment = ContactDialogFragment.newInstance();
-											contactDialogFragment.setArguments(bundle);
-											assert getFragmentManager() != null;
-											contactDialogFragment.show(getFragmentManager(), "contact_dialog_fragment");
-										}
-									}
-
-							)
-							.setNegativeButton("No", (dialog, which) -> {
-
-									}
-							).show();
-
-					return false;
-				});
 			}
 
 			@NonNull

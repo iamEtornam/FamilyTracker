@@ -37,7 +37,6 @@ import butterknife.OnClick;
 import co.etornam.familytracker.R;
 import co.etornam.familytracker.dialogFragment.DoctorDialogFragment;
 import co.etornam.familytracker.model.Health;
-import io.paperdb.Paper;
 
 import static co.etornam.familytracker.util.Constants.DOCTOR_NAME;
 import static co.etornam.familytracker.util.Constants.DOCTOR_NUMBER;
@@ -160,7 +159,6 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 		mAuth = FirebaseAuth.getInstance();
 		mDatabase = FirebaseDatabase.getInstance().getReference();
 		initRadioButtons();
-		Paper.init(this);
 		Intent intent = getIntent();
 		if (intent != null) {
 			layoutContact.setVisibility(View.VISIBLE);
@@ -302,8 +300,7 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 				&& !bleeder.isEmpty() && !donor.isEmpty() && !insuranceCompany.isEmpty()
 				&& !insuranceNumber.isEmpty() || !doctorName.isEmpty() || !doctorNumber.isEmpty()) {
 			writeUserHealthDetails(bloodGroup, diabetic, medication, medicationEdit, allergy, allergyEdit, pressure, bleeder, donor, doctorName, doctorNumber, insuranceCompany, insuranceNumber);
-			Paper.book().write("name", doctorName);
-			Paper.book().write("number", doctorNumber);
+
 		} else {
 			Snackbar.make(findViewById(R.id.healthLayoutMain), getString(R.string.field_error), Snackbar.LENGTH_LONG).show();
 		}

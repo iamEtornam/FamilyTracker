@@ -54,9 +54,9 @@
 	<string-array name="relation_array">
 		<item>(SELECT RELATION)</item>
 		<item>BROTHER</item>
+		<item>SISTER</item>
 		<item>MOTHER</item>
 		<item>FATHER</item>
-		<item>SISTER</item>
 		<item>SON</item>
 		<item>DAUGHTER</item>
 		<item>AUNT</item>
@@ -64,6 +64,7 @@
 		<item>COUSIN</item>
 		<item>GRANDMOTHER</item>
 		<item>GRANDFATHER</item>
+		<item>FRIEND</item>
 	</string-array>
 
 
@@ -120,7 +121,7 @@
 	<string name="enter_your_passcode_to_continue">Enter your Passcode to continue...</string>
 	<string name="validate">Validate</string>
 	<string name="forgot_passcode">Forgot Passcode? Reset here.</string>
-	<string name="in_case_of_emergency_contact">In case of Emergency, contact...</string>
+	<string name="in_case_of_emergency_contact">In case of Emergency</string>
 	<string name="no_internet">No internet Connection.</string>
 	<string name="couldnt_save">Couldn\'t Save Details</string>
 	<string name="details_saved">Details Saved!!!</string>
@@ -128,4 +129,6 @@
 	<string name="edit_details">Update Details</string>
 	<string name="doc_name">NAME:</string>
 	<string name="doc_number">NUMBER:</string>
+	<string name="home_address">My Home Address:</string>
+	<string name="work_address">My Work Address:</string>
 </resources>

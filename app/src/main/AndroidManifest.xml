@@ -74,7 +74,7 @@
 		</activity>
 		<activity
 			android:name=".ui.SplashActivity"
-			android:theme="@style/FullscreenUltimate">
+			android:theme="@style/SplashScreenTheme">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 

@@ -25,8 +25,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.tuyenmonkey.mkloader.MKLoader;
 
-import java.util.Objects;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.browser.customtabs.CustomTabsIntent;
@@ -121,7 +119,6 @@ public class SignUpActivity extends AppCompatActivity {
 				.addOnCompleteListener(this, task -> {
 					if (task.isSuccessful()) {
 						Log.d(TAG, "signInWithCredential:success");
-						doesUserExist(Objects.requireNonNull(task.getResult()).getUser().getUid());
 						startActivity(new Intent(this, MainActivity.class));
 
 					} else {
@@ -138,31 +135,6 @@ public class SignUpActivity extends AppCompatActivity {
 					btnSignup.setVisibility(View.VISIBLE);
 
 				});
-	}
-
-	private void doesUserExist(String uid) {
-	/*	contactReference = mDatabase.child(CONTACT_DB);
-		userReference = mDatabase.child(USER_DB);
-
-		userReference.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				String key = dataSnapshot.getKey();
-				if (dataSnapshot.exists()){
-					Intent userIntent = new Intent(getApplicationContext(), ProfileActivity.class);
-					userIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK| Intent.FLAG_ACTIVITY_CLEAR_TOP);
-					startActivity(userIntent);
-				}else{
-
-				}
-			}
-
-			@Override
-			public void onCancelled(@NonNull DatabaseError databaseError) {
-
-			}
-		});*/
-
 	}
 
 
@@ -183,5 +155,14 @@ public class SignUpActivity extends AppCompatActivity {
 
 			}
 		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+		homeIntent.addCategory(Intent.CATEGORY_HOME);
+		homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity(homeIntent);
 	}
 }
