@@ -36,7 +36,7 @@ What things you need to install the software and how to install them
 ```
 
 ## Helliomessaging sms service(optional)
-You can create an account with [Helliomessaging](https://helliomessaging.com/) Helliomessaging to get their API client id and auth key.
+You can create an account with [Helliomessaging](https://helliomessaging.com/) to get their API client id and auth key.
 Add the Client Id and App secret to your grade.properties
 
 ```
