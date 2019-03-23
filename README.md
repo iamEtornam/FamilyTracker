@@ -44,6 +44,13 @@ SMS_CLIENT_ID="xxxxxxxxxxxxx"
 SMS_APP_SECRET="xxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
+## Mapbox API
+Get [Mapbox API](https://account.mapbox.com/auth/signup/) for free and add it your string.xml under res/values
+
+```
+<string name="mapbox_api" translatable="false">YOUR-PRIVATE-KEY-HERE</string>
+```
+
 
 ## How to contribute
 Contributing to XYZ Reader App is pretty straight forward! Fork the project, clone your fork and start coding!

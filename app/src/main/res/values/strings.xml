@@ -100,7 +100,7 @@
 	<string name="profile">Profile</string>
 	<string name="my_profile">My Profile</string>
 	<string name="my_map">My Map</string>
-	<string name="mapbox_api" translatable="false">pk.eyJ1IjoicmVnbmV4IiwiYSI6ImNqaXVlb3dxejF5dXgzcXFtNW5naTh4YjgifQ.ETNFvMbm9leMY1dC4x0fCQ</string>
+	<string name="mapbox_api" translatable="false">YOUR-PRIVATE-KEY-HERE</string>
 	<string name="user_location_permission_explanation">FamilyTracker required permission to be able to display your current location on the map and keep your location updated to your friends and family.</string>
 	<string name="user_location_permission_not_granted">Location Permission is not G</string>
 	<string name="tracker">User Tracker</string>
