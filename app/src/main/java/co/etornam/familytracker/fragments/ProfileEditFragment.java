@@ -41,7 +41,6 @@ import co.etornam.familytracker.R;
 import co.etornam.familytracker.model.Profile;
 import de.hdodenhof.circleimageview.CircleImageView;
 import gun0912.tedbottompicker.TedBottomPicker;
-import io.paperdb.Paper;
 
 import static co.etornam.familytracker.util.Constants.USER_DB;
 import static co.etornam.familytracker.util.NetworkUtil.isNetworkAvailable;
@@ -211,10 +210,6 @@ public class ProfileEditFragment extends Fragment {
 				assert downloadUrl != null;
 
 				writeUserDetails(firstName, otherName, dateOfBirth, homeAddress, workAddress, mobileNumber, downloadUrl.toString(), gender);
-				Paper.book().write("name", firstName + " " + otherName);
-				Paper.book().write("home_address", homeAddress);
-				Paper.book().write("work_address", workAddress);
-				Paper.book().write("number", mobileNumber);
 			} else {
 				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragMainLayout), "Couldn't upload Profile Photo. ", Snackbar.LENGTH_SHORT).show();
 			}

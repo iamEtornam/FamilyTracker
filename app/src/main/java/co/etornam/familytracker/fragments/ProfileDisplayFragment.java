@@ -1,7 +1,9 @@
 package co.etornam.familytracker.fragments;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,10 +40,11 @@ import co.etornam.familytracker.security.SignUpActivity;
 import co.etornam.familytracker.ui.DisplayHealthInfoActivity;
 import co.etornam.familytracker.ui.ProfileActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
-import io.paperdb.Paper;
 
 import static co.etornam.familytracker.util.Constants.USER_DB;
 import static co.etornam.familytracker.util.NetworkUtil.isNetworkAvailable;
+import static co.etornam.familytracker.util.PrefUtil.setSharedPProfileForWidget;
+import static com.mapbox.mapboxsdk.Mapbox.getApplicationContext;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -124,6 +127,9 @@ public class ProfileDisplayFragment extends Fragment {
 							.placeholder(R.drawable.ic_person)
 							.error(R.drawable.ic_image_placeholder)
 							.into(imgUserProfile);
+
+					setSharedPProfileForWidget(Objects.requireNonNull(getContext()), fullName, mobileNumber, homeAddress, workAddress);
+
 				} else {
 					new AlertDialog.Builder(Objects.requireNonNull(getContext()))
 							.setMessage("Set up your Personal profile")
@@ -161,7 +167,8 @@ public class ProfileDisplayFragment extends Fragment {
 						.setMessage("Do you want to Logout?")
 						.setCancelable(false)
 						.setPositiveButton("Yes", (dialog, id) -> {
-							Paper.book().destroy();
+							SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(getResources().getString(R.string.profile), Context.MODE_PRIVATE);
+							sharedPreferences.edit().clear().apply();
 							mAuth.signOut();
 							Intent logoutIntent = new Intent(getContext(), SignUpActivity.class);
 							logoutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -171,8 +178,6 @@ public class ProfileDisplayFragment extends Fragment {
 
 								}
 						).show();
-
-
 
 
 			}

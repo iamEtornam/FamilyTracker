@@ -37,10 +37,10 @@ public class SettingsFragment extends PreferenceFragmentCompat {
 			sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
 			startActivity(Intent.createChooser(sharingIntent, "Share via..."));
 		} else if (key.equals(getString(R.string.pref_privacy_key))) {
-			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
+			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.google.com/document/d/1KgEHGi2T9JbvtAX-Yoe15j5Ac1CR5Acr4mcfexM61ak/"));
 			startActivity(browserIntent);
 		} else if (key.equals(getString(R.string.pref_terms_key))) {
-			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
+			Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.google.com/document/d/1KgEHGi2T9JbvtAX-Yoe15j5Ac1CR5Acr4mcfexM61ak/"));
 			startActivity(browserIntent);
 		}
 		return super.onPreferenceTreeClick(preference);

@@ -12,7 +12,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import co.etornam.familytracker.R;
-import io.paperdb.Paper;
 
 import static co.etornam.familytracker.util.Constants.AUTH_STATUS;
 
@@ -27,13 +26,14 @@ public class PasscodeSetActivity extends AppCompatActivity {
 	@BindView(R.id.btnForgotPasscode)
 	Button btnForgotPasscode;
 	private SharedPreferences preferences;
+	private SharedPreferences lockPref;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_passcode_set);
 		ButterKnife.bind(this);
-		Paper.init(this);
+		lockPref = getSharedPreferences(getResources().getString(R.string.lock), MODE_PRIVATE);
 		preferences = getSharedPreferences(AUTH_STATUS, MODE_PRIVATE);
 		if (preferences.getBoolean(getString(R.string.isAuthSet_key), false)) {
 			edtPinOne.setEnabled(false);
@@ -54,7 +54,7 @@ public class PasscodeSetActivity extends AppCompatActivity {
 
 				if (!codeOne.isEmpty() && !codeTwo.isEmpty() && codeOne.equals(codeTwo)) {
 					//save the pin
-					Paper.book().write("code", codeOne);
+					lockPref.edit().putString("code", codeOne).apply();
 					preferences.edit().putBoolean(getString(R.string.isAuthSet_key), true).apply();
 					Intent intent = new Intent(this, MainActivity.class);
 					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -65,7 +65,7 @@ public class PasscodeSetActivity extends AppCompatActivity {
 				}
 				break;
 			case R.id.btnForgotPasscode:
-				Paper.book().delete("code");
+				lockPref.edit().clear().apply();
 				edtPinOne.setEnabled(true);
 				edtPinTwo.setEnabled(true);
 				btnSubmit.setEnabled(true);

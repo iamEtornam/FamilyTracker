@@ -12,9 +12,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
-        buildConfigField("String", "SMS_API_URL", SMS_API_URL)
-        buildConfigField("String", "SMS_USERNAME", SMS_USERNAME)
-        buildConfigField("String", "SMS_PASSWORD", SMS_PASSWORD)
+        buildConfigField("String", "SMS_CLIENT_ID", SMS_CLIENT_ID)
+        buildConfigField("String", "SMS_APP_SECRET", SMS_APP_SECRET)
     }
     buildTypes {
         release {
@@ -40,6 +39,7 @@ dependencies {
     implementation 'androidx.preference:preference:1.0.0'
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.android.volley:volley:1.1.1'
+    implementation 'androidx.preference:preference:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
@@ -54,7 +54,6 @@ dependencies {
     implementation 'com.github.joaquimley:faboptions:1.2.0'
     implementation 'com.github.florent37:expansionpanel:1.2.2'
     implementation 'com.github.nanchen2251:PinView:1.0.1'
-    implementation 'io.paperdb:paperdb:2.6'
 
     //mapbox dependencies
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:7.2.0'

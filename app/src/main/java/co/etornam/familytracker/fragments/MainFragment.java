@@ -3,6 +3,7 @@ package co.etornam.familytracker.fragments;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,9 +13,6 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -29,9 +27,22 @@ import com.google.firebase.dynamiclinks.DynamicLink;
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks;
 import com.squareup.picasso.Picasso;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Objects;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -67,9 +78,21 @@ public class MainFragment extends Fragment {
 	private String TAG = MainFragment.class.getSimpleName();
 	private String userFullName;
 	private ProgressDialog progressDialog;
+	private String CURRENT_DATE = new SimpleDateFormat("yyyyMMddHH", Locale.getDefault()).format(new Date());
+	private String SMS_API_URL = "https://app.helliomessaging.com/api/v2/sms?";
 
 	public MainFragment() {
 
+	}
+
+	private static String sha1(String input) throws NoSuchAlgorithmException {
+		MessageDigest mDigest = MessageDigest.getInstance("SHA1");
+		byte[] result = mDigest.digest(input.getBytes());
+		StringBuilder sb = new StringBuilder();
+		for (byte aResult : result) {
+			sb.append(Integer.toString((aResult & 0xff) + 0x100, 16).substring(1));
+		}
+		return sb.toString();
 	}
 
 	@Override
@@ -215,7 +238,6 @@ public class MainFragment extends Fragment {
 						//send link thru sms api
 						sendSms(shortLink, positionId);
 
-
 						Intent sendIntent = new Intent();
 						String msg = "Hey, here is a link to my current location: " + shortLink + " you can track me using FamilyTracker App.";
 						sendIntent.setAction(Intent.ACTION_SEND);
@@ -231,45 +253,112 @@ public class MainFragment extends Fragment {
 
 	private void sendSms(Uri shortLink, String positionId) {
 
-//		https://app.helliomessaging.com/api/sms?username=regnex&password=xxxxxx&senderId=TEST&msisdn=233xxxxxxxxx&message=Hello_World
-
 		mContactDb.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(positionId).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 				Contact contact = dataSnapshot.getValue(Contact.class);
 				assert contact != null;
-				String msisdn = contact.getNumber();
-				String username = BuildConfig.SMS_USERNAME;
-				String password = "&password=" + BuildConfig.SMS_PASSWORD;
-				String message = "&message=" + "Hey, here is a link to my current location: " + shortLink + " you can track me using FamilyTracker App.";
-				String senderId = "&senderId=" + userFullName;
-				String SMS_API_URL = BuildConfig.SMS_API_URL;
+				String message = "Hey, track me with this link " + shortLink;
+
+				class SendPostRequest extends AsyncTask<String, Void, String> {
+
+					private String clientId = "clientId=" + BuildConfig.SMS_CLIENT_ID;
+					private String authKey = "&authKey=" + sha1(BuildConfig.SMS_CLIENT_ID + BuildConfig.SMS_APP_SECRET + CURRENT_DATE);
+					private String myMessage = "&message=" + message;
+					private String senderId = "&senderId=" + userFullName;
+					private String msisdn = "&msisdn=" + contact.getNumber();
 
 
-				StringRequest postRequest = new StringRequest(Request.Method.POST, SMS_API_URL,
-						response -> {
-							try {
-								Log.d(TAG, "onResponse: " + response);
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						},
-						error -> error.printStackTrace()
-				) {
-					@Override
-					protected Map<String, String> getParams() {
-						Map<String, String> params = new HashMap<>();
-						// the POST parameters:
-						params.put("username", username);
-						params.put("password", password);
-						params.put("senderId", senderId);
-						params.put("msisdn", msisdn);
-						params.put("message", message);
-
-						return params;
+					private SendPostRequest() throws NoSuchAlgorithmException {
 					}
-				};
-				Volley.newRequestQueue(Objects.requireNonNull(getContext())).add(postRequest);
+
+
+					protected void onPreExecute() {
+					}
+
+					@Override
+					protected String doInBackground(String... strings) {
+						try {
+
+							Log.d(TAG, clientId);
+							Log.d(TAG, authKey);
+							Log.d(TAG, msisdn);
+							Log.d(TAG, myMessage);
+							Log.d(TAG, senderId);
+
+
+							//Prepare parameter string
+							StringBuilder sbPostData = new StringBuilder(SMS_API_URL);
+							sbPostData.append(clientId);
+							sbPostData.append(authKey);
+							sbPostData.append(msisdn);
+							sbPostData.append(myMessage);
+							sbPostData.append(senderId);
+
+							//final string
+							SMS_API_URL = sbPostData.toString().replace(" ", "%20");
+							Log.d(TAG, "doInBackground: SMS_API " + SMS_API_URL);
+							URL myURL = new URL(SMS_API_URL);
+
+							Log.d(TAG, "doInBackground: URL: " + myURL);
+
+							HttpURLConnection conn = (HttpURLConnection) myURL.openConnection();
+							conn.setReadTimeout(15000 /* milliseconds */);
+							conn.setConnectTimeout(15000 /* milliseconds */);
+							conn.setRequestMethod("POST");
+							conn.setDoInput(true);
+							conn.setDoOutput(true);
+
+							OutputStream os = conn.getOutputStream();
+							BufferedWriter writer = new BufferedWriter(
+									new OutputStreamWriter(os, StandardCharsets.UTF_8));
+							writer.write(SMS_API_URL);
+
+							writer.flush();
+							writer.close();
+							os.close();
+
+							int responseCode = conn.getResponseCode();
+
+							if (responseCode == HttpsURLConnection.HTTP_OK) {
+
+								BufferedReader in = new BufferedReader(
+										new InputStreamReader(
+												conn.getInputStream()));
+								StringBuilder sb = new StringBuilder();
+								String line = "";
+
+								while ((line = in.readLine()) != null) {
+
+									sb.append(line);
+									break;
+								}
+								Toast.makeText(getContext(), "Sms sent!", Toast.LENGTH_SHORT).show();
+								in.close();
+								Log.d(TAG, "doInBackground: " + responseCode);
+								return sb.toString();
+
+							} else {
+								return String.valueOf(responseCode);
+
+							}
+						} catch (Exception e) {
+							Toast.makeText(getContext(), "Couldn't sent sms online", Toast.LENGTH_SHORT).show();
+						}
+						return null;
+					}
+
+					@Override
+					protected void onPostExecute(String result) {
+						Log.d("SEND_SMS", result);
+					}
+
+				}
+				try {
+					new SendPostRequest().execute();
+				} catch (NoSuchAlgorithmException e) {
+					e.printStackTrace();
+				}
 
 			}
 
@@ -278,6 +367,7 @@ public class MainFragment extends Fragment {
 				Log.d(TAG, "onCancelled: " + databaseError.getMessage());
 			}
 		});
+
 	}
 
 
@@ -317,4 +407,6 @@ public class MainFragment extends Fragment {
 			ContactMainLayout = v.findViewById(R.id.contactMainLayout);
 		}
 	}
+
+
 }

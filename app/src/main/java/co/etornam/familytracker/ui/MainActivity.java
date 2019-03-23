@@ -31,10 +31,10 @@ import co.etornam.familytracker.fragments.SettingsFragment;
 import co.etornam.familytracker.fragments.TrackerFragment;
 import co.etornam.familytracker.security.PasscodeActivity;
 import co.etornam.familytracker.services.LocationFetcherService;
-import io.paperdb.Paper;
 
 import static co.etornam.familytracker.util.Constants.AUTH_STATUS;
 import static co.etornam.familytracker.util.Constants.ID_KEY;
+import static co.etornam.familytracker.util.PrefUtil.getSharedPProfileNameForWidget;
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 	private static final String TAG = MainActivity.class.getSimpleName();
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 			displaySelectedScreen(itemId);
 			return true;
 		});
-
+		Log.d(TAG, "onCreate: SHARED: " + getSharedPProfileNameForWidget(getApplicationContext()));
 		FirebaseDynamicLinks.getInstance()
 				.getDynamicLink(getIntent())
 				.addOnSuccessListener(this, pendingDynamicLinkData -> {
@@ -165,7 +165,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 				startActivity(pinIntent);
 			} else if (!isPinActivated) {
 				preferences.edit().putBoolean(getString(R.string.isAuthSet_key), false).apply();
-				Paper.book().delete("code");
+				SharedPreferences lockPref = getSharedPreferences(getResources().getString(R.string.lock), MODE_PRIVATE);
+				lockPref.edit().clear().apply();
 			}
 
 		} else if (key.equals(getString(R.string.pref_track_key))) {

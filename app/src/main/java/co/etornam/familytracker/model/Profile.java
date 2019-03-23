@@ -9,6 +9,7 @@ public class Profile {
 	private String mobileNumber;
 	private String profileImgUrl;
 	private String gender;
+
 	private Object timestamp;
 
 	public Profile() {

@@ -24,4 +24,5 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
 	<dimen name="dp_150">150dp</dimen>
 	<dimen name="dp_50">50dp</dimen>
 	<dimen name="dp_24">24dp</dimen>
+	<dimen name="dp_40">40dp</dimen>
 </resources>

@@ -109,18 +109,6 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 		mDatabase = FirebaseDatabase.getInstance().getReference();
 		fabOptions.setOnClickListener(this);
 		fabOptions.setVisibility(View.GONE);
-
-	/*	mDatabase.child(CONTACT_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).child(postionId).addListenerForSingleValueEvent(new ValueEventListener() {
-			@Override
-			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-				contact = dataSnapshot.getValue(Contact.class);
-			}
-
-			@Override
-			public void onCancelled(@NonNull DatabaseError databaseError) {
-				Log.d(TAG, "onCancelled: " + databaseError.getMessage());
-			}
-		});*/
 	}
 
 	@SuppressLint("MissingPermission")
@@ -324,16 +312,20 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 					mDatabase.child(TRACKING_DB).child(positionId).addValueEventListener(new ValueEventListener() {
 						@Override
 						public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-							Tracker tracker = dataSnapshot.getValue(Tracker.class);
-							assert tracker != null;
-							destinationLat = Double.parseDouble(tracker.getLatitude());
-							destinationLng = Double.parseDouble(tracker.getLongitude());
-							LatLng destinationLatLng = new LatLng(destinationLat, destinationLng);
-							originPoint = Point.fromLngLat(originLocation.getLongitude(), originLocation.getLatitude());
-							destinationPoint = Point.fromLngLat(destinationLatLng.getLongitude(), destinationLatLng.getLatitude());
-							mapboxMap.addMarker(new MarkerOptions().position(destinationLatLng));
-							getRoute(originPoint, destinationPoint);
+							if (dataSnapshot.exists()) {
+								Tracker tracker = dataSnapshot.getValue(Tracker.class);
+								assert tracker != null;
+								destinationLat = Double.parseDouble(tracker.getLatitude());
+								destinationLng = Double.parseDouble(tracker.getLongitude());
+								LatLng destinationLatLng = new LatLng(destinationLat, destinationLng);
+								originPoint = Point.fromLngLat(originLocation.getLongitude(), originLocation.getLatitude());
+								destinationPoint = Point.fromLngLat(destinationLatLng.getLongitude(), destinationLatLng.getLatitude());
+								mapboxMap.addMarker(new MarkerOptions().position(destinationLatLng));
+								getRoute(originPoint, destinationPoint);
 
+							} else {
+								Toast.makeText(trackerActivity, "User Location not found!", Toast.LENGTH_SHORT).show();
+							}
 						}
 
 						@Override

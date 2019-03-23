@@ -7,119 +7,84 @@
 	android:id="@+id/widgetLayout"
 	android:padding="@dimen/widget_margin">
 
+	<RelativeLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_vertical"
+		android:gravity="center_vertical">
+		<!-- Widget enrolled classes -->
+
+		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentStart="true"
+			android:layout_centerVertical="true"
+			android:layout_gravity="center_horizontal"
+			android:layout_margin="@dimen/dp_8"
+			android:text="@string/in_case_of_emergency_contact"
+			android:textColor="@color/colorWhite"
+			android:textSize="16sp"
+			android:textStyle="bold" />
+
+		<ImageButton
+			android:id="@+id/updateBtn"
+			android:layout_width="@dimen/dp_40"
+			android:layout_height="@dimen/dp_40"
+			android:layout_alignParentEnd="true"
+			android:layout_centerVertical="true"
+			android:layout_margin="@dimen/dp_8"
+			android:background="@android:color/transparent"
+			android:contentDescription="@string/avatar"
+			android:src="@drawable/ic_reload" />
+
+	</RelativeLayout>
+
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="@dimen/dp_1"
+		android:layout_marginStart="@dimen/dp_5"
+		android:layout_marginEnd="@dimen/dp_5"
+		android:background="@color/colorWhite" />
 
 	<TextView
+		android:id="@+id/txtName"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:layout_gravity="center_horizontal"
-		android:layout_margin="@dimen/dp_8"
-		android:text="@string/in_case_of_emergency_contact"
+		android:layout_marginStart="@dimen/dp_8"
+		android:layout_marginTop="@dimen/dp_8"
 		android:textColor="@color/colorWhite"
 		android:textSize="16sp"
-		android:textStyle="bold" />
+		tools:text="@string/text_placeholder" />
 
-	<LinearLayout
+	<TextView
+		android:id="@+id/txtNumber"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:orientation="horizontal">
+		android:layout_marginStart="@dimen/dp_8"
+		android:layout_marginTop="@dimen/dp_5"
+		android:textColor="@color/colorWhite"
+		android:textSize="16sp"
+		tools:text="@string/text_placeholder" />
 
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="@dimen/dp_8"
-			android:layout_marginBottom="@dimen/dp_5"
-			android:text="@string/doc_name"
-			android:textColor="@color/colorWhite"
-			android:textSize="16sp" />
 
-		<TextView
-			android:id="@+id/txtPersonName"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="@dimen/dp_8"
-			android:layout_marginBottom="@dimen/dp_5"
-			android:textColor="@color/colorWhite"
-			android:textSize="16sp"
-			android:textStyle="bold"
-			tools:text="@string/text_placeholder" />
-	</LinearLayout>
-
-	<LinearLayout
+	<TextView
+		android:id="@+id/txtHome"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:orientation="horizontal">
+		android:layout_marginStart="@dimen/dp_8"
+		android:layout_marginTop="@dimen/dp_5"
+		android:textColor="@color/colorWhite"
+		android:textSize="16sp"
+		tools:text="@string/text_placeholder" />
 
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="@dimen/dp_8"
-			android:layout_marginBottom="@dimen/dp_5"
-			android:text="@string/doc_number"
-			android:textColor="@color/colorWhite"
-			android:textSize="16sp" />
-
-		<TextView
-			android:id="@+id/txtPersonNumber"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="@dimen/dp_8"
-			android:layout_marginBottom="@dimen/dp_5"
-			android:textColor="@color/colorWhite"
-			android:textSize="16sp"
-			android:textStyle="bold"
-			tools:text="@string/text_placeholder" />
-	</LinearLayout>
-
-	<LinearLayout
+	<TextView
+		android:id="@+id/txtWork"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:orientation="horizontal">
-
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="@dimen/dp_8"
-			android:layout_marginBottom="@dimen/dp_5"
-			android:text="@string/home_address"
-			android:textColor="@color/colorWhite"
-			android:textSize="16sp" />
-
-		<TextView
-			android:id="@+id/txtPersonHomeAddress"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="@dimen/dp_8"
-			android:layout_marginBottom="@dimen/dp_5"
-			android:textColor="@color/colorWhite"
-			android:textSize="16sp"
-			android:textStyle="bold"
-			tools:text="@string/text_placeholder" />
-	</LinearLayout>
-
-	<LinearLayout
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:orientation="horizontal">
-
-		<TextView
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="@dimen/dp_8"
-			android:layout_marginBottom="@dimen/dp_5"
-			android:text="@string/work_address"
-			android:textColor="@color/colorWhite"
-			android:textSize="16sp" />
-
-		<TextView
-			android:id="@+id/txtPersonWorkAddress"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:layout_marginStart="@dimen/dp_8"
-			android:layout_marginBottom="@dimen/dp_5"
-			android:textColor="@color/colorWhite"
-			android:textSize="16sp"
-			android:textStyle="bold"
-			tools:text="@string/text_placeholder" />
-	</LinearLayout>
+		android:layout_marginStart="@dimen/dp_8"
+		android:layout_marginTop="@dimen/dp_5"
+		android:textColor="@color/colorWhite"
+		android:textSize="16sp"
+		tools:text="@string/text_placeholder" />
 
 </LinearLayout>

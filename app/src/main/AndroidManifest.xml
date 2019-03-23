@@ -120,6 +120,7 @@
 		</activity>
 
 		<service android:name=".services.LocationFetcherService" />
+		<service android:name=".services.WidgetService" />
 	</application>
 
 </manifest>

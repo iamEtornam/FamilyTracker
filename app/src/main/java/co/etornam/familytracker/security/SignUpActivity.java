@@ -88,7 +88,7 @@ public class SignUpActivity extends AppCompatActivity {
 	}
 
 	private void readTermCondition() {
-		String url = "https://google.com";
+		String url = "https://docs.google.com/document/d/1KgEHGi2T9JbvtAX-Yoe15j5Ac1CR5Acr4mcfexM61ak/";
 		CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
 		builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
 		builder.setStartAnimations(this, R.anim.slide_right, R.anim.slide_left);
