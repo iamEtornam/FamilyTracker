@@ -44,7 +44,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import static co.etornam.familytracker.util.Constants.USER_DB;
 import static co.etornam.familytracker.util.NetworkUtil.isNetworkAvailable;
 import static co.etornam.familytracker.util.PrefUtil.setSharedPProfileForWidget;
-import static com.mapbox.mapboxsdk.Mapbox.getApplicationContext;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -167,7 +166,7 @@ public class ProfileDisplayFragment extends Fragment {
 						.setMessage("Do you want to Logout?")
 						.setCancelable(false)
 						.setPositiveButton("Yes", (dialog, id) -> {
-							SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences(getResources().getString(R.string.profile), Context.MODE_PRIVATE);
+							SharedPreferences sharedPreferences = getContext().getSharedPreferences(getResources().getString(R.string.profile), Context.MODE_PRIVATE);
 							sharedPreferences.edit().clear().apply();
 							mAuth.signOut();
 							Intent logoutIntent = new Intent(getContext(), SignUpActivity.class);
