@@ -36,7 +36,7 @@ What things you need to install the software and how to install them
 ```
 
 ## Keystore Configuration
-Create a file "keystore.properties" in root folder of project and add & edit the following code to suit your details
+Create a file "keystore.properties" in app/ folder of project and add & edit the following code to suit your details
 ```
 storePassword=myStorePassword //your store password
 keyPassword=mykeyPassword //your keystore password
