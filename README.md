@@ -35,6 +35,15 @@ What things you need to install the software and how to install them
 * Firebase Account
 ```
 
+## Keystore Configuration
+Create a file "keystore.properties" in root folder of project and add & edit the following code to suit your details
+```
+storePassword=myStorePassword //your store password
+keyPassword=mykeyPassword //your keystore password
+keyAlias=myKeyAlias //your keystore alias
+storeFile=/Documents/uploadKeys/keystore.jks //path to your keystore
+```
+
 ## Helliomessaging sms service(optional)
 You can create an account with [Helliomessaging](https://helliomessaging.com/) to get their API client id and auth key.
 Add the Client Id and App secret to your grade.properties
