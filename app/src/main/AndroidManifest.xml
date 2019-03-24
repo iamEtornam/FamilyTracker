@@ -90,14 +90,6 @@
 				android:value=".ui.MainActivity" />
 		</activity>
 		<activity
-			android:name=".ui.ContactActivity"
-			android:label="@string/select_contacts"
-			android:parentActivityName=".ui.MainActivity">
-			<meta-data
-				android:name="android.support.PARENT_ACTIVITY"
-				android:value=".ui.MainActivity" />
-		</activity>
-		<activity
 			android:name=".ui.ProfileActivity"
 			android:label="@string/profile"
 			android:parentActivityName=".ui.MainActivity">

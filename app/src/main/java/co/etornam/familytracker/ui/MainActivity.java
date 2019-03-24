@@ -20,6 +20,7 @@ import java.util.Objects;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import butterknife.BindView;
@@ -34,7 +35,6 @@ import co.etornam.familytracker.services.LocationFetcherService;
 
 import static co.etornam.familytracker.util.Constants.AUTH_STATUS;
 import static co.etornam.familytracker.util.Constants.ID_KEY;
-import static co.etornam.familytracker.util.PrefUtil.getSharedPProfileNameForWidget;
 
 public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 	private static final String TAG = MainActivity.class.getSimpleName();
@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 	FrameLayout mainContainer;
 	@BindView(R.id.mainNavView)
 	BottomNavigationView mainNavView;
+	@BindView(R.id.toolbar)
+	Toolbar toolbar;
 	private boolean isTrackingActivated;
 	private boolean isPinActivated;
 	private String key;
@@ -54,6 +56,9 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		ButterKnife.bind(this);
+		toolbar.setTitle(getResources().getString(R.string.home));
+		toolbar.setTitleTextColor(getResources().getColor(R.color.colorWhite));
+		setSupportActionBar(toolbar);
 		mAuth = FirebaseAuth.getInstance();
 		displaySelectedScreen(R.id.action_home);
 		sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -65,7 +70,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 			displaySelectedScreen(itemId);
 			return true;
 		});
-		Log.d(TAG, "onCreate: SHARED: " + getSharedPProfileNameForWidget(getApplicationContext()));
 		FirebaseDynamicLinks.getInstance()
 				.getDynamicLink(getIntent())
 				.addOnSuccessListener(this, pendingDynamicLinkData -> {
@@ -78,19 +82,19 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 					}
 
 				})
-				.addOnFailureListener(this, e -> Log.w(TAG, "getDynamicLink:onFailure", e));
+				.addOnFailureListener(this, e ->
+						Log.w(TAG, "getDynamicLink:onFailure", e));
 	}
 
 	private void handleDeepLink(Uri deepLink) {
 		if (Objects.equals(deepLink.getPath(), "/tracker")) {
 			key = deepLink.getQueryParameter("id");
-			Toast.makeText(this, "key from MainActivity: " + key, Toast.LENGTH_SHORT).show();
 			new Handler().postDelayed(() -> {
 				Intent intent = new Intent(MainActivity.this, SingleTrackerActivity.class);
 				intent.putExtra("id", deepLink.getQueryParameter("id"));
 				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 				startActivity(intent);
-			}, 5000);
+			}, 3000);
 		}
 	}
 
@@ -136,15 +140,15 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
 	@Override
 	public void onBackPressed() {
 		new AlertDialog.Builder(this)
-				.setMessage("Are you sure you want to exit?")
+				.setMessage(getString(R.string.want_to_exit))
 				.setCancelable(false)
-				.setPositiveButton("Yes", (dialog, id) -> {
+				.setPositiveButton(getResources().getString(R.string.yes), (dialog, id) -> {
 					Intent homeIntent = new Intent(Intent.ACTION_MAIN);
 					homeIntent.addCategory(Intent.CATEGORY_HOME);
 					homeIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 					startActivity(homeIntent);
 				})
-				.setNegativeButton("No", (dialog, which) ->
+				.setNegativeButton(getResources().getString(R.string.no), (dialog, which) ->
 						displaySelectedScreen(R.id.action_home)
 				)
 				.show();

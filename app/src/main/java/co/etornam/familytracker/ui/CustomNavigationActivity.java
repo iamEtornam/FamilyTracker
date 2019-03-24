@@ -22,6 +22,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static co.etornam.familytracker.util.Constants.DESTINATIONLAT;
+import static co.etornam.familytracker.util.Constants.DESTINATIONLNG;
+import static co.etornam.familytracker.util.Constants.ORIGINLAT;
+import static co.etornam.familytracker.util.Constants.ORIGINLNG;
+
 public class CustomNavigationActivity extends AppCompatActivity implements OnNavigationReadyCallback {
 
 	@BindView(R.id.navigationView)
@@ -42,10 +47,10 @@ public class CustomNavigationActivity extends AppCompatActivity implements OnNav
 		navigationView.initialize(this);
 		Intent navigationIntent = getIntent();
 		if (navigationIntent != null) {
-			navigateDestinationLat = navigationIntent.getDoubleExtra("destinationLatitude", 0.0);
-			navigateDestinationLng = navigationIntent.getDoubleExtra("destinationLongitude", 0.0);
-			navigateOriginLat = navigationIntent.getDoubleExtra("originLatitude", 0.0);
-			navigateOriginLng = navigationIntent.getDoubleExtra("originLongitude", 0.0);
+			navigateDestinationLat = navigationIntent.getDoubleExtra(DESTINATIONLAT, 0.0);
+			navigateDestinationLng = navigationIntent.getDoubleExtra(DESTINATIONLNG, 0.0);
+			navigateOriginLat = navigationIntent.getDoubleExtra(ORIGINLAT, 0.0);
+			navigateOriginLng = navigationIntent.getDoubleExtra(ORIGINLNG, 0.0);
 		}
 		Log.d(TAG, "onCreate: originLatlng: " + navigateOriginLat + ", " + navigateOriginLng);
 		Log.d(TAG, "onCreate: destinationLatlng: " + navigateDestinationLat + ", " + navigateDestinationLng);

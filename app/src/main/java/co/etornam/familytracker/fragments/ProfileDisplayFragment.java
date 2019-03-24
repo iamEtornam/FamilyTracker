@@ -109,12 +109,12 @@ public class ProfileDisplayFragment extends Fragment {
 				if (dataSnapshot.exists()) {
 					Profile profile = dataSnapshot.getValue(Profile.class);
 					assert profile != null;
-					String fullName = "FULL NAME: " + profile.getFirstName() + " " + profile.getOtherName();
-					String dob = "D.O.B: " + profile.getDateOfBirth();
-					String homeAddress = "HOME: " + profile.getHomeAddress();
-					String workAddress = "WORK: " + profile.getWorkAddress();
-					String gender = "GENDER: " + profile.getGender();
-					String mobileNumber = "MOBILE NUMBER: " + profile.getMobileNumber();
+					String fullName = getString(R.string.full_name) + " " + profile.getFirstName() + " " + profile.getOtherName();
+					String dob = getString(R.string.dob) + " " + profile.getDateOfBirth();
+					String homeAddress = getString(R.string.home_profile) + " " + profile.getHomeAddress();
+					String workAddress = getString(R.string.work) + " " + profile.getWorkAddress();
+					String gender = getString(R.string.gender) + " " + profile.getGender();
+					String mobileNumber = getString(R.string.mobile) + " " + profile.getMobileNumber();
 					txtUserName.setText(fullName);
 					txtUserDob.setText(dob);
 					txtUserHomeAddress.setText(homeAddress);
@@ -131,14 +131,14 @@ public class ProfileDisplayFragment extends Fragment {
 
 				} else {
 					new AlertDialog.Builder(Objects.requireNonNull(getContext()))
-							.setMessage("Set up your Personal profile")
+							.setMessage(getString(R.string.profile_dia_msg))
 							.setCancelable(false)
-							.setPositiveButton("Ok", (dialog, id) -> {
+							.setPositiveButton(getString(R.string.ok), (dialog, id) -> {
 								Intent intent = new Intent(getContext(), ProfileActivity.class);
 								intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 								startActivity(intent);
 							})
-							.setNegativeButton("Cancel", (dialog, which) -> {
+							.setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
 
 									}
 							).show();
@@ -148,9 +148,9 @@ public class ProfileDisplayFragment extends Fragment {
 			@Override
 			public void onCancelled(@NonNull DatabaseError databaseError) {
 				Log.d(TAG, "onCancelled: " + databaseError.getMessage());
-				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragDisplayMain), "Couldn't Retrieve your Details ", Snackbar.LENGTH_SHORT)
+				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragDisplayMain), getString(R.string.could_not_retrieve), Snackbar.LENGTH_SHORT)
 						.setActionTextColor(getResources().getColor(R.color.colorRed))
-						.setAction("Try Again!", v -> getUserDetails())
+						.setAction(getString(R.string.try_again), v -> getUserDetails())
 						.show();
 			}
 		});
@@ -160,12 +160,12 @@ public class ProfileDisplayFragment extends Fragment {
 	public void onViewClicked() {
 		if (mAuth.getCurrentUser() != null) {
 			if (!isNetworkAvailable(Objects.requireNonNull(getContext()))) {
-				Toast.makeText(getContext(), "No internet Connection.", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getContext(), getString(R.string.no_internet), Toast.LENGTH_SHORT).show();
 			} else {
 				new AlertDialog.Builder(Objects.requireNonNull(getContext()))
-						.setMessage("Do you want to Logout?")
+						.setMessage(getString(R.string.want_to_logout))
 						.setCancelable(false)
-						.setPositiveButton("Yes", (dialog, id) -> {
+						.setPositiveButton(getString(R.string.Yes), (dialog, id) -> {
 							SharedPreferences sharedPreferences = getContext().getSharedPreferences(getResources().getString(R.string.profile), Context.MODE_PRIVATE);
 							sharedPreferences.edit().clear().apply();
 							mAuth.signOut();
@@ -173,7 +173,7 @@ public class ProfileDisplayFragment extends Fragment {
 							logoutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 							startActivity(logoutIntent);
 						})
-						.setNegativeButton("No", (dialog, which) -> {
+						.setNegativeButton(getString(R.string.no), (dialog, which) -> {
 
 								}
 						).show();

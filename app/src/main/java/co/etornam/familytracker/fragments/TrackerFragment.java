@@ -208,9 +208,7 @@ public class TrackerFragment extends Fragment implements OnMapReadyCallback, Per
 					return;
 				}
 				if (!isNetworkAvailable(Objects.requireNonNull(getContext()))) {
-					Toast.makeText(getContext(), "No Internet Connection.", Toast.LENGTH_SHORT).show();
-				} else {
-
+					Toast.makeText(getContext(), getString(R.string.no_internet), Toast.LENGTH_SHORT).show();
 				}
 
 				if (fragment.mapboxMap != null && result.getLastLocation() != null) {

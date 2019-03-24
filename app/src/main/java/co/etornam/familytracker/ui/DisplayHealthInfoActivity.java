@@ -87,17 +87,17 @@ public class DisplayHealthInfoActivity extends AppCompatActivity {
 				if (dataSnapshot.exists()) {
 					Health health = dataSnapshot.getValue(Health.class);
 					assert health != null;
-					String donor = "DONOR: " + health.getDonor();
-					String diabetic = "DIABETIC: " + health.getDiabetic();
-					String bloodGroup = "BLOOD GROUP: " + health.getBloodgroup();
-					String bloodPressure = "BLOOD PRESSURE: " + health.getBloodpressure();
-					String allergy = "ALLERGY: " + health.getAllergy();
-					String allergyInfo = "ALLERGY INFO. : " + health.getAllergyinfo();
-					String medication = "MEDICATION: " + health.getMedication();
-					String medicationInfo = "MEDICATION INFO. : " + health.getMedinfo();
-					String insuranceName = "INSURANCE COMPANY: " + health.getCompanyname();
-					String insuranceNumber = "INSURANCE NUMBER: " + health.getInsurancenumber();
-					String doctorName = "DOCTOR: " + health.getDoctorname();
+					String donor = getString(R.string.donor) + health.getDonor();
+					String diabetic = getString(R.string.diabetic_desc) + health.getDiabetic();
+					String bloodGroup = getString(R.string.blood_group_desc) + health.getBloodgroup();
+					String bloodPressure = getString(R.string.blood_pressure_desc) + health.getBloodpressure();
+					String allergy = getString(R.string.allergy_desc) + health.getAllergy();
+					String allergyInfo = getString(R.string.allergy_info_desc) + health.getAllergyinfo();
+					String medication = getString(R.string.medication_desc) + health.getMedication();
+					String medicationInfo = getString(R.string.medication_info_desc) + health.getMedinfo();
+					String insuranceName = getString(R.string.indurance_desc) + health.getCompanyname();
+					String insuranceNumber = getString(R.string.insurance_number_desc) + health.getInsurancenumber();
+					String doctorName = getString(R.string.doctor_desc) + health.getDoctorname();
 					String doctorNumber = "(" + health.getDoctornumber() + ")";
 
 					txtDonor.setText(donor);
@@ -111,14 +111,14 @@ public class DisplayHealthInfoActivity extends AppCompatActivity {
 					txtDoctorName.setText(doctorName);
 					txtDoctorNumber.setText(doctorNumber);
 
-					if (health.getAllergy().equalsIgnoreCase("yes")) {
+					if (health.getAllergy().equalsIgnoreCase(getString(R.string.yes))) {
 						txtAllergyInfo.setVisibility(View.VISIBLE);
 						txtAllergyInfo.setText(allergyInfo);
 					} else {
 						txtAllergyInfo.setVisibility(View.GONE);
 					}
 
-					if (health.getMedication().equalsIgnoreCase("yes")) {
+					if (health.getMedication().equalsIgnoreCase(getString(R.string.yes))) {
 						txtMedicationInfo.setVisibility(View.VISIBLE);
 						txtMedicationInfo.setText(medicationInfo);
 					} else {
@@ -126,14 +126,14 @@ public class DisplayHealthInfoActivity extends AppCompatActivity {
 					}
 				} else {
 					new AlertDialog.Builder(DisplayHealthInfoActivity.this)
-							.setMessage("Set up your Personal Health Information")
+							.setMessage(getString(R.string.health_dia_msg))
 							.setCancelable(false)
-							.setPositiveButton("Ok", (dialog, id) -> {
+							.setPositiveButton(getString(R.string.ok), (dialog, id) -> {
 								Intent intent = new Intent(DisplayHealthInfoActivity.this, HealthActivity.class);
 								intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 								startActivity(intent);
 							})
-							.setNegativeButton("Cancel", (dialog, which) -> {
+							.setNegativeButton(getString(R.string.cancel), (dialog, which) -> {
 
 									}
 							).show();
@@ -143,9 +143,9 @@ public class DisplayHealthInfoActivity extends AppCompatActivity {
 			@Override
 			public void onCancelled(@NonNull DatabaseError databaseError) {
 				Log.d(TAG, "onCancelled: " + databaseError.getMessage());
-				Snackbar.make(findViewById(R.id.layoutMain), "Couldn't Retrieve your Health Details ", Snackbar.LENGTH_SHORT)
+				Snackbar.make(findViewById(R.id.layoutMain), getString(R.string.could_not_get_health_info), Snackbar.LENGTH_SHORT)
 						.setActionTextColor(getResources().getColor(R.color.colorRed))
-						.setAction("Try Again!", v -> getUserHealthDetails())
+						.setAction(getString(R.string.try_again), v -> getUserHealthDetails())
 						.show();
 			}
 		});

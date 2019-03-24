@@ -19,7 +19,6 @@
 	<string name="avatar">Avatar</string>
 	<string name="text_placeholder">Dummy Text Here</string>
 	<string name="home">Home</string>
-	<string name="select_contacts">Select Contacts</string>
 	<string name="add_new_contact">Add New Contact</string>
 	<string name="save_contact">Save Contact</string>
 	<string name="enter_full_name">Enter Full Name</string>
@@ -100,7 +99,7 @@
 	<string name="profile">Profile</string>
 	<string name="my_profile">My Profile</string>
 	<string name="my_map">My Map</string>
-	<string name="mapbox_api" translatable="false">YOUR-PRIVATE-KEY-HERE</string>
+	<string name="mapbox_api" translatable="false">pk.eyJ1IjoicmVnbmV4IiwiYSI6ImNqaXVlb3dxejF5dXgzcXFtNW5naTh4YjgifQ.ETNFvMbm9leMY1dC4x0fCQ</string>
 	<string name="user_location_permission_explanation">FamilyTracker required permission to be able to display your current location on the map and keep your location updated to your friends and family.</string>
 	<string name="user_location_permission_not_granted">Location Permission is not G</string>
 	<string name="tracker">User Tracker</string>
@@ -118,7 +117,7 @@
 	<string name="pref_privacy_key" translatable="false">privacy_key</string>
 	<string name="pref_terms_key" translatable="false">terms_key</string>
 	<string name="isAuthSet_key">isAuthSet</string>
-	<string name="enter_your_passcode_to_continue">Enter your Passcode to continue...</string>
+	<string name="enter_your_passcode_to_continue">Enter your Passcode to continue…</string>
 	<string name="validate">Validate</string>
 	<string name="forgot_passcode">Forgot Passcode? Reset here.</string>
 	<string name="in_case_of_emergency_contact">In case of Emergency</string>
@@ -130,4 +129,57 @@
 	<string name="doc_name">NAME:</string>
 	<string name="doc_number">NUMBER:</string>
 	<string name="lock">App_lock</string>
+	<string name="photo_error">Couldn\'t upload Profile Photo.</string>
+	<string name="contact_saved">Contact Saved!!!</string>
+	<string name="contact_not_saved">Couldn\'t Save Contact</string>
+	<string name="ok">OK</string>
+	<string name="profile_dia_msg">Set up your Personal profile</string>
+	<string name="contact_dia_msg">Are you sure you want to Delete this?</string>
+	<string name="Yes">Yes</string>
+	<string name="deleted">Deleted!</string>
+	<string name="location_share_msg">Do you want to share Location with this contact?</string>
+	<string name="loading">Loading…</string>
+	<string name="sms_sent">Sms sent!</string>
+	<string name="sms_not_sent">Couldn\'t sent sms online</string>
+	<string name="full_name">FULL NAME:</string>
+	<string name="dob">D.O.B:</string>
+	<string name="home_profile">HOME:</string>
+	<string name="work">WORK:</string>
+	<string name="gender">GENDER:</string>
+	<string name="mobile">MOBILE NUMBER:</string>
+	<string name="cancel">Cancel</string>
+	<string name="try_again">Try Again!</string>
+	<string name="could_not_retrieve">Couldn\'t Retrieve your Details</string>
+	<string name="want_to_logout">Do you want to Logout?</string>
+	<string name="something_wrong">Something went wrong.</string>
+	<string name="could_not_upload">Couldn\'t upload Profile Photo.</string>
+	<string name="detail_saved">Details Saved!!!</string>
+	<string name="detail_not_saved">Couldn\'t Save Details</string>
+	<string name="email_subject">Report from Family Tracker App</string>
+	<string name="email_details">Enter details here…</string>
+	<string name="send_mail">Send mail…</string>
+	<string name="no_client_installed">There are no email clients installed.</string>
+	<string name="share_msg">Hi, check out this awesome App. you will love it!</string>
+	<string name="share_subject">Awesome!!!</string>
+	<string name="share_via">Share via…</string>
+	<string name="pass_code_error">Passcode is wrong. Try again.</string>
+	<string name="welcome">Welcome</string>
+	<string name="health_dia_msg">Set up your Personal Health Information</string>
+	<string name="could_not_get_health_info">Couldn\'t Retrieve your Health Details</string>
+	<string name="donor">DONOR:</string>
+	<string name="diabetic_desc">DIABETIC:</string>
+	<string name="blood_group_desc">BLOOD GROUP:</string>
+	<string name="blood_pressure_desc">BLOOD PRESSURE:</string>
+	<string name="allergy_desc">ALLERGY:</string>
+	<string name="allergy_info_desc">ALLERGY INFO. :</string>
+	<string name="medication_desc">MEDICATION:</string>
+	<string name="medication_info_desc">MEDICATION INFO. :</string>
+	<string name="indurance_desc">INSURANCE COMPANY:</string>
+	<string name="insurance_number_desc">INSURANCE NUMBER:</string>
+	<string name="doctor_desc">DOCTOR:</string>
+	<string name="could_not_get_health_detail">Couldn\'t Retrieve your Health Details</string>
+	<string name="want_to_exit">Are you sure you want to exit?</string>
+	<string name="pin_error">Pin do not match.</string>
+	<string name="calling">calling</string>
+	<string name="location_error">User Location not found!</string>
 </resources>

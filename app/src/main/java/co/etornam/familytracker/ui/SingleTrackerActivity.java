@@ -62,6 +62,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static co.etornam.familytracker.util.Constants.DESTINATIONLAT;
+import static co.etornam.familytracker.util.Constants.DESTINATIONLNG;
+import static co.etornam.familytracker.util.Constants.ORIGINLAT;
+import static co.etornam.familytracker.util.Constants.ORIGINLNG;
 import static co.etornam.familytracker.util.Constants.TRACKING_DB;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
@@ -272,7 +276,7 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 								new String[]{Manifest.permission.CALL_PHONE},
 								1023);
 					} else {
-						Toast.makeText(SingleTrackerActivity.this, "calling " + contact.getName(), Toast.LENGTH_SHORT).show();
+						Toast.makeText(SingleTrackerActivity.this, getString(R.string.calling) + contact.getName(), Toast.LENGTH_SHORT).show();
 						startActivity(callIntent);
 					}
 				}
@@ -281,10 +285,10 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 			case R.id.faboptions_navigate:
 				Intent navigationIntent = new Intent(SingleTrackerActivity.this, CustomNavigationActivity.class);
 				navigationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-				navigationIntent.putExtra("destinationLatitude", destinationLat);
-				navigationIntent.putExtra("destinationLongitude", destinationLng);
-				navigationIntent.putExtra("originLongitude", originLocation.getLongitude());
-				navigationIntent.putExtra("originLatitude", originLocation.getLatitude());
+				navigationIntent.putExtra(DESTINATIONLAT, destinationLat);
+				navigationIntent.putExtra(DESTINATIONLNG, destinationLng);
+				navigationIntent.putExtra(ORIGINLNG, originLocation.getLongitude());
+				navigationIntent.putExtra(ORIGINLAT, originLocation.getLatitude());
 				startActivity(navigationIntent);
 				break;
 		}
@@ -324,7 +328,7 @@ public class SingleTrackerActivity extends AppCompatActivity implements OnMapRea
 								getRoute(originPoint, destinationPoint);
 
 							} else {
-								Toast.makeText(trackerActivity, "User Location not found!", Toast.LENGTH_SHORT).show();
+								Toast.makeText(trackerActivity, getString(R.string.location_error), Toast.LENGTH_SHORT).show();
 							}
 						}
 

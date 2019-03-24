@@ -1,7 +1,21 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
+    signingConfigs {
+        config {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
+
     compileSdkVersion 28
     defaultConfig {
         applicationId "co.etornam.familytracker"
@@ -17,8 +31,12 @@ android {
     }
     buildTypes {
         release {
+            signingConfig signingConfigs.config
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            versionNameSuffix 'dev'
         }
     }
     buildToolsVersion '28.0.3'
@@ -26,6 +44,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
 }
 
 dependencies {
@@ -54,13 +73,11 @@ dependencies {
     implementation 'com.github.joaquimley:faboptions:1.2.0'
     implementation 'com.github.florent37:expansionpanel:1.2.2'
     implementation 'com.github.nanchen2251:PinView:1.0.1'
-
     //mapbox dependencies
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:7.2.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-traffic:0.6.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-core:1.1.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.31.0'
-
     //firebase dependencies
     implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.google.firebase:firebase-auth:16.2.0'

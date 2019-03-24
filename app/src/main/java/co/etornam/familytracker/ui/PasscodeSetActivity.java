@@ -14,6 +14,7 @@ import butterknife.OnClick;
 import co.etornam.familytracker.R;
 
 import static co.etornam.familytracker.util.Constants.AUTH_STATUS;
+import static co.etornam.familytracker.util.Constants.ID_CODE;
 
 public class PasscodeSetActivity extends AppCompatActivity {
 
@@ -54,14 +55,14 @@ public class PasscodeSetActivity extends AppCompatActivity {
 
 				if (!codeOne.isEmpty() && !codeTwo.isEmpty() && codeOne.equals(codeTwo)) {
 					//save the pin
-					lockPref.edit().putString("code", codeOne).apply();
+					lockPref.edit().putString(ID_CODE, codeOne).apply();
 					preferences.edit().putBoolean(getString(R.string.isAuthSet_key), true).apply();
 					Intent intent = new Intent(this, MainActivity.class);
 					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 					startActivity(intent);
 				} else {
-					edtPinOne.setError("Pin do not match.");
-					edtPinTwo.setError("Pin do not match.");
+					edtPinOne.setError(getString(R.string.pin_error));
+					edtPinTwo.setError(getString(R.string.pin_error));
 				}
 				break;
 			case R.id.btnForgotPasscode:

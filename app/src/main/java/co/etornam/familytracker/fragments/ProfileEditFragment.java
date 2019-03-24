@@ -42,6 +42,7 @@ import co.etornam.familytracker.model.Profile;
 import de.hdodenhof.circleimageview.CircleImageView;
 import gun0912.tedbottompicker.TedBottomPicker;
 
+import static co.etornam.familytracker.util.Constants.PROFILE_STORAGE;
 import static co.etornam.familytracker.util.Constants.USER_DB;
 import static co.etornam.familytracker.util.NetworkUtil.isNetworkAvailable;
 
@@ -121,13 +122,13 @@ public class ProfileEditFragment extends Fragment {
 		genderGroup.setOnCheckedChangeListener((group, checkedId) -> {
 			switch (checkedId) {
 				case R.id.rBtnMale:
-					gender = "Male";
+					gender = getString(R.string.male);
 					break;
 				case R.id.rBtnFemale:
-					gender = "Female";
+					gender = getString(R.string.female);
 					break;
 				case R.id.rBtnOther:
-					gender = "Other";
+					gender = getString(R.string.other);
 					break;
 			}
 		});
@@ -144,7 +145,7 @@ public class ProfileEditFragment extends Fragment {
 				break;
 			case R.id.btnUpdateDetail:
 				if (!isNetworkAvailable(Objects.requireNonNull(getContext()))) {
-					Toast.makeText(getContext(), "No internet Connection.", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getContext(), getString(R.string.no_internet), Toast.LENGTH_SHORT).show();
 				} else {
 					validateUserDetails();
 				}
@@ -188,16 +189,16 @@ public class ProfileEditFragment extends Fragment {
 		} else if (mobileNumber.isEmpty()) {
 			edtMobileNumber.setError(getResources().getString(R.string.error_msg));
 		} else if (resultUri == null) {
-			txtImgSelect.setError("Select a Photo");
+			txtImgSelect.setError(getString(R.string.select_photo));
 		} else {
-			Snackbar.make(getView().findViewById(R.id.fragMainLayout), "Something went wrong. ", Snackbar.LENGTH_SHORT).show();
+			Snackbar.make(getView().findViewById(R.id.fragMainLayout), getString(R.string.something_wrong), Snackbar.LENGTH_SHORT).show();
 		}
 	}
 
 	private void saveUserDetails() {
 		btnUpdateDetail.setVisibility(View.GONE);
 		progressIndicator.setVisibility(View.VISIBLE);
-		mImageRef = mStorage.child("profile_images").child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid() + ".jpg");
+		mImageRef = mStorage.child(PROFILE_STORAGE).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid() + ".jpg");
 		UploadTask uploadTask = mImageRef.putFile(resultUri);
 		urlTask = uploadTask.continueWithTask(task -> {
 			if (!task.isSuccessful()) {
@@ -211,7 +212,7 @@ public class ProfileEditFragment extends Fragment {
 
 				writeUserDetails(firstName, otherName, dateOfBirth, homeAddress, workAddress, mobileNumber, downloadUrl.toString(), gender);
 			} else {
-				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragMainLayout), "Couldn't upload Profile Photo. ", Snackbar.LENGTH_SHORT).show();
+				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragMainLayout), getString(R.string.could_not_upload), Snackbar.LENGTH_SHORT).show();
 			}
 			btnUpdateDetail.setVisibility(View.VISIBLE);
 			progressIndicator.setVisibility(View.GONE);
@@ -222,14 +223,14 @@ public class ProfileEditFragment extends Fragment {
 		Profile profile = new Profile(firstName, otherName, dateOfBirth, homeAddress, workAddress, mobileNumber, profileImgUrl, gender, ServerValue.TIMESTAMP);
 		mDatabase.child(USER_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).setValue(profile).addOnCompleteListener(task -> {
 			if (task.isSuccessful()) {
-				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragMainLayout), "Details Saved!!! ", Snackbar.LENGTH_SHORT).show();
+				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragMainLayout), getString(R.string.detail_saved), Snackbar.LENGTH_SHORT).show();
 				ProfileDisplayFragment profileDisplayFragment = new ProfileDisplayFragment();
 				assert getFragmentManager() != null;
 				FragmentTransaction transaction = getFragmentManager().beginTransaction();
 				transaction.replace(R.id.fragContainer, profileDisplayFragment);
 				transaction.commit();
 			} else {
-				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragMainLayout), "Couldn't Save Details ", Snackbar.LENGTH_SHORT).show();
+				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragMainLayout), getString(R.string.detail_not_saved), Snackbar.LENGTH_SHORT).show();
 			}
 		});
 	}

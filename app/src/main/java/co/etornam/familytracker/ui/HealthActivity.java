@@ -209,13 +209,13 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 		medicationRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
 			switch (checkedId) {
 				case R.id.medicationNo:
-					medication = "no";
+					medication = getResources().getString(R.string.no);
 					if (edtMedication.getVisibility() == View.VISIBLE) {
 						edtMedication.setVisibility(View.GONE);
 					}
 					break;
 				case R.id.medicationYes:
-					medication = "YES";
+					medication = getResources().getString(R.string.yes);
 					if (edtMedication.getVisibility() == View.GONE) {
 						edtMedication.setVisibility(View.VISIBLE);
 					}
@@ -226,10 +226,10 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 		bleederRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
 			switch (checkedId) {
 				case R.id.bleederNo:
-					bleeder = "NO";
+					bleeder = getResources().getString(R.string.no);
 					break;
 				case R.id.bleederYes:
-					bleeder = "YES";
+					bleeder = getResources().getString(R.string.yes);
 					break;
 			}
 		});
@@ -237,13 +237,13 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 		allergicRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
 			switch (checkedId) {
 				case R.id.allergyNo:
-					allergy = "NO";
+					allergy = getResources().getString(R.string.no);
 					if (edtAllergy.getVisibility() == View.VISIBLE) {
 						edtAllergy.setVisibility(View.GONE);
 					}
 					break;
 				case R.id.allergyYes:
-					allergy = "YES";
+					allergy = getResources().getString(R.string.yes);
 					if (edtAllergy.getVisibility() == View.GONE) {
 						edtAllergy.setVisibility(View.VISIBLE);
 					}
@@ -254,13 +254,13 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 		pressureRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
 			switch (checkedId) {
 				case R.id.pressureLow:
-					pressure = "LOW";
+					pressure = getResources().getString(R.string.low);
 					break;
 				case R.id.pressureNormal:
-					pressure = "NORMAL";
+					pressure = getResources().getString(R.string.normal);
 					break;
 				case R.id.pressureHigh:
-					pressure = "HIGH";
+					pressure = getResources().getString(R.string.high);
 					break;
 			}
 		});
@@ -268,10 +268,10 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 		donorRadioGroup.setOnCheckedChangeListener((group, checkedId) -> {
 			switch (checkedId) {
 				case R.id.organDonorNo:
-					donor = "NO";
+					donor = getResources().getString(R.string.no);
 					break;
 				case R.id.organDonorYes:
-					donor = "YES";
+					donor = getResources().getString(R.string.yes);
 					break;
 			}
 		});
@@ -282,13 +282,13 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 		String insuranceCompany = edtCompanyName.getText().toString();
 		String insuranceNumber = insuranceId.getText().toString();
 		String bloodGroup = spinnerBlood.getSelectedItem().toString();
-		if (medication.equalsIgnoreCase("Yes")) {
+		if (medication.equalsIgnoreCase(getResources().getString(R.string.yes))) {
 			medicationEdit = edtMedication.getText().toString();
 		} else {
 			medicationEdit = "";
 		}
 
-		if (allergy.equalsIgnoreCase("Yes")) {
+		if (allergy.equalsIgnoreCase(getResources().getString(R.string.yes))) {
 			allergyEdit = edtAllergy.getText().toString();
 		} else {
 			allergyEdit = "";
@@ -365,33 +365,33 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 					insuranceId.setText(health.getInsurancenumber());
 					txtContactName.setText(health.getDoctorname());
 					txtContactNumber.setText(health.getDoctornumber());
-					if (health.getDonor().equalsIgnoreCase("Yes")) {
+					if (health.getDonor().equalsIgnoreCase(getResources().getString(R.string.yes))) {
 						donorRadioGroup.check(R.id.organDonorYes);
 					} else {
 						donorRadioGroup.check(R.id.organDonorNo);
 					}
 
-					if (health.getBleeder().equalsIgnoreCase("Yes")) {
+					if (health.getBleeder().equalsIgnoreCase(getResources().getString(R.string.yes))) {
 						bleederRadioGroup.check(R.id.bleederYes);
 					} else {
 						bleederRadioGroup.check(R.id.bleederNo);
 					}
 
-					if (health.getBloodpressure().equalsIgnoreCase("high")) {
+					if (health.getBloodpressure().equalsIgnoreCase(getResources().getString(R.string.high))) {
 						pressureRadioGroup.check(R.id.pressureHigh);
-					} else if (health.getBloodpressure().equalsIgnoreCase("normal")) {
+					} else if (health.getBloodpressure().equalsIgnoreCase(getResources().getString(R.string.normal))) {
 						pressureRadioGroup.check(R.id.pressureNormal);
 					} else {
 						pressureRadioGroup.check(R.id.pressureLow);
 					}
 
-					if (health.getDiabetic().equalsIgnoreCase("Yes")) {
+					if (health.getDiabetic().equalsIgnoreCase(getResources().getString(R.string.yes))) {
 						diabeticRadioGroup.check(R.id.diabeticYes);
 					} else {
 						diabeticRadioGroup.check(R.id.diabeticNo);
 					}
 
-					if (health.getAllergy().equalsIgnoreCase("Yes")) {
+					if (health.getAllergy().equalsIgnoreCase(getResources().getString(R.string.yes))) {
 						allergicRadioGroup.check(R.id.allergyYes);
 						edtAllergy.setText(health.getAllergyinfo());
 					} else {
@@ -399,7 +399,7 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 					}
 
 
-					if (health.getMedication().equalsIgnoreCase("Yes")) {
+					if (health.getMedication().equalsIgnoreCase(getResources().getString(R.string.yes))) {
 						medicationRadioGroup.check(R.id.medicationYes);
 						edtMedication.setText(health.getMedinfo());
 					} else {
@@ -421,9 +421,9 @@ public class HealthActivity extends AppCompatActivity implements AdapterView.OnI
 			@Override
 			public void onCancelled(@NonNull DatabaseError databaseError) {
 				Log.d(TAG, "onCancelled: " + databaseError.getMessage());
-				Snackbar.make(findViewById(R.id.layoutMain), "Couldn't Retrieve your Health Details ", Snackbar.LENGTH_SHORT)
+				Snackbar.make(findViewById(R.id.layoutMain), getString(R.string.could_not_get_health_detail), Snackbar.LENGTH_SHORT)
 						.setActionTextColor(getResources().getColor(R.color.colorRed))
-						.setAction("Try Again!", v -> getUserHealthDetails())
+						.setAction(getString(R.string.try_again), v -> getUserHealthDetails())
 						.show();
 			}
 		});

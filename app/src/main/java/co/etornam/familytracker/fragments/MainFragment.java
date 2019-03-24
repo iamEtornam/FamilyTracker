@@ -63,6 +63,7 @@ import co.etornam.familytracker.ui.ProfileActivity;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static co.etornam.familytracker.util.Constants.CONTACT_DB;
+import static co.etornam.familytracker.util.Constants.SMS_API_URL;
 import static co.etornam.familytracker.util.Constants.TRACKING_DB;
 import static co.etornam.familytracker.util.Constants.USER_DB;
 import static co.etornam.familytracker.util.NetworkUtil.isNetworkAvailable;
@@ -79,7 +80,6 @@ public class MainFragment extends Fragment {
 	private String userFullName;
 	private ProgressDialog progressDialog;
 	private String CURRENT_DATE = new SimpleDateFormat("yyyyMMddHH", Locale.getDefault()).format(new Date());
-	private String SMS_API_URL = "https://app.helliomessaging.com/api/v2/sms?";
 
 	public MainFragment() {
 
@@ -125,9 +125,9 @@ public class MainFragment extends Fragment {
 					userFullName = profile.getFirstName() + " " + profile.getOtherName();
 				} else {
 					new AlertDialog.Builder(Objects.requireNonNull(getContext()))
-							.setMessage("Set up your Personal profile")
+							.setMessage(getString(R.string.profile_dia_msg))
 							.setCancelable(false)
-							.setPositiveButton("Ok", (dialog, id) -> {
+							.setPositiveButton(getString(R.string.ok), (dialog, id) -> {
 								Intent intent = new Intent(getContext(), ProfileActivity.class);
 								intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 								startActivity(intent);
@@ -147,7 +147,7 @@ public class MainFragment extends Fragment {
 
 		Query query = FirebaseDatabase.getInstance()
 				.getReference()
-				.child("contacts")
+				.child(CONTACT_DB)
 				.child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
 
 
@@ -166,22 +166,22 @@ public class MainFragment extends Fragment {
 						.placeholder(R.drawable.ic_image_placeholder)
 						.into(contactViewHolder.ContactImage);
 				contactViewHolder.ContactDeleteBtn.setOnClickListener(v -> new AlertDialog.Builder(Objects.requireNonNull(getContext()))
-						.setMessage("Are you sure you want to Delete this?")
+						.setMessage(getString(R.string.contact_dia_msg))
 						.setCancelable(false)
-						.setPositiveButton("Yes", (dialog, id) -> {
+						.setPositiveButton(getString(R.string.Yes), (dialog, id) -> {
 							if (!isNetworkAvailable(Objects.requireNonNull(getContext()))) {
-								Toast.makeText(getContext(), "No internet Connection.", Toast.LENGTH_SHORT).show();
+								Toast.makeText(getContext(), getString(R.string.no_internet), Toast.LENGTH_SHORT).show();
 							} else {
 								adapter.getRef(i).removeValue();
 								notifyItemRemoved(contactViewHolder.getAdapterPosition());
 								notifyDataSetChanged();
 
-								Toast.makeText(getContext(), "Deleted! ", Toast
+								Toast.makeText(getContext(), getString(R.string.deleted), Toast
 										.LENGTH_SHORT)
 										.show();
 							}
 						})
-						.setNegativeButton("No", (dialog, which) -> {
+						.setNegativeButton(getString(R.string.no), (dialog, which) -> {
 
 								}
 						).show()
@@ -190,17 +190,17 @@ public class MainFragment extends Fragment {
 
 				contactViewHolder.ContactMainLayout.setOnClickListener(v ->
 						new AlertDialog.Builder(Objects.requireNonNull(getContext()))
-								.setMessage("Do you want to share Location with this contact?")
+								.setMessage(getString(R.string.location_share_msg))
 								.setCancelable(false)
-								.setPositiveButton("Yes", (dialog, id) -> {
+								.setPositiveButton(getString(R.string.Yes), (dialog, id) -> {
 									if (!isNetworkAvailable(Objects.requireNonNull(getContext()))) {
-										Toast.makeText(getContext(), "No internet Connection.", Toast.LENGTH_SHORT).show();
+										Toast.makeText(getContext(), getString(R.string.no_internet), Toast.LENGTH_SHORT).show();
 									} else {
 
 										initializeTracker(list_id);
 									}
 								})
-								.setNegativeButton("No", (dialog, which) -> {
+								.setNegativeButton(getString(R.string.no), (dialog, which) -> {
 
 										}
 								).show()
@@ -220,7 +220,7 @@ public class MainFragment extends Fragment {
 	}
 
 	private void initializeTracker(String positionId) {
-		progressDialog.setMessage("Loading...");
+		progressDialog.setMessage(getString(R.string.loading));
 		progressDialog.show();
 		FirebaseDynamicLinks.getInstance().createDynamicLink()
 				.setLink(Uri.parse("https://www.etornam.com/tracker?id=" + Objects.requireNonNull(mAuth.getCurrentUser()).getUid()))
@@ -288,15 +288,14 @@ public class MainFragment extends Fragment {
 
 
 							//Prepare parameter string
-							StringBuilder sbPostData = new StringBuilder(SMS_API_URL);
-							sbPostData.append(clientId);
-							sbPostData.append(authKey);
-							sbPostData.append(msisdn);
-							sbPostData.append(myMessage);
-							sbPostData.append(senderId);
 
 							//final string
-							SMS_API_URL = sbPostData.toString().replace(" ", "%20");
+							String sbPostData = SMS_API_URL + clientId +
+									authKey +
+									msisdn +
+									myMessage +
+									senderId;
+							SMS_API_URL = sbPostData.replace(" ", "%20");
 							Log.d(TAG, "doInBackground: SMS_API " + SMS_API_URL);
 							URL myURL = new URL(SMS_API_URL);
 
@@ -326,14 +325,14 @@ public class MainFragment extends Fragment {
 										new InputStreamReader(
 												conn.getInputStream()));
 								StringBuilder sb = new StringBuilder();
-								String line = "";
+								String line;
 
 								while ((line = in.readLine()) != null) {
 
 									sb.append(line);
 									break;
 								}
-								Toast.makeText(getContext(), "Sms sent!", Toast.LENGTH_SHORT).show();
+								Toast.makeText(getContext(), getString(R.string.sms_sent), Toast.LENGTH_SHORT).show();
 								in.close();
 								Log.d(TAG, "doInBackground: " + responseCode);
 								return sb.toString();
@@ -343,7 +342,7 @@ public class MainFragment extends Fragment {
 
 							}
 						} catch (Exception e) {
-							Toast.makeText(getContext(), "Couldn't sent sms online", Toast.LENGTH_SHORT).show();
+							Toast.makeText(getContext(), getString(R.string.sms_not_sent), Toast.LENGTH_SHORT).show();
 						}
 						return null;
 					}

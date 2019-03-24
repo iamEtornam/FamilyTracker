@@ -10,8 +10,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -19,13 +17,12 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import java.util.Objects;
 
-import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
 import static co.etornam.familytracker.util.Constants.TRACKING_DB;
 
 public class LocationFetcherService extends Service {
-	private static final String TAG = "MyLocationService";
+	private String TAG = LocationFetcherService.class.getSimpleName();
 	private static final int LOCATION_INTERVAL = 500;
 	private static final float LOCATION_DISTANCE = 1f;
 	LocationListener[] mLocationListeners = new LocationListener[]{
@@ -123,17 +120,10 @@ public class LocationFetcherService extends Service {
 				stringMap.put("speed", String.valueOf(location.getSpeed()));
 				stringMap.put("time", String.valueOf(location.getTime()));
 				mLocationDb.setValue(stringMap)
-						.addOnSuccessListener(new OnSuccessListener<Void>() {
-							@Override
-							public void onSuccess(Void aVoid) {
-								Log.d(TAG, "UserTracking onSuccess: Uploaded");
-							}
-						}).addOnFailureListener(new OnFailureListener() {
-					@Override
-					public void onFailure(@NonNull Exception e) {
-						Log.d(TAG, "UserTracking onFailure: failed to upload");
-					}
-				});
+						.addOnSuccessListener(aVoid ->
+								Log.d(TAG, "UserTracking onSuccess: Uploaded"))
+						.addOnFailureListener(e ->
+								Log.d(TAG, "UserTracking onFailure: failed to upload"));
 
 				mLastLocation.set(location);
 			} catch (Exception e) {
@@ -148,6 +138,7 @@ public class LocationFetcherService extends Service {
 
 		@Override
 		public void onProviderEnabled(String provider) {
+
 			Log.e(TAG, "onProviderEnabled: " + provider);
 		}
 

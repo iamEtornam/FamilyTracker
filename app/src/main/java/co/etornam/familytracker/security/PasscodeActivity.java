@@ -19,6 +19,8 @@ import co.etornam.familytracker.R;
 import co.etornam.familytracker.ui.MainActivity;
 import co.etornam.familytracker.ui.PasscodeSetActivity;
 
+import static co.etornam.familytracker.util.Constants.ID_CODE;
+
 public class PasscodeActivity extends AppCompatActivity implements PinView.PinViewEventListener {
 
 	private static final String TAG = PasscodeSetActivity.class.getSimpleName();
@@ -47,7 +49,7 @@ public class PasscodeActivity extends AppCompatActivity implements PinView.PinVi
 
 	@OnClick(R.id.btnValidate)
 	public void onViewClicked() {
-		String savedPin = lockPref.getString("code", "null");
+		String savedPin = lockPref.getString(ID_CODE, "null");
 		Log.d(TAG, "onViewClicked: " + savedPin);
 		assert savedPin != null;
 		if (Objects.equals(savedPin, pin)) {
@@ -55,7 +57,7 @@ public class PasscodeActivity extends AppCompatActivity implements PinView.PinVi
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(intent);
 		} else {
-			Toast.makeText(this, "Passcode is wrong. Try again.", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, getString(R.string.pass_code_error), Toast.LENGTH_SHORT).show();
 		}
 	}
 

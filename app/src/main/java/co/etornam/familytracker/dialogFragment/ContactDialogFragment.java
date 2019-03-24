@@ -130,7 +130,7 @@ public class ContactDialogFragment extends BottomSheetDialogFragment implements 
 				break;
 			case R.id.btnSaveContact:
 				if (!isNetworkAvailable(Objects.requireNonNull(getContext()))) {
-					Toast.makeText(getContext(), "No internet Connection.", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getContext(), getResources().getString(R.string.no_internet), Toast.LENGTH_SHORT).show();
 				} else {
 					validateData();
 				}
@@ -173,7 +173,7 @@ public class ContactDialogFragment extends BottomSheetDialogFragment implements 
 
 				writeContactDetails(downloadUrl.toString(), name, contact, relation);
 			} else {
-				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragDialogMain), "Couldn't upload Profile Photo. ", Snackbar.LENGTH_SHORT).show();
+				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragDialogMain), getString(R.string.photo_error), Snackbar.LENGTH_SHORT).show();
 			}
 			progressBar.setVisibility(View.GONE);
 		});
@@ -241,10 +241,10 @@ public class ContactDialogFragment extends BottomSheetDialogFragment implements 
 		Contact contact = new Contact(imageUrl, name, number, relation, ServerValue.TIMESTAMP);
 		mDatabase.child(CONTACT_DB).child(Objects.requireNonNull(mAuth.getCurrentUser()).getUid()).push().setValue(contact).addOnCompleteListener(task -> {
 			if (task.isSuccessful()) {
-				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragDialogMain), "Contact Saved!!! ", Snackbar.LENGTH_SHORT).show();
+				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragDialogMain), getString(R.string.contact_saved), Snackbar.LENGTH_SHORT).show();
 				this.dismiss();
 			} else {
-				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragDialogMain), "Couldn't Save Contact ", Snackbar.LENGTH_SHORT).show();
+				Snackbar.make(Objects.requireNonNull(getView()).findViewById(R.id.fragDialogMain), getString(R.string.contact_not_saved), Snackbar.LENGTH_SHORT).show();
 			}
 		});
 	}

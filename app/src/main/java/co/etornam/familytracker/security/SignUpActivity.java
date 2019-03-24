@@ -34,6 +34,7 @@ import butterknife.OnClick;
 import co.etornam.familytracker.R;
 import co.etornam.familytracker.ui.MainActivity;
 
+import static co.etornam.familytracker.util.Constants.SITE_URL;
 import static co.etornam.familytracker.util.NetworkUtil.isNetworkAvailable;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -75,7 +76,7 @@ public class SignUpActivity extends AppCompatActivity {
 		switch (view.getId()) {
 			case R.id.btnSignup:
 				if (!isNetworkAvailable(this)) {
-					Toast.makeText(this, "No internet Connection.", Toast.LENGTH_SHORT).show();
+					Toast.makeText(this, getString(R.string.no_internet), Toast.LENGTH_SHORT).show();
 				} else {
 					signupUser();
 				}
@@ -88,13 +89,12 @@ public class SignUpActivity extends AppCompatActivity {
 	}
 
 	private void readTermCondition() {
-		String url = "https://docs.google.com/document/d/1KgEHGi2T9JbvtAX-Yoe15j5Ac1CR5Acr4mcfexM61ak/";
 		CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
 		builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
 		builder.setStartAnimations(this, R.anim.slide_right, R.anim.slide_left);
 		builder.setExitAnimations(this, R.anim.slide_left, R.anim.slide_right);
 		CustomTabsIntent customTabsIntent = builder.build();
-		customTabsIntent.launchUrl(this, Uri.parse(url));
+		customTabsIntent.launchUrl(this, Uri.parse(SITE_URL));
 	}
 
 	private void signupUser() {
@@ -122,8 +122,8 @@ public class SignUpActivity extends AppCompatActivity {
 						startActivity(new Intent(this, MainActivity.class));
 
 					} else {
-						Snackbar.make(findViewById(R.id.signupLayout), "Error: Something went wrong.", Snackbar.LENGTH_LONG)
-								.setAction("Try Again!", v ->
+						Snackbar.make(findViewById(R.id.signupLayout), getString(R.string.something_wrong), Snackbar.LENGTH_LONG)
+								.setAction(getString(R.string.try_again), v ->
 										signupUser()
 								)
 								.setActionTextColor(getResources().getColor(R.color.colorRed))
@@ -147,10 +147,9 @@ public class SignUpActivity extends AppCompatActivity {
 				GoogleSignInAccount account = task.getResult(ApiException.class);
 				assert account != null;
 				firebaseAuthWithGoogle(account);
-				Snackbar.make(findViewById(R.id.signupLayout), "Welcome " + account.getDisplayName(), Snackbar.LENGTH_SHORT).show();
-
+				Snackbar.make(findViewById(R.id.signupLayout), getString(R.string.welcome) + account.getDisplayName(), Snackbar.LENGTH_SHORT).show();
 			} catch (ApiException e) {
-				Snackbar.make(findViewById(R.id.signupLayout), "Error: Something went wrong.", Snackbar.LENGTH_SHORT).show();
+				Snackbar.make(findViewById(R.id.signupLayout), getString(R.string.something_wrong), Snackbar.LENGTH_SHORT).show();
 				Log.w(TAG, "Google sign in failed", e);
 				progressIndicator.setVisibility(View.GONE);
 			}
