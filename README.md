@@ -1,4 +1,5 @@
 # FamilyTracker
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/RegNex/FamilyTracker/graphs/commit-activity)
 Udacity Android Developer Nanodegree Capstone 2 project. A simple App to track family and friends
 
 
