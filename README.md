@@ -1,12 +1,16 @@
 # FamilyTracker
 <p align="left">
     
+---
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/RegNex/FamilyTracker/graphs/commit-activity)
 
+---
 [![made-with-Java](https://img.shields.io/badge/Made%20with-Java-red.svg)](https://www.java.com)
 
+---
 [![made-with-Java](https://img.shields.io/badge/Made%20with-Android-green.svg)](https://www.android.com/)
 
+---
 [![ForTheBadge built-with-love](http://ForTheBadge.com/images/badges/built-with-love.svg)](https://github.com/RegNex/)
 </p>
 
