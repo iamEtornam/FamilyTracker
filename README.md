@@ -5,6 +5,8 @@
 
 [![ForTheBadge built-by-developers](http://ForTheBadge.com/images/badges/built-by-developers.svg)](https://github.com/RegNex/)
 
+[![ForTheBadge built-with-love](http://ForTheBadge.com/images/badges/built-with-love.svg)](https://github.com/RegNex/)
+
 Udacity Android Developer Nanodegree Capstone 2 project. A simple App to track family and friends
 
 
