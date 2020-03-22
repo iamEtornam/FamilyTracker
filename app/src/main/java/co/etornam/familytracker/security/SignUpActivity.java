@@ -150,8 +150,9 @@ public class SignUpActivity extends AppCompatActivity {
 				Snackbar.make(findViewById(R.id.signupLayout), getString(R.string.welcome) + account.getDisplayName(), Snackbar.LENGTH_SHORT).show();
 			} catch (ApiException e) {
 				Snackbar.make(findViewById(R.id.signupLayout), getString(R.string.something_wrong), Snackbar.LENGTH_SHORT).show();
-				Log.w(TAG, "Google sign in failed", e);
+				Log.d(TAG, "Google sign in failed", e);
 				progressIndicator.setVisibility(View.GONE);
+				btnSignup.setVisibility(View.VISIBLE);
 			}
 		}
 	}
