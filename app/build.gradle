@@ -16,11 +16,11 @@ android {
     }
 
 
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "co.etornam.familytracker"
         minSdkVersion 19
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -39,7 +39,7 @@ android {
             versionNameSuffix 'dev'
         }
     }
-    buildToolsVersion '28.0.3'
+    buildToolsVersion '29.0.2'
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -49,21 +49,23 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.0.2'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'com.google.android.material:material:1.0.0'
-    implementation 'androidx.browser:browser:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.browser:browser:1.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.vectordrawable:vectordrawable:1.0.1'
-    implementation 'androidx.preference:preference:1.0.0'
+    implementation 'androidx.vectordrawable:vectordrawable:1.1.0'
+    implementation 'androidx.preference:preference:1.1.0'
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.android.volley:volley:1.1.1'
-    implementation 'androidx.preference:preference:1.0.0'
+    implementation 'androidx.preference:preference:1.1.0'
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test:runner:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    
     //additional dependencies
-    implementation 'com.jakewharton:butterknife:10.0.0'
+    annotationProcessor 'com.jakewharton:butterknife:10.0.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
     implementation 'com.tuyenmonkey:mkloader:1.4.0'
     implementation 'de.hdodenhof:circleimageview:3.0.0'
@@ -73,18 +75,21 @@ dependencies {
     implementation 'com.github.joaquimley:faboptions:1.2.0'
     implementation 'com.github.florent37:expansionpanel:1.2.2'
     implementation 'com.github.nanchen2251:PinView:1.0.1'
+    
     //mapbox dependencies
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:7.2.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-traffic:0.6.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-core:1.1.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.31.0'
+    
     //firebase dependencies
-    implementation 'com.google.firebase:firebase-core:16.0.8'
-    implementation 'com.google.firebase:firebase-auth:16.2.0'
-    implementation 'com.google.android.gms:play-services-auth:16.0.1'
-    implementation 'com.google.firebase:firebase-storage:16.1.0'
+    implementation 'com.google.firebase:firebase-core:17.2.3'
+    implementation 'com.google.firebase:firebase-auth:19.3.0'
+    implementation 'com.google.firebase:firebase-database:19.2.1'
+    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation 'com.google.firebase:firebase-storage:19.1.1'
     implementation 'com.firebaseui:firebase-ui-database:4.3.1'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
-    implementation 'com.google.firebase:firebase-dynamic-links:16.1.8'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+    implementation 'com.google.firebase:firebase-dynamic-links:19.1.0'
 }
 apply plugin: 'com.google.gms.google-services'
