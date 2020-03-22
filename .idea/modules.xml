@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/FamilyTracker.iml" filepath="$PROJECT_DIR$/FamilyTracker.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FamilyTracker.iml" filepath="$PROJECT_DIR$/FamilyTracker.iml" group="FamilyTracker" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="FamilyTracker/app" />
     </modules>
   </component>
 </project>
