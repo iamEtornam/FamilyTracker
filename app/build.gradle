@@ -1,19 +1,19 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
 
-def keystorePropertiesFile = rootProject.file("keystore.properties")
-def keystoreProperties = new Properties()
-keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+//def keystorePropertiesFile = rootProject.file("keystore.properties")
+//def keystoreProperties = new Properties()
+//keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
-    signingConfigs {
-        config {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
-        }
-    }
+//    signingConfigs {
+//        config {
+//            keyAlias keystoreProperties['keyAlias']
+//            keyPassword keystoreProperties['keyPassword']
+//            storeFile file(keystoreProperties['storeFile'])
+//            storePassword keystoreProperties['storePassword']
+//        }
+//    }
 
 
     compileSdkVersion 29
@@ -31,7 +31,7 @@ android {
     }
     buildTypes {
         release {
-            signingConfig signingConfigs.config
+//            signingConfig signingConfigs.config
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -39,7 +39,7 @@ android {
             versionNameSuffix 'dev'
         }
     }
-    buildToolsVersion '29.0.2'
+    buildToolsVersion '29.0.3'
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -65,7 +65,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     
     //additional dependencies
-    annotationProcessor 'com.jakewharton:butterknife:10.0.0'
+    implementation 'com.jakewharton:butterknife:10.0.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.0.0'
     implementation 'com.tuyenmonkey:mkloader:1.4.0'
     implementation 'de.hdodenhof:circleimageview:3.0.0'
